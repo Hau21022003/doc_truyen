@@ -6,6 +6,8 @@ import { AppConfigModule } from 'src/config/app-config.module';
 import jwtConfig from 'src/config/jwt.config';
 import databaseConfig from 'src/config/database.config';
 import { UsersModule } from 'src/apis/users/users.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { AppConfigService } from './config/app-config.service';
 
 @Module({
   imports: [
@@ -13,6 +15,20 @@ import { UsersModule } from 'src/apis/users/users.module';
       isGlobal: true,
       load: [jwtConfig, databaseConfig],
       // envFilePath: `.env.${process.env.NODE_ENV || 'development'}`,
+    }),
+    TypeOrmModule.forRootAsync({
+      inject: [AppConfigService],
+      useFactory: (config: AppConfigService) => ({
+        type: 'postgres',
+        host: config.dbHost,
+        port: config.dbPort,
+        username: config.dbUser,
+        password: config.dbPassword,
+        database: config.dbName,
+        autoLoadEntities: true,
+        synchronize: config.dbSynchronize,
+        logging: config.dbLogging,
+      }),
     }),
     AppConfigModule,
     UsersModule,
