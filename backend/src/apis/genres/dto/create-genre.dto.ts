@@ -1,7 +1,5 @@
 import { IsString, IsNotEmpty } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsUnique } from 'src/common/decorators/is-unique.decorator';
-import { Genre } from '../entities/genre.entity';
 
 export class CreateGenreDto {
   @ApiProperty({
