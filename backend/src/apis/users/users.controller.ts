@@ -8,9 +8,7 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 @ApiTags('users1')
 @Controller('users')
 export class UsersController {
-  constructor(
-    private readonly usersService: UsersService,
-  ) { }
+  constructor(private readonly usersService: UsersService) {}
 
   @Post()
   @ApiOperation({ summary: 'Tạo user' })
@@ -19,7 +17,6 @@ export class UsersController {
   }
 
   @Get()
-
   @ApiOperation({ summary: 'Lấy danh sách user' })
   findAll() {
     return this.usersService.findAll();

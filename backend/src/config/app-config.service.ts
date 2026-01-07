@@ -4,7 +4,7 @@ import ms from 'ms';
 
 @Injectable()
 export class AppConfigService {
-  constructor(private readonly config: ConfigService) { }
+  constructor(private readonly config: ConfigService) {}
 
   // ========== JWT ACCESS ==========
   get jwtAccessSecret(): string {
@@ -31,7 +31,6 @@ export class AppConfigService {
   get jwtRefreshExpiresInMs(): number {
     return ms(this.jwtRefreshExpiresIn);
   }
-
 
   // ========== DATABASE ==========
   get dbHost(): string {

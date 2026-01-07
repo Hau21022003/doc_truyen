@@ -2,9 +2,13 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
+import { useContainer } from 'class-validator';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  // Cần thêm dòng này để class-validator có thể truy cập NestJS DI container
+  useContainer(app.select(AppModule), { fallbackOnErrors: true });
 
   // Swagger config
   const config = new DocumentBuilder()
@@ -17,7 +21,7 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document, {
     swaggerOptions: {
       docExpansion: 'none',
-    }
+    },
   });
 
   app.useGlobalPipes(

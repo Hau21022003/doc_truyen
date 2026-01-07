@@ -6,8 +6,10 @@ import { AppConfigModule } from 'src/config/app-config.module';
 import jwtConfig from 'src/config/jwt.config';
 import databaseConfig from 'src/config/database.config';
 import { UsersModule } from 'src/apis/users/users.module';
+import { GenresModule } from './apis/genres/genres.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppConfigService } from './config/app-config.service';
+import { ValidationProvidersModule } from './common/providers/validation-providers.module';
 
 @Module({
   imports: [
@@ -32,6 +34,8 @@ import { AppConfigService } from './config/app-config.service';
     }),
     AppConfigModule,
     UsersModule,
+    GenresModule,
+    ValidationProvidersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
