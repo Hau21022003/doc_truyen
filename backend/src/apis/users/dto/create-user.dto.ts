@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsString, IsOptional, IsBoolean, MaxLength, MinLength } from 'class-validator';
+import { IsEmail, IsString, IsOptional, IsBoolean, IsEnum, MaxLength, MinLength } from 'class-validator';
 import { IsStrongPassword, IsUnique, StringTrim } from '@/common/decorators';
-import { User } from '../entities/user.entity';
+import { User, UserRole } from '../entities/user.entity';
 
 export class CreateUserDto {
   @ApiProperty({
@@ -77,12 +77,12 @@ export class CreateUserDto {
   isActive?: boolean;
 
   @ApiProperty({
-    example: false,
-    description: 'Là quản trị viên',
-    required: false,
-    default: false,
+    enum: UserRole,
+    example: UserRole.READER,
+    description: 'Vai trò của người dùng',
+    default: UserRole.READER,
   })
   @IsOptional()
-  @IsBoolean()
-  isAdmin?: boolean;
+  @IsEnum(UserRole)
+  role?: UserRole;
 }

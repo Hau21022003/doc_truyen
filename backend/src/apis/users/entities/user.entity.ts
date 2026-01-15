@@ -1,6 +1,12 @@
 import { Entity, Column } from 'typeorm';
 import { UuidBaseEntity } from '@/common/entities/uuid-base.entity';
 
+export enum UserRole {
+  READER = 'reader',
+  CONTENT_ADMIN = 'content_admin',
+  SYSTEM_ADMIN = 'system_admin',
+}
+
 @Entity('users')
 export class User extends UuidBaseEntity {
   @Column({ unique: true })
@@ -24,8 +30,12 @@ export class User extends UuidBaseEntity {
   @Column({ default: true })
   isActive: boolean;
 
-  @Column({ default: false })
-  isAdmin: boolean;
+  @Column({
+    type: 'enum',
+    enum: UserRole,
+    default: UserRole.READER,
+  })
+  role: UserRole;
 
   @Column({ nullable: true })
   lastLoginAt?: Date;
