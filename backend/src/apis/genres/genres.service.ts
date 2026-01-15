@@ -4,8 +4,8 @@ import { Repository, DataSource } from 'typeorm';
 import { CreateGenreDto } from './dto/create-genre.dto';
 import { UpdateGenreDto } from './dto/update-genre.dto';
 import { Genre } from './entities/genre.entity';
-import { QueryBaseDto } from '@/common/dto';
-import { PaginatedResponseDto } from '@/common/dto';
+import { QueryBaseDto, PaginatedResponseDto } from '@/common';
+import { QueryBuilderHelper } from '@/common';
 
 @Injectable()
 export class GenresService {
@@ -22,28 +22,24 @@ export class GenresService {
   }
 
   async findAll(query: QueryBaseDto): Promise<PaginatedResponseDto<Genre>> {
-    const { page, limit, skip } = query;
-    const { sortBy, sortOrder, search } = query;
+    const { page, limit, skip, search, sortBy, sortOrder } = query;
     
-    const queryBuilder = this.genreRepository.createQueryBuilder('genre');
+    let queryBuilder = this.genreRepository.createQueryBuilder('genre');
     
-    // Apply search filter
-    if (search) {
-      queryBuilder.where('genre.name LIKE :search OR genre.description LIKE :search', { 
-        search: `%${search}%` 
-      });
-    }
+    // Apply search using helper
+    queryBuilder = QueryBuilderHelper.applySearch(queryBuilder, 'genre', search, ['name', 'description']);
     
-    // Apply sorting
-    if (sortBy && sortOrder) {
-      queryBuilder.orderBy(`genre.${sortBy}`, sortOrder);
-    } else {
-      // Default sorting by created time
-      queryBuilder.orderBy('genre.createdAt', 'DESC');
-    }
+    // Apply sorting using helper
+    queryBuilder = QueryBuilderHelper.applySorting(
+      queryBuilder, 
+      'genre', 
+      sortBy, 
+      sortOrder, 
+      ['name', 'createdAt', 'updatedAt']
+    );
     
-    // Apply pagination
-    queryBuilder.skip(skip).take(limit);
+    // Apply pagination using helper
+    queryBuilder = QueryBuilderHelper.applyPagination(queryBuilder, page, limit);
     
     const [data, total] = await queryBuilder.getManyAndCount();
     
