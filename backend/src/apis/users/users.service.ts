@@ -1,8 +1,8 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Like } from 'typeorm';
 import { CreateUserDto, UpdateUserDto, QueryUserDto, UserListResponseDto, UserResponseDto } from './dto';
-import { User, UserRole } from './entities/user.entity';
+import { User } from './entities/user.entity';
 import { hashPassword } from '@/common/utils/crypto.util';
 
 @Injectable()
@@ -12,7 +12,7 @@ export class UsersService {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  async create(createUserDto: CreateUserDto): Promise<UserResponseDto> {
+  async create(createUserDto: CreateUserDto): Promise<User> {
     const { password, ...userData } = createUserDto;
 
     // Hash the password
@@ -24,7 +24,7 @@ export class UsersService {
     });
 
     const savedUser = await this.userRepository.save(user);
-    return this.createUserResponseDto(savedUser);
+    return savedUser;
   }
 
   async findAll(query: QueryUserDto): Promise<UserListResponseDto> {
@@ -54,7 +54,7 @@ export class UsersService {
     const totalPages = Math.ceil(total / limit);
 
     return {
-      data: data.map((user) => this.createUserResponseDto(user)),
+      data,
       page,
       limit,
       total,
@@ -62,27 +62,28 @@ export class UsersService {
     };
   }
 
-  async findOne(id: string): Promise<UserResponseDto> {
+  async findOne(id: string): Promise<User> {
     const user = await this.userRepository.findOne({ where: { id } });
 
     if (!user) {
       throw new NotFoundException(`User with ID ${id} not found`);
     }
 
-    return this.createUserResponseDto(user);
+    // return this.createUserResponseDto(user);
+    return user;
   }
 
-  async findByEmail(email: string): Promise<UserResponseDto | null> {
+  async findByEmail(email: string): Promise<User | null> {
     const user = await this.userRepository.findOne({ where: { email } });
-    return user ? this.createUserResponseDto(user) : null;
+    return user;
   }
 
-  async findByUsername(username: string): Promise<UserResponseDto | null> {
+  async findByUsername(username: string): Promise<User | null> {
     const user = await this.userRepository.findOne({ where: { username } });
-    return user ? this.createUserResponseDto(user) : null;
+    return user;
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto): Promise<UserResponseDto> {
+  async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
     const user = await this.userRepository.findOne({ where: { id } });
 
     if (!user) {
@@ -102,10 +103,10 @@ export class UsersService {
 
     Object.assign(user, updateUserDto);
     const updatedUser = await this.userRepository.save(user);
-    return this.createUserResponseDto(updatedUser);
+    return updatedUser;
   }
 
-  async remove(id: string): Promise<UserResponseDto> {
+  async remove(id: string): Promise<User> {
     const user = await this.userRepository.findOne({ where: { id } });
 
     if (!user) {
@@ -114,10 +115,10 @@ export class UsersService {
 
     const removedUser = { ...user };
     await this.userRepository.remove(user);
-    return this.createUserResponseDto(removedUser);
+    return removedUser;
   }
 
-  async updateLastLogin(id: string): Promise<UserResponseDto> {
+  async updateLastLogin(id: string): Promise<User> {
     await this.userRepository.update(id, { lastLoginAt: new Date() });
     const user = await this.userRepository.findOne({ where: { id } });
 
@@ -125,11 +126,12 @@ export class UsersService {
       throw new NotFoundException(`User with ID ${id} not found`);
     }
 
-    return this.createUserResponseDto(user);
+    return user;
   }
 
-  private createUserResponseDto(user: User): UserResponseDto {
-    const { password, ...userWithoutPassword } = user;
-    return userWithoutPassword as UserResponseDto;
+  async updateRefreshToken(userId: string, refreshToken: string): Promise<void> {
+    await this.userRepository.update(userId, {
+      refreshToken: refreshToken,
+    });
   }
 }

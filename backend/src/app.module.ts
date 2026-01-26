@@ -10,13 +10,16 @@ import { GenresModule } from './apis/genres/genres.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppConfigService } from './config/app-config.service';
 import { ValidationProvidersModule } from './common/providers/validation-providers.module';
+import { AuthModule } from './apis/auth/auth.module';
+import oauthConfig from './config/oauth.config';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtAuthGuard } from './apis/auth/guards/jwt-auth.guard';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [jwtConfig, databaseConfig],
-      // envFilePath: `.env.${process.env.NODE_ENV || 'development'}`,
+      load: [jwtConfig, databaseConfig, oauthConfig],
     }),
     TypeOrmModule.forRootAsync({
       inject: [AppConfigService],
@@ -36,8 +39,15 @@ import { ValidationProvidersModule } from './common/providers/validation-provide
     UsersModule,
     GenresModule,
     ValidationProvidersModule,
+    AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+  ],
 })
 export class AppModule {}

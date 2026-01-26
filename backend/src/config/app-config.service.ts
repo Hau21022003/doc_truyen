@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import ms from 'ms';
+import ms, { StringValue } from 'ms';
 
 @Injectable()
 export class AppConfigService {
@@ -16,7 +16,7 @@ export class AppConfigService {
   }
 
   get jwtAccessExpiresInMs(): number {
-    return ms(this.jwtAccessExpiresIn);
+    return ms(this.jwtAccessExpiresIn as StringValue);
   }
 
   // ========== JWT REFRESH ==========
@@ -29,7 +29,7 @@ export class AppConfigService {
   }
 
   get jwtRefreshExpiresInMs(): number {
-    return ms(this.jwtRefreshExpiresIn);
+    return ms(this.jwtRefreshExpiresIn as StringValue);
   }
 
   // ========== DATABASE ==========
@@ -59,5 +59,23 @@ export class AppConfigService {
 
   get dbLogging(): boolean {
     return this.config.get('database.logging', false);
+  }
+
+  // ========== GOOGLE OAUTH ==========
+  get googleClientId(): string {
+    return this.config.getOrThrow<string>('oauth.google.clientId');
+  }
+
+  get googleClientSecret(): string {
+    return this.config.getOrThrow<string>('oauth.google.clientSecret');
+  }
+
+  get googleCallbackURL(): string {
+    return this.config.getOrThrow<string>('oauth.google.callbackURL');
+  }
+
+  // ========== CLIENT APPLICATION ==========
+  get clientUrl(): string {
+    return this.config.getOrThrow<string>('CLIENT_URL');
   }
 }

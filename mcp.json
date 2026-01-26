@@ -1,0 +1,80 @@
+{
+  "name": "doc-truyen-figma-connector",
+  "version": "1.0.0",
+  "description": "Figma connector for doc-truyen project",
+  "servers": {
+    "figma": {
+      "command": "node",
+      "args": ["dist/figma-server.js"],
+      "env": {
+        "FIGMA_API_TOKEN": "",
+        "FIGMA_TEAM_ID": ""
+      }
+    }
+  },
+  "resources": [],
+  "tools": [
+    {
+      "name": "get-figma-file",
+      "description": "Retrieve Figma file information",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "fileId": {
+            "type": "string",
+            "description": "The ID of the Figma file"
+          }
+        },
+        "required": ["fileId"]
+      }
+    },
+    {
+      "name": "get-figma-components",
+      "description": "Extract components from Figma file",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "fileId": {
+            "type": "string",
+            "description": "The ID of the Figma file"
+          },
+          "componentType": {
+            "type": "string",
+            "description": "Type of components to extract (optional)"
+          }
+        },
+        "required": ["fileId"]
+      }
+    },
+    {
+      "name": "export-figma-assets",
+      "description": "Export assets from Figma file",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "fileId": {
+            "type": "string",
+            "description": "The ID of the Figma file"
+          },
+          "nodeIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of node IDs to export"
+          },
+          "format": {
+            "type": "string",
+            "enum": ["png", "jpg", "svg", "pdf"],
+            "description": "Export format"
+          },
+          "scale": {
+            "type": "number",
+            "description": "Export scale (1-3)"
+          }
+        },
+        "required": ["fileId", "nodeIds"]
+      }
+    }
+  ]
+}

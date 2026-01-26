@@ -1,5 +1,6 @@
 import { Entity, Column } from 'typeorm';
 import { UuidBaseEntity } from '@/common/entities/uuid-base.entity';
+import { Exclude } from 'class-transformer';
 
 export enum UserRole {
   READER = 'reader',
@@ -13,6 +14,7 @@ export class User extends UuidBaseEntity {
   email: string;
 
   @Column()
+  @Exclude()
   password: string;
 
   @Column({ unique: true })
@@ -39,4 +41,8 @@ export class User extends UuidBaseEntity {
 
   @Column({ nullable: true })
   lastLoginAt?: Date;
+
+  @Column({ nullable: true })
+  @Exclude()
+  refreshToken: string;
 }

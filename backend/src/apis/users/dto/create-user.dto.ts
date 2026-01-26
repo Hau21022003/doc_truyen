@@ -14,7 +14,7 @@ export class CreateUserDto {
   email: string;
 
   @ApiProperty({
-    example: 'John123!@#',
+    example: 'Abcd123!',
     description: 'Mật khẩu',
     minLength: 8,
   })

@@ -13,9 +13,10 @@ import {
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto, UpdateUserDto, QueryUserDto, UserResponseDto, UserListResponseDto } from './dto';
-import { ApiOperation, ApiTags, ApiResponse } from '@nestjs/swagger';
+import { ApiOperation, ApiTags, ApiResponse, ApiCookieAuth } from '@nestjs/swagger';
 
 @ApiTags('users')
+@ApiCookieAuth('access_token')
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
