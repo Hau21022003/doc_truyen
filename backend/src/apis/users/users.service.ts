@@ -2,14 +2,16 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Like } from 'typeorm';
 import { CreateUserDto, UpdateUserDto, QueryUserDto, UserListResponseDto, UserResponseDto } from './dto';
-import { User } from './entities/user.entity';
-import { hashPassword } from '@/common/utils/crypto.util';
+import { RefreshTokenInfo, User } from './entities/user.entity';
+import { comparePassword, hashPassword } from '@/common/utils/crypto.util';
+import { AppConfigService } from '@/config/app-config.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    private readonly configService: AppConfigService,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
@@ -133,5 +135,119 @@ export class UsersService {
     await this.userRepository.update(userId, {
       refreshToken: refreshToken,
     });
+  }
+
+  /**
+   * Kiểm tra xem refresh token có còn hợp lệ không
+   */
+  async validateRefreshToken(userId: string, refreshToken: string): Promise<boolean> {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      select: { id: true, refreshTokens: true },
+    });
+
+    if (!user || !user.refreshTokens) {
+      return false;
+    }
+
+    // Check token exists
+    for (const rt of user.refreshTokens) {
+      const expiresAt = new Date(rt.expiresAt);
+
+      const isMatch = await comparePassword(refreshToken, rt.tokenHash);
+
+      if (isMatch && expiresAt.getTime() > Date.now()) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  /**
+   * Thêm một refresh token mới
+   */
+  async addRefreshToken(userId: string, refreshToken: string, deviceInfo?: { deviceName?: string }): Promise<void> {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      select: { id: true, refreshTokens: true },
+    });
+
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found`);
+    }
+
+    const expiresAt = new Date(Date.now() + this.configService.jwtRefreshExpiresInMs);
+    const tokenHash = await hashPassword(refreshToken);
+
+    const newToken: RefreshTokenInfo = {
+      tokenHash: tokenHash,
+      deviceName: deviceInfo?.deviceName || 'Unknown Device',
+      createdAt: new Date(),
+      expiresAt,
+    };
+
+    // Thêm token mới vào mảng
+    const updatedTokens = user.refreshTokens ? [...user.refreshTokens, newToken] : [newToken];
+
+    // Xóa các token đã hết hạn
+    const validTokens = updatedTokens.filter((token) => new Date(token.expiresAt).getTime() > Date.now());
+
+    await this.userRepository.update(userId, {
+      refreshTokens: validTokens,
+    });
+  }
+
+  /**
+   * Thu hồi một refresh token cụ thể
+   */
+  async revokeRefreshToken(userId: string, refreshToken: string): Promise<void> {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      select: { id: true, refreshTokens: true },
+    });
+
+    if (!user || !user.refreshTokens) {
+      return;
+    }
+
+    // const updatedTokens = user.refreshTokens.filter((token) => token.tokenHash !== refreshToken);
+
+    const updatedTokens: RefreshTokenInfo[] = [];
+
+    for (const rt of user.refreshTokens) {
+      const isMatch = await comparePassword(refreshToken, rt.tokenHash);
+
+      if (!isMatch) {
+        updatedTokens.push(rt);
+      }
+    }
+
+    await this.userRepository.update(userId, { refreshTokens: updatedTokens });
+  }
+
+  /**
+   * Thu hồi tất cả refresh token của user (logout tất cả thiết bị)
+   */
+  async revokeAllRefreshTokens(userId: string): Promise<void> {
+    await this.userRepository.update(userId, { refreshTokens: [] });
+  }
+
+  /**
+   * Lấy danh sách các thiết bị đã đăng nhập
+   */
+  async getActiveDevices(userId: string) {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      select: { id: true, refreshTokens: true },
+    });
+
+    if (!user || !user.refreshTokens) {
+      return [];
+    }
+
+    return user.refreshTokens
+      .filter((token) => new Date(token.expiresAt).getTime() > Date.now())
+      .map(({ tokenHash, ...deviceInfo }) => deviceInfo);
   }
 }

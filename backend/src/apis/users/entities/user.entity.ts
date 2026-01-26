@@ -8,6 +8,13 @@ export enum UserRole {
   SYSTEM_ADMIN = 'system_admin',
 }
 
+export interface RefreshTokenInfo {
+  tokenHash: string;
+  deviceName?: string;
+  createdAt: Date;
+  expiresAt: Date;
+}
+
 @Entity('users')
 export class User extends UuidBaseEntity {
   @Column({ unique: true })
@@ -45,4 +52,8 @@ export class User extends UuidBaseEntity {
   @Column({ nullable: true })
   @Exclude()
   refreshToken: string;
+
+  @Column({ type: 'json', nullable: true })
+  @Exclude()
+  refreshTokens: RefreshTokenInfo[];
 }

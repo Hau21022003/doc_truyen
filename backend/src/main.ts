@@ -4,6 +4,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
 import { useContainer } from 'class-validator';
 import cookieParser from 'cookie-parser';
+import { CustomValidationPipe } from './common/pipes/custom-validation.pipe';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -28,8 +29,15 @@ async function bootstrap() {
     },
   });
 
+  // app.useGlobalPipes(
+  //   new ValidationPipe({
+  //     whitelist: true,
+  //     transform: true,
+  //     forbidNonWhitelisted: false,
+  //   }),
+  // );
   app.useGlobalPipes(
-    new ValidationPipe({
+    new CustomValidationPipe({
       whitelist: true,
       transform: true,
       forbidNonWhitelisted: false,

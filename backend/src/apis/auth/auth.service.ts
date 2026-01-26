@@ -16,28 +16,6 @@ export class AuthService {
     private configService: AppConfigService,
   ) {}
 
-  async login(authDto: AuthDto) {
-    const user = await this.usersService.findByEmail(authDto.email);
-    if (!user) throw new UnauthorizedException();
-    const passwordMatches = await comparePassword(authDto.password, user.password);
-    if (!passwordMatches) throw new UnauthorizedException();
-    if (!user.isActive) {
-      throw new BadRequestException('Your account is locked. Please contact support for assistance.');
-    }
-
-    const tokens = await this.getTokens(user);
-
-    await Promise.all([
-      this.usersService.updateRefreshToken(user.id, tokens.refreshToken),
-      this.usersService.updateLastLogin(user.id),
-    ]);
-
-    return {
-      account: user,
-      ...tokens,
-    };
-  }
-
   async getTokens(user: UserResponseDto) {
     const payload: JwtPayload = {
       sub: user.id,
@@ -61,7 +39,30 @@ export class AuthService {
     };
   }
 
-  async googleLogin(req: any) {
+  async login(authDto: AuthDto, deviceInfo?: { deviceName?: string }) {
+    const user = await this.usersService.findByEmail(authDto.email);
+    if (!user) throw new UnauthorizedException();
+    const passwordMatches = await comparePassword(authDto.password, user.password);
+    if (!passwordMatches) throw new UnauthorizedException();
+    if (!user.isActive) {
+      throw new BadRequestException('Your account is locked. Please contact support for assistance.');
+    }
+
+    const tokens = await this.getTokens(user);
+
+    await Promise.all([
+      // this.usersService.updateRefreshToken(user.id, tokens.refreshToken),
+      this.usersService.addRefreshToken(user.id, tokens.refreshToken, deviceInfo),
+      this.usersService.updateLastLogin(user.id),
+    ]);
+
+    return {
+      account: user,
+      ...tokens,
+    };
+  }
+
+  async googleLogin(req: any, deviceInfo?: { deviceName?: string }) {
     if (!req.user) {
       throw new UnauthorizedException('Google authentication failed');
     }
@@ -93,7 +94,7 @@ export class AuthService {
     const tokens = await this.getTokens(user);
 
     await Promise.all([
-      this.usersService.updateRefreshToken(user.id, tokens.refreshToken),
+      this.usersService.addRefreshToken(user.id, tokens.refreshToken, deviceInfo),
       this.usersService.updateLastLogin(user.id),
     ]);
 
@@ -101,6 +102,39 @@ export class AuthService {
       account: user,
       ...tokens,
     };
+  }
+
+  async refreshTokens(userId: string, refreshToken: string) {
+    // Kiểm tra refresh token có hợp lệ không
+    const isValid = await this.usersService.validateRefreshToken(userId, refreshToken);
+    if (!isValid) {
+      throw new UnauthorizedException('Invalid refresh token');
+    }
+
+    // Tìm user
+    const user = await this.usersService.findOne(userId);
+    const tokens = await this.getTokens(user);
+
+    // Thu hồi token cũ và thêm token mới
+    await this.usersService.revokeRefreshToken(userId, refreshToken);
+    await this.usersService.addRefreshToken(userId, tokens.refreshToken);
+
+    return {
+      account: user,
+      ...tokens,
+    };
+  }
+
+  async logout(userId: string, refreshToken?: string) {
+    if (refreshToken) {
+      // Thu hồi chỉ refresh token cụ thể (logout một thiết bị)
+      await this.usersService.revokeRefreshToken(userId, refreshToken);
+    } else {
+      // Thu hồi tất cả refresh token (logout tất cả thiết bị)
+      await this.usersService.revokeAllRefreshTokens(userId);
+    }
+
+    return { message: 'Logged out successfully' };
   }
 
   private generateRandomPassword(): string {
