@@ -1,0 +1,11 @@
+{
+  "HomePage": {
+    "title": "Chào mừng đến với trang web của chúng tôi",
+    "description": "Để bắt đầu, chỉnh sửa file page.tsx.",
+    "lookingFor": "Tìm kiếm điểm khởi đầu hoặc hướng dẫn thêm?",
+    "templates": "Mẫu",
+    "learning": "Học tập",
+    "deployNow": "Triển khai ngay",
+    "documentation": "Tài liệu"
+  }
+}
