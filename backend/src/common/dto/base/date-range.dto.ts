@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsOptional, IsDateString } from 'class-validator';
+import { IsOptional, IsDateString, IsString, Matches } from 'class-validator';
 
 export class DateRangeDto {
   @ApiProperty({
@@ -19,4 +19,14 @@ export class DateRangeDto {
   @IsOptional()
   @IsDateString()
   endDate?: string;
+
+  @ApiProperty({
+    description: 'Timezone for date conversion (IANA format)',
+    example: 'Asia/Ho_Chi_Minh',
+    required: false,
+  })
+  @IsOptional()
+  @IsString()
+  @Matches(/^[A-Za-z_\/]+$/, { message: 'Invalid timezone format' })
+  timezone?: string;
 }

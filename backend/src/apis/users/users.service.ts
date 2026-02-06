@@ -80,11 +80,6 @@ export class UsersService {
     return user;
   }
 
-  async findByUsername(username: string): Promise<User | null> {
-    const user = await this.userRepository.findOne({ where: { username } });
-    return user;
-  }
-
   async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
     const user = await this.userRepository.findOne({ where: { id } });
 

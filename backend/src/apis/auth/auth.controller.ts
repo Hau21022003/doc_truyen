@@ -2,7 +2,7 @@ import { Controller, Post, Body, Res, Get, UseGuards, Req, HttpStatus } from '@n
 import { CookieOptions, type Response } from 'express';
 import { type Request } from 'express';
 import { AuthService } from './auth.service';
-import { AuthDto } from './dto/auth.dto';
+import { LoginDto } from './dto/login.dto';
 import { AppConfigService } from '@/config/app-config.service';
 import { GoogleOauthGuard } from './guards/google-oauth.guard';
 import { ApiBody, ApiCookieAuth, ApiTags } from '@nestjs/swagger';
@@ -11,6 +11,7 @@ import { RefreshTokenGuard } from './guards/refresh-token.guard';
 import { type JwtPayload } from './types/jwt-payload';
 import { UsersService } from '../users/users.service';
 import { CurrentUser } from './decorators/current-user.decorator';
+import { RegisterDto } from './dto/register.dto';
 
 @ApiTags('Authentication')
 @Controller('auth')
@@ -25,7 +26,6 @@ export class AuthController {
     const cookieOptions: CookieOptions = {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      // sameSite: 'strict',
       sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
     };
 
@@ -57,10 +57,18 @@ export class AuthController {
 
   @Public()
   @Post('login')
-  @ApiCookieAuth('access_token')
-  @ApiBody({ type: AuthDto })
-  async login(@Body() authDto: AuthDto, @Res({ passthrough: true }) response: Response) {
+  @ApiBody({ type: LoginDto })
+  async login(@Body() authDto: LoginDto, @Res({ passthrough: true }) response: Response) {
     const result = await this.authService.login(authDto);
+    this.setCookies(response, result);
+    return result.account;
+  }
+
+  @Public()
+  @Post('register')
+  @ApiBody({ type: RegisterDto })
+  async register(@Body() authDto: RegisterDto, @Res({ passthrough: true }) response: Response) {
+    const result = await this.authService.register(authDto);
     this.setCookies(response, result);
     return result.account;
   }

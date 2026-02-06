@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { User, UserRole } from '../entities/user.entity';
+import { Timezone, type TimezoneValue } from '@/common/constants/timezone.constant';
 
 export class UserResponseDto {
   @ApiProperty({
@@ -14,11 +15,11 @@ export class UserResponseDto {
   })
   email: string;
 
-  @ApiProperty({
-    example: 'john_doe',
-    description: 'Tên đăng nhập',
-  })
-  username: string;
+  // @ApiProperty({
+  //   example: 'john_doe',
+  //   description: 'Tên đăng nhập',
+  // })
+  // username: string;
 
   @ApiProperty({
     example: 'John',
@@ -72,6 +73,12 @@ export class UserResponseDto {
     description: 'Thời gian cập nhật',
   })
   updatedAt: Date;
+
+  @ApiProperty({
+    example: Timezone.ASIA_HO_CHI_MINH,
+    description: 'timezone',
+  })
+  timezone: TimezoneValue;
 }
 
 export class UserListResponseDto {

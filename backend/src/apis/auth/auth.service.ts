@@ -2,11 +2,12 @@ import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import { AppConfigService } from '@/config/app-config.service';
-import { AuthDto } from './dto/auth.dto';
+import { LoginDto } from './dto';
 import { comparePassword } from '@/common';
 import { StringValue } from 'ms';
 import { JwtPayload } from './types/jwt-payload';
 import { UserResponseDto } from '../users/dto';
+import { RegisterDto } from './dto/register.dto';
 
 @Injectable()
 export class AuthService {
@@ -21,6 +22,7 @@ export class AuthService {
       sub: user.id,
       email: user.email,
       role: user.role,
+      timezone: user.timezone,
     };
 
     const [accessToken, refreshToken] = await Promise.all([
@@ -39,7 +41,7 @@ export class AuthService {
     };
   }
 
-  async login(authDto: AuthDto, deviceInfo?: { deviceName?: string }) {
+  async login(authDto: LoginDto, deviceInfo?: { deviceName?: string }) {
     const user = await this.usersService.findByEmail(authDto.email);
     if (!user) throw new UnauthorizedException();
     const passwordMatches = await comparePassword(authDto.password, user.password);
@@ -58,6 +60,25 @@ export class AuthService {
 
     return {
       account: user,
+      ...tokens,
+    };
+  }
+
+  async register(registerDto: RegisterDto) {
+    let user = await this.usersService.findByEmail(registerDto.email);
+    if (user) {
+      throw new BadRequestException('Email exists');
+    }
+    const created = await this.usersService.create(registerDto);
+    const tokens = await this.getTokens(created);
+
+    await Promise.all([
+      this.usersService.addRefreshToken(created.id, tokens.refreshToken),
+      this.usersService.updateLastLogin(created.id),
+    ]);
+
+    return {
+      account: created,
       ...tokens,
     };
   }

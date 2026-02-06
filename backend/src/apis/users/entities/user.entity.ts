@@ -1,6 +1,7 @@
 import { Entity, Column } from 'typeorm';
 import { UuidBaseEntity } from '@/common/entities/uuid-base.entity';
 import { Exclude } from 'class-transformer';
+import { Timezone, type TimezoneValue } from '@/common/constants/timezone.constant';
 
 export enum UserRole {
   READER = 'reader',
@@ -24,8 +25,8 @@ export class User extends UuidBaseEntity {
   @Exclude()
   password: string;
 
-  @Column({ unique: true })
-  username: string;
+  // @Column({ unique: true })
+  // username: string;
 
   @Column({ nullable: true })
   firstName?: string;
@@ -45,6 +46,9 @@ export class User extends UuidBaseEntity {
     default: UserRole.READER,
   })
   role: UserRole;
+
+  @Column({ default: Timezone.ASIA_HO_CHI_MINH, type: 'enum', enum: Timezone })
+  timezone: TimezoneValue;
 
   @Column({ nullable: true })
   lastLoginAt?: Date;
