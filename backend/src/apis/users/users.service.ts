@@ -44,7 +44,7 @@ export class UsersService {
     }
 
     if (search) {
-      where.username = Like(`%${search}%`);
+      where.email = Like(`%${search}%`);
     }
 
     const [data, total] = await this.userRepository.findAndCount({

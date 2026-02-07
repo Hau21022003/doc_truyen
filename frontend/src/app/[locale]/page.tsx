@@ -1,12 +1,16 @@
+"use client";
 import LocalSwitcher from "@/components/language-switcher";
 import { getTranslations } from "next-intl/server";
 import { usePathname } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
+import { useTranslations } from "next-intl";
+import { devLog } from "@/shared/utils";
 
-export default async function HomePage() {
-  const t = await getTranslations("HomePage");
+export default function HomePage() {
+  const t = useTranslations("HomePage");
   // const pathname = usePathname();
   // console.log("oath", pathname);
+  devLog("oath", "a");
 
   return (
     <div>

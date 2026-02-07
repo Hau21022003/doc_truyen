@@ -6,6 +6,7 @@ import {
   HttpErrorPayload,
 } from "@/lib/error";
 import { HTTP_STATUS, SHARED_ENDPOINTS } from "@/shared/constants";
+import { authEvents } from "@/shared/events/auth.events";
 import { redirect } from "next/navigation";
 
 // Biến để theo dõi trạng thái refresh token
@@ -59,6 +60,9 @@ const parseResponse = async <T>(response: Response): Promise<T> => {
 };
 
 export const redirectToLogin = () => {
+  // Phát sự kiện token hết hạn trước khi redirect
+  authEvents.tokenExpired();
+
   if (typeof window !== "undefined") {
     window.location.href = "/login";
   } else {
@@ -81,7 +85,7 @@ const handleRefreshToken = async (): Promise<boolean> => {
 
   try {
     const response = await fetch(
-      `${envConfig.NEXT_PUBLIC_API_ENDPOINT}${SHARED_ENDPOINTS.AUTH_REFRESH}`,
+      `${envConfig.NEXT_PUBLIC_API_ENDPOINT}${SHARED_ENDPOINTS.AUTH.REFRESH}`,
       {
         method: "POST",
         credentials: "include",
@@ -129,7 +133,7 @@ const handleErrorResponse = async <T>(
       );
     case HTTP_STATUS.UNAUTHORIZED:
       // trường hợp login xử lý như bình thường
-      if (url.includes("auth/login")) {
+      if (url === SHARED_ENDPOINTS.AUTH.LOGIN) {
         throw new HttpError(
           errorResponse as { status: number; payload: HttpErrorPayload },
         );
