@@ -7,5 +7,13 @@
     "learning": "Học tập",
     "deployNow": "Triển khai ngay",
     "documentation": "Tài liệu"
+  },
+  "UserHeader": {
+    "Login": "Đăng nhập",
+    "Register": "Đăng kí",
+    "Completed": "Completed",
+    "Manhwa": "Manhwa",
+    "Novel": "Novel",
+    "Manga": "Manga"
   }
 }

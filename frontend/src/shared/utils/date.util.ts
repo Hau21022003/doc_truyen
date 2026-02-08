@@ -1,19 +1,25 @@
-/**
- * Date utility functions for the frontend
- */
+import { SUPPORTED_LOCALES } from "@/i18n/routing";
+import { TimezoneValue } from "../constants";
 
+export type SupportedLocale = (typeof SUPPORTED_LOCALES)[number];
 /**
- * Format a date according to the specified locale
+ * Format a date according to the specified locale and optional timeZone
  */
 export function formatDate(
   date: Date | string | number,
   options: {
-    locale?: string;
+    locale?: SupportedLocale;
     format?: "short" | "medium" | "long" | "full";
     includeTime?: boolean;
+    timeZone?: TimezoneValue | string;
   } = {},
 ): string {
-  const { locale = "vi", format = "medium", includeTime = false } = options;
+  const {
+    locale = "vi",
+    format = "medium",
+    includeTime = false,
+    timeZone,
+  } = options;
 
   const dateObj =
     typeof date === "string" || typeof date === "number"
@@ -27,11 +33,13 @@ export function formatDate(
         day: "numeric",
         hour: "2-digit",
         minute: "2-digit",
+        timeZone,
       }
     : {
         year: "numeric",
         month: format === "short" ? "short" : "long",
         day: "numeric",
+        timeZone,
       };
 
   if (format === "full") {
@@ -46,7 +54,7 @@ export function formatDate(
  */
 export function formatRelativeTime(
   date: Date | string | number,
-  locale: string = "vi",
+  locale: SupportedLocale = "vi",
 ): string {
   const dateObj =
     typeof date === "string" || typeof date === "number"
