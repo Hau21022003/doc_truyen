@@ -1,7 +1,5 @@
-// src/shared/utils/avatar.util.ts
 export const generateAvatarUrl = (
-  userId?: string,
-  name?: string,
+  seed?: string,
   avatarUrl?: string,
 ): string => {
   // Nếu đã có URL avatar, trả về
@@ -10,12 +8,12 @@ export const generateAvatarUrl = (
   }
 
   // Xử lý trường hợp avatar null, tạo avatar từ ID hoặc tên
-  const identifier = userId || name || "user";
+  const identifier = seed || "user";
 
-  // Số lượng avatar mặc định có sẵn
+  // Số lượng avatar mặc định có sẵn (từ 1 đến 10)
   const avatarCount = 10;
 
-  // Tạo một số determinstic dựa trên ID để chọn avatar nhất quán
+  // Tạo một số deterministic dựa trên ID để chọn avatar nhất quán
   const getAvatarIndex = (id: string): number => {
     let hash = 0;
     for (let i = 0; i < id.length; i++) {
@@ -27,9 +25,6 @@ export const generateAvatarUrl = (
   // Lấy index từ ID
   const avatarIndex = getAvatarIndex(identifier);
 
-  // Tạo chuỗi có số 0 phía trước cho số < 10
-  const paddedIndex = avatarIndex.toString().padStart(2, "0");
-
   // Trả về đường dẫn đến avatar tương ứng
-  return `/avatars/avatar-${paddedIndex}.png`;
+  return `/avatars/avatar-${avatarIndex}.jpg`;
 };

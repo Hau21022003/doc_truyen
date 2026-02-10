@@ -1,28 +1,27 @@
 "use client";
 
-import { useLocale } from "next-intl";
-import { useRouter, usePathname } from "next/navigation";
-import { useTransition } from "react";
-import { ChevronDown } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
+import { ChevronDown } from "lucide-react";
+import { useLocale } from "next-intl";
 import Image from "next/image";
+import { usePathname, useRouter } from "next/navigation";
+import { useTransition } from "react";
+import IconCheck from "./icons/icon-check";
 
 // Define available languages with their properties
 const languages = [
   {
     code: "en",
-    name: "English",
     flagUrl: "/flags/united-states-of-america.png", // US flag for English
   },
   {
     code: "vi",
-    name: "Tiếng Việt",
     flagUrl: "/flags/vietnam.png", // Vietnam flag
   },
 ];
@@ -47,17 +46,16 @@ export default function LocalSwitcher() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" disabled={isPending}>
-          <span className="mr-2">
+        <Button variant="outline" className="rounded-2xl" disabled={isPending}>
+          <span>
             <Image
-              className="w-6 h-6"
+              className="w-5 h-5"
               src={currentLanguage.flagUrl}
               width={24}
               height={24}
-              alt={`${currentLanguage.name} flag`}
+              alt={`${currentLanguage.code} flag`}
             />
           </span>
-          <span className="mr-2">{currentLanguage.code.toUpperCase()}</span>
           <ChevronDown className="h-4 w-4" />
           <span className="sr-only">Change language</span>
         </Button>
@@ -70,21 +68,18 @@ export default function LocalSwitcher() {
             className="flex items-center justify-between"
           >
             <div className="flex items-center">
-              <span className="mr-2">
+              <span className="mr-3">
                 <Image
-                  className="w-6 h-6"
+                  className="w-5 h-5"
                   src={language.flagUrl}
                   width={24}
                   height={24}
-                  alt={`${language.name} flag`}
+                  alt={`${language.code} flag`}
                 />
               </span>
-              <span className="mr-2 font-medium">
-                {language.code.toUpperCase()}
-              </span>
-              <span>{language.name}</span>
+              <span className="font-medium">{language.code.toUpperCase()}</span>
             </div>
-            {locale === language.code && <span className="ml-2">✓</span>}
+            {locale === language.code && <IconCheck size={"sm"} />}
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>

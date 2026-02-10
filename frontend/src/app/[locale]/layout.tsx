@@ -1,11 +1,11 @@
-import { hasLocale, NextIntlClientProvider } from "next-intl";
-import { getMessages, setRequestLocale } from "next-intl/server";
-import { notFound } from "next/navigation";
-import { Geist, Geist_Mono } from "next/font/google";
+import AuthModal from "@/features/auth/components/auth-modal";
 import { routing } from "@/i18n/routing";
 import { AppProvider } from "@/providers/app-provider";
 import { Metadata } from "next";
-import AuthModal from "@/features/auth/components/auth-modal";
+import { hasLocale, NextIntlClientProvider } from "next-intl";
+import { getMessages, setRequestLocale } from "next-intl/server";
+import { Geist, Geist_Mono } from "next/font/google";
+import { notFound } from "next/navigation";
 import { Toaster } from "sonner";
 
 const geistSans = Geist({
@@ -20,8 +20,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Đọc Truyện Online",
-    template: "%s | Đọc Truyện Online",
+    default: "Đọc Truyện",
+    template: "%s | Đọc Truyện",
   },
   description: "Ứng dụng đọc truyện online",
   icons: [

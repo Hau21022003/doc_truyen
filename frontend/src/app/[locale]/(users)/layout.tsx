@@ -1,4 +1,4 @@
-import UsersHeader from "@/components/layout/users/users-header";
+import UsersHeader from "@/components/layout/users-header";
 import React from "react";
 
 export default function UsersLayout({

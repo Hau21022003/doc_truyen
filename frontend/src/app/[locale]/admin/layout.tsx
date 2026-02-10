@@ -1,5 +1,5 @@
 import { AdminGuard } from "@/components/guards/admin-guard";
-import { AdminSidebar } from "@/components/layout/admin/admin-sidebar";
+import { AdminSidebar } from "@/components/layout/admin-sidebar";
 
 export default function AdminLayout({
   children,
