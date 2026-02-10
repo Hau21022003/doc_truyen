@@ -3,6 +3,7 @@ import { useAuthStore } from "@/shared/stores";
 import { useProfileQuery } from "@/features/auth/queries/auth.query";
 import { Loader2 } from "lucide-react";
 import { AUTH_EVENTS } from "@/shared/events/auth.events";
+import { useAuthModal } from "@/features/auth/hooks/use-auth-modal.hook";
 
 interface AuthProviderProps {
   children: ReactNode;
@@ -11,6 +12,7 @@ interface AuthProviderProps {
 export function AuthProvider({ children }: AuthProviderProps) {
   const { user, setUser } = useAuthStore();
   const { data: profile, isLoading, isError } = useProfileQuery();
+  const { openLoginModal } = useAuthModal();
 
   useEffect(() => {
     // Only update the store if profile data exists
@@ -21,6 +23,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     // Lắng nghe sự kiện token hết hạn
     const handleTokenExpired = () => {
       setUser(null); // Xóa trạng thái auth
+      openLoginModal(); // Mở login modal
     };
 
     window.addEventListener(AUTH_EVENTS.TOKEN_EXPIRED, handleTokenExpired);
@@ -29,7 +32,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     return () => {
       window.removeEventListener(AUTH_EVENTS.TOKEN_EXPIRED, handleTokenExpired);
     };
-  }, [setUser]);
+  }, [setUser, openLoginModal]);
 
   useEffect(() => {
     // Khi có lỗi, xóa user trạng thái

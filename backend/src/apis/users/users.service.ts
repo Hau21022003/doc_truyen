@@ -1,10 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Like } from 'typeorm';
-import { CreateUserDto, UpdateUserDto, QueryUserDto, UserListResponseDto, UserResponseDto } from './dto';
-import { RefreshTokenInfo, User } from './entities/user.entity';
 import { comparePassword, hashPassword } from '@/common/utils/crypto.util';
 import { AppConfigService } from '@/config/app-config.service';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Like, Repository } from 'typeorm';
+import { CreateUserDto, QueryUserDto, UpdateUserDto, UserListResponseDto } from './dto';
+import { RefreshTokenInfo, User } from './entities/user.entity';
 
 @Injectable()
 export class UsersService {
@@ -244,5 +244,13 @@ export class UsersService {
     return user.refreshTokens
       .filter((token) => new Date(token.expiresAt).getTime() > Date.now())
       .map(({ tokenHash, ...deviceInfo }) => deviceInfo);
+  }
+
+  findByFacebookId(facebookId: string) {
+    return this.userRepository.findOneBy({ facebookId });
+  }
+
+  findByGoogleId(googleId: string) {
+    return this.userRepository.findOneBy({ googleId });
   }
 }

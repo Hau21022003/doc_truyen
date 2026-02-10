@@ -16,10 +16,20 @@ const refreshSubscribers: ((success: boolean) => void)[] = [];
 type CustomOptions = Omit<RequestInit, "method"> & {
   baseUrl?: string | undefined;
   params?: Record<string, string | number | boolean>;
-  timeout?: number; // Thêm timeout option ms
+  timeout?: number; // ms
+  // default true - Xác định có cần mở login modal không khi không login
+  authRequired?: boolean;
 };
 
 export const isClient = () => typeof window !== "undefined";
+
+/**
+ * Phát sự kiện yêu cầu mở modal login
+ */
+export const triggerLoginRequired = () => {
+  // Phát sự kiện token hết hạn
+  authEvents.tokenExpired();
+};
 
 /**
  * Xây dựng URL với params query
@@ -59,17 +69,6 @@ const parseResponse = async <T>(response: Response): Promise<T> => {
   return response.blob() as unknown as Promise<T>;
 };
 
-export const redirectToLogin = () => {
-  // Phát sự kiện token hết hạn trước khi redirect
-  authEvents.tokenExpired();
-
-  if (typeof window !== "undefined") {
-    window.location.href = "/login";
-  } else {
-    redirect("/login");
-  }
-};
-
 /**
  * Thực hiện refresh token
  */
@@ -105,9 +104,6 @@ const handleRefreshToken = async (): Promise<boolean> => {
     refreshSubscribers.forEach((resolve) => resolve(false));
     refreshSubscribers.length = 0;
 
-    // Chuyển hướng đến trang login
-    redirectToLogin();
-
     return false;
   } finally {
     isRefreshing = false;
@@ -122,6 +118,7 @@ const handleErrorResponse = async <T>(
   url: string,
   options: CustomOptions,
   errorResponse: { status: number; payload: any },
+  authRequired: boolean,
 ): Promise<{ status: number; payload: T }> => {
   switch (errorResponse.status) {
     case HTTP_STATUS.ENTITY_ERROR:
@@ -147,7 +144,9 @@ const handleErrorResponse = async <T>(
       }
 
       // Nếu refresh không thành công, chuyển sang login
-      redirectToLogin();
+      if (authRequired) {
+        triggerLoginRequired();
+      }
       throw new HttpError(
         errorResponse as { status: number; payload: HttpErrorPayload },
       );
@@ -200,6 +199,7 @@ const request = async <T>(
     headers = {},
     timeout,
     signal,
+    authRequired = true,
     // Nếu không truyền baseUrl (hoặc baseUrl = undefined) thì lấy từ envConfig.NEXT_PUBLIC_API_ENDPOINT
     // Nếu truyền baseUrl thì lấy giá trị truyền vào
     // Truyền vào '' thì đồng nghĩa với việc chúng ta gọi API đến Next.js Server
@@ -250,7 +250,7 @@ const request = async <T>(
     };
 
     if (!res.ok) {
-      return handleErrorResponse(method, url, options, data);
+      return handleErrorResponse(method, url, options, data, authRequired);
     }
 
     return data;

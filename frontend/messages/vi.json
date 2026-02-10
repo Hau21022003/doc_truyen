@@ -15,5 +15,34 @@
     "Manhwa": "Manhwa",
     "Novel": "Novel",
     "Manga": "Manga"
+  },
+  "AuthModal": {
+    "Login": {
+      "Welcome Back": "Chào mừng bạn quay lại",
+      "Please enter your credentials to continue": "Nhập thông tin đăng nhập để tiếp tục",
+      "Login": "Đăng nhập",
+      "Register": "Đăng ký",
+      "Password": "Mật khẩu",
+      "Enter your password": "Nhập mật khẩu",
+      "Enter your email": "Nhập email",
+      "Or": "Hoặc",
+      "Don't have an account?": "Chưa có tài khoản?"
+    },
+    "Register": {
+      "Create New Account": "Tạo tài khoản mới",
+      "Introduce your information to register": "Nhập thông tin bên dưới để đăng ký tài khoản",
+      "Register": "Đăng ký",
+      "Name": "Tên hiển thị",
+      "Email": "Địa chỉ email",
+      "Password": "Mật khẩu",
+      "Confirm Password": "Nhập lại mật khẩu",
+      "Enter your email": "Nhập địa chỉ email",
+      "Enter your name": "Nhập tên hiển thị",
+      "Enter your password": "Nhập mật khẩu",
+      "Confirm your password": "Nhập lại mật khẩu",
+      "Or": "Hoặc",
+      "Already have an account?": "Đã có tài khoản?",
+      "Login": "Đăng nhập"
+    }
   }
 }

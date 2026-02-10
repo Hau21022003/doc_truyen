@@ -1,8 +1,18 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsString, IsOptional, IsBoolean, IsEnum, MaxLength, MinLength, IsIn } from 'class-validator';
+import { SUPPORTED_TIMEZONES } from '@/common/constants/timezone.constant';
 import { IsStrongPassword, IsUnique, StringTrim } from '@/common/decorators';
-import { User, UserRole } from '../entities/user.entity';
-import { Timezone, TIMEZONE_VALUES, type TimezoneValue } from '@/common/constants/timezone.constant';
+import { ApiProperty } from '@nestjs/swagger';
+import {
+  IsBoolean,
+  IsEmail,
+  IsEnum,
+  IsIn,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  MaxLength,
+  MinLength,
+} from 'class-validator';
+import { AuthProvider, User, UserRole } from '../entities/user.entity';
 
 export class CreateUserDto {
   @ApiProperty({
@@ -24,38 +34,16 @@ export class CreateUserDto {
   @IsStrongPassword()
   password: string;
 
-  // @ApiProperty({
-  //   example: 'john_doe',
-  //   description: 'Tên đăng nhập',
-  // })
-  // @IsString()
-  // @MinLength(3)
-  // @MaxLength(20)
-  // @IsUnique(User, 'username')
-  // @StringTrim()
-  // username: string;
-
   @ApiProperty({
     example: 'John',
     description: 'Tên',
     required: false,
   })
-  @IsOptional()
+  @IsNotEmpty()
   @IsString()
   @MaxLength(50)
   @StringTrim()
-  firstName?: string;
-
-  @ApiProperty({
-    example: 'Doe',
-    description: 'Họ',
-    required: false,
-  })
-  @IsOptional()
-  @IsString()
-  @MaxLength(50)
-  @StringTrim()
-  lastName?: string;
+  name: string;
 
   @ApiProperty({
     example: 'https://example.com/avatar.jpg',
@@ -88,12 +76,22 @@ export class CreateUserDto {
   role?: UserRole;
 
   @ApiProperty({
-    enum: Timezone,
-    example: Timezone.ASIA_HO_CHI_MINH,
-    description: 'Timezone',
-    default: Timezone.ASIA_HO_CHI_MINH,
+    example: 'Asia/Ho_Chi_Minh',
+    description: 'IANA timezone',
+    default: 'UTC',
   })
   @IsOptional()
-  @IsIn(TIMEZONE_VALUES)
-  timezone?: TimezoneValue;
+  @IsString()
+  @IsIn(SUPPORTED_TIMEZONES)
+  timezone?: string;
+
+  @IsEnum(AuthProvider)
+  @IsOptional()
+  provider?: AuthProvider = AuthProvider.LOCAL;
+
+  @IsOptional()
+  googleId?: string;
+
+  @IsOptional()
+  facebookId?: string;
 }

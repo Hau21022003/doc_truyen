@@ -1,13 +1,14 @@
+import { comparePassword } from '@/common';
+import { AppConfigService } from '@/config/app-config.service';
 import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { UsersService } from '../users/users.service';
-import { AppConfigService } from '@/config/app-config.service';
-import { LoginDto } from './dto';
-import { comparePassword } from '@/common';
 import { StringValue } from 'ms';
-import { JwtPayload } from './types/jwt-payload';
 import { UserResponseDto } from '../users/dto';
+import { AuthProvider } from '../users/entities/user.entity';
+import { UsersService } from '../users/users.service';
+import { LoginDto } from './dto';
 import { RegisterDto } from './dto/register.dto';
+import { JwtPayload } from './types/jwt-payload';
 
 @Injectable()
 export class AuthService {
@@ -88,20 +89,66 @@ export class AuthService {
       throw new UnauthorizedException('Google authentication failed');
     }
 
-    const { email, firstName, lastName, picture } = req.user;
+    const { email, firstName, lastName, picture, googleId } = req.user;
 
-    // Check if user already exists
-    let user = await this.usersService.findByEmail(email);
+    // Check if user already exists - ưu tiên tìm theo googleId trước
+    let user = await this.usersService.findByGoogleId(googleId);
+
+    // Nếu không tìm thấy theo googleId, thử tìm theo email
+    if (!user && email) {
+      user = await this.usersService.findByEmail(email);
+    }
 
     if (!user) {
       // Create new user if not exists
       const createUserDto = {
         email,
-        username: email.split('@')[0],
-        firstName,
-        lastName,
+        name: `${firstName} ${lastName}`,
         avatar: picture,
         password: this.generateRandomPassword(),
+        googleId: googleId,
+        provider: AuthProvider.GOOGLE,
+      };
+
+      user = await this.usersService.create(createUserDto);
+    } else {
+      if (!user.isActive) {
+        throw new BadRequestException('Your account is locked. Please contact support for assistance.');
+      }
+    }
+
+    // Generate tokens
+    const tokens = await this.getTokens(user);
+
+    await Promise.all([
+      this.usersService.addRefreshToken(user.id, tokens.refreshToken, deviceInfo),
+      this.usersService.updateLastLogin(user.id),
+    ]);
+
+    return {
+      account: user,
+      ...tokens,
+    };
+  }
+
+  async facebookLogin(userInfo: any, deviceInfo?: { deviceName?: string }) {
+    const { name, facebookId, email, avatar } = userInfo;
+
+    const userEmail = email || `${facebookId}@facebook.user`;
+
+    // Check if user already exists
+    let user = await this.usersService.findByFacebookId(facebookId);
+
+    if (!user) {
+      // Create new user if not exists
+      const createUserDto = {
+        email: userEmail,
+        firstName: name,
+        avatar,
+        name,
+        password: this.generateRandomPassword(),
+        facebookId,
+        provider: AuthProvider.FACEBOOK,
       };
 
       user = await this.usersService.create(createUserDto);

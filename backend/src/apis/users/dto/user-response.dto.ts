@@ -1,6 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { User, UserRole } from '../entities/user.entity';
-import { Timezone, type TimezoneValue } from '@/common/constants/timezone.constant';
+import { UserRole } from '../entities/user.entity';
 
 export class UserResponseDto {
   @ApiProperty({
@@ -15,25 +14,12 @@ export class UserResponseDto {
   })
   email: string;
 
-  // @ApiProperty({
-  //   example: 'john_doe',
-  //   description: 'Tên đăng nhập',
-  // })
-  // username: string;
-
   @ApiProperty({
     example: 'John',
     description: 'Tên',
     required: false,
   })
-  firstName?: string;
-
-  @ApiProperty({
-    example: 'Doe',
-    description: 'Họ',
-    required: false,
-  })
-  lastName?: string;
+  name: string;
 
   @ApiProperty({
     example: 'https://example.com/avatar.jpg',
@@ -75,10 +61,10 @@ export class UserResponseDto {
   updatedAt: Date;
 
   @ApiProperty({
-    example: Timezone.ASIA_HO_CHI_MINH,
+    example: 'Asia/Ho_Chi_Minh',
     description: 'timezone',
   })
-  timezone: TimezoneValue;
+  timezone: string;
 }
 
 export class UserListResponseDto {

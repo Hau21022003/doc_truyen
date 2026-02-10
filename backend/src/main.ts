@@ -29,13 +29,6 @@ async function bootstrap() {
     },
   });
 
-  // app.useGlobalPipes(
-  //   new ValidationPipe({
-  //     whitelist: true,
-  //     transform: true,
-  //     forbidNonWhitelisted: false,
-  //   }),
-  // );
   app.useGlobalPipes(
     new CustomValidationPipe({
       whitelist: true,
@@ -45,7 +38,8 @@ async function bootstrap() {
   );
 
   app.enableCors({
-    origin: '*',
+    // origin: '*',
+    origin: process.env.CLIENT_URL || 'http://localhost:3000',
     methods: ['GET', 'PUT', 'POST', 'PATCH', 'DELETE'],
     credentials: true,
   });

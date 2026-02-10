@@ -1,17 +1,15 @@
-import { Controller, Post, Body, Res, Get, UseGuards, Req, HttpStatus } from '@nestjs/common';
-import { CookieOptions, type Response } from 'express';
-import { type Request } from 'express';
-import { AuthService } from './auth.service';
-import { LoginDto } from './dto/login.dto';
 import { AppConfigService } from '@/config/app-config.service';
-import { GoogleOauthGuard } from './guards/google-oauth.guard';
+import { Body, Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { ApiBody, ApiCookieAuth, ApiTags } from '@nestjs/swagger';
-import { Public } from './decorators/public.decorator';
-import { RefreshTokenGuard } from './guards/refresh-token.guard';
-import { type JwtPayload } from './types/jwt-payload';
+import { CookieOptions, type Request, type Response } from 'express';
 import { UsersService } from '../users/users.service';
+import { AuthService } from './auth.service';
 import { CurrentUser } from './decorators/current-user.decorator';
+import { Public } from './decorators/public.decorator';
+import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
+import { FacebookAuthGuard, GoogleOauthGuard, RefreshTokenGuard } from './guards';
+import { type JwtPayload } from './types/jwt-payload';
 
 @ApiTags('Authentication')
 @Controller('auth')
@@ -73,6 +71,11 @@ export class AuthController {
     return result.account;
   }
 
+  @Get('profile')
+  async findProfile(@CurrentUser() user: JwtPayload) {
+    return this.usersService.findByEmail(user.email);
+  }
+
   @Public()
   @Post('refresh')
   @UseGuards(RefreshTokenGuard)
@@ -90,17 +93,18 @@ export class AuthController {
     return { message: 'Tokens refreshed' };
   }
 
-  @Post('logout')
+  @Get('logout')
   @ApiCookieAuth('access_token')
   async logout(@Req() req: Request, @Res({ passthrough: true }) response: Response, @CurrentUser() user: JwtPayload) {
     const refreshToken = req.cookies?.refresh_token;
 
+    console.log('log out', refreshToken);
     await this.authService.logout(user.sub, refreshToken);
     this.clearCookies(response);
     return { message: 'Logged out successfully' };
   }
 
-  @Post('logout-all')
+  @Get('logout-all')
   @ApiCookieAuth('access_token')
   async logoutAll(@Res({ passthrough: true }) response: Response, @CurrentUser() user: JwtPayload) {
     await this.authService.logout(user.sub);
@@ -114,6 +118,7 @@ export class AuthController {
     return await this.usersService.getActiveDevices(user.sub);
   }
 
+  @Public()
   @Get('google')
   @UseGuards(GoogleOauthGuard)
   async googleAuth() {
@@ -121,10 +126,26 @@ export class AuthController {
     // Passport will redirect to Google
   }
 
+  @Public()
   @Get('google/redirect')
   @UseGuards(GoogleOauthGuard)
   async googleAuthRedirect(@Req() req: Request, @Res({ passthrough: true }) response: Response) {
     const result = await this.authService.googleLogin(req);
+    this.setCookies(response, result);
+    return response.redirect(this.configService.clientUrl);
+  }
+
+  @Public()
+  @Get('facebook')
+  @UseGuards(FacebookAuthGuard)
+  async facebookLogin() {}
+
+  @Public()
+  @Get('facebook/callback')
+  @UseGuards(FacebookAuthGuard)
+  async facebookCallback(@Req() req, @Res({ passthrough: true }) response: Response) {
+    const user = req.user;
+    const result = await this.authService.facebookLogin(user);
     this.setCookies(response, result);
     return response.redirect(this.configService.clientUrl);
   }

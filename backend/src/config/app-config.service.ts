@@ -74,6 +74,19 @@ export class AppConfigService {
     return this.config.getOrThrow<string>('oauth.google.callbackURL');
   }
 
+  // ========== FACEBOOK OAUTH ==========
+  get facebookClientId(): string {
+    return this.config.getOrThrow<string>('oauth.facebook.clientId');
+  }
+
+  get facebookClientSecret(): string {
+    return this.config.getOrThrow<string>('oauth.facebook.clientSecret');
+  }
+
+  get facebookCallbackURL(): string {
+    return this.config.getOrThrow<string>('oauth.facebook.callbackURL');
+  }
+
   // ========== CLIENT APPLICATION ==========
   get clientUrl(): string {
     return this.config.getOrThrow<string>('CLIENT_URL');

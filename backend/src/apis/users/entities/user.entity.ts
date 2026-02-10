@@ -1,7 +1,12 @@
-import { Entity, Column } from 'typeorm';
 import { UuidBaseEntity } from '@/common/entities/uuid-base.entity';
 import { Exclude } from 'class-transformer';
-import { Timezone, type TimezoneValue } from '@/common/constants/timezone.constant';
+import { Column, Entity } from 'typeorm';
+
+export enum AuthProvider {
+  LOCAL = 'local',
+  GOOGLE = 'google',
+  FACEBOOK = 'facebook',
+}
 
 export enum UserRole {
   READER = 'reader',
@@ -25,14 +30,8 @@ export class User extends UuidBaseEntity {
   @Exclude()
   password: string;
 
-  // @Column({ unique: true })
-  // username: string;
-
-  @Column({ nullable: true })
-  firstName?: string;
-
-  @Column({ nullable: true })
-  lastName?: string;
+  @Column()
+  name: string;
 
   @Column({ nullable: true })
   avatar?: string;
@@ -47,8 +46,21 @@ export class User extends UuidBaseEntity {
   })
   role: UserRole;
 
-  @Column({ default: Timezone.ASIA_HO_CHI_MINH, type: 'enum', enum: Timezone })
-  timezone: TimezoneValue;
+  @Column({ default: 'Asia/Saigon', length: 64 })
+  timezone: string;
+
+  @Column({
+    type: 'enum',
+    enum: AuthProvider,
+    default: AuthProvider.LOCAL,
+  })
+  provider: AuthProvider;
+
+  @Column({ nullable: true })
+  googleId?: string;
+
+  @Column({ nullable: true })
+  facebookId?: string;
 
   @Column({ nullable: true })
   lastLoginAt?: Date;

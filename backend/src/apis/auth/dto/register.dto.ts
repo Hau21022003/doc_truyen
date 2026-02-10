@@ -1,4 +1,4 @@
-import { Timezone, TIMEZONE_VALUES, type TimezoneValue } from '@/common/constants/timezone.constant';
+import { SUPPORTED_TIMEZONES } from '@/common/constants/timezone.constant';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsIn, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
@@ -12,6 +12,14 @@ export class RegisterDto {
   email: string;
 
   @ApiProperty({
+    description: 'Tên hiển thị của người dùng',
+    example: 'joe',
+  })
+  @IsNotEmpty()
+  @IsString()
+  name: string;
+
+  @ApiProperty({
     description: 'Mật khẩu đăng nhập',
     example: 'Abcd123!',
   })
@@ -20,12 +28,12 @@ export class RegisterDto {
   password: string;
 
   @ApiProperty({
-    enum: Timezone,
-    example: Timezone.ASIA_HO_CHI_MINH,
-    description: 'Timezone',
-    default: Timezone.ASIA_HO_CHI_MINH,
+    example: 'Asia/Ho_Chi_Minh',
+    description: 'IANA timezone',
+    default: 'UTC',
   })
   @IsOptional()
-  @IsIn(TIMEZONE_VALUES)
-  timezone?: TimezoneValue;
+  @IsString()
+  @IsIn(SUPPORTED_TIMEZONES)
+  timezone?: string;
 }

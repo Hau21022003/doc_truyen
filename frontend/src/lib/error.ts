@@ -5,8 +5,7 @@ export type EntityErrorPayload = {
   message: string;
   errors: {
     field: string;
-    messages: string[];
-    // errors: string[];
+    errors: string[];
   }[];
 };
 
@@ -47,7 +46,7 @@ export class EntityError extends HttpError {
 
     if (this.payload.errors) {
       const errorMessages = this.payload.errors.map(
-        (err) => `${err.field}: ${err.messages.join(", ")}`,
+        (err) => `${err.field}: ${err.errors.join(", ")}`,
       );
       this.message = errorMessages.join("; ");
     }
@@ -74,7 +73,7 @@ export const handleErrorApi = <T extends FieldValues>({
 }) => {
   if (error instanceof EntityError) {
     if (setError) {
-      error.payload.errors.forEach(({ field, messages }) => {
+      error.payload.errors.forEach(({ field, errors: messages }) => {
         setError(field as Path<T>, {
           type: "server",
           message: messages[0],
