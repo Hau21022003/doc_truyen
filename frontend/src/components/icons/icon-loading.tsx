@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import { IconProps, iconVariants } from "./icon-variants";
 
-export function IconEye({
+export function IconLoading({
   className,
   size,
   color,
@@ -17,19 +17,10 @@ export function IconEye({
       viewBox="0 0 24 24"
       className={cn(iconVariants({ size, color, variant }), className)}
     >
-      <title>eye</title>
-      <g
-        fill="none"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="2"
-      >
-        <path d="M15 12a3 3 0 1 1-6 0a3 3 0 0 1 6 0" />
-        <path d="M2 12c1.6-4.097 5.336-7 10-7s8.4 2.903 10 7c-1.6 4.097-5.336 7-10 7s-8.4-2.903-10-7" />
-      </g>
+      <title>loading</title>
+      <path fill="currentColor" d="M12 4V2A10 10 0 0 0 2 12h2a8 8 0 0 1 8-8" />
     </svg>
   );
 }
 
-export default IconEye;
+export default IconLoading;

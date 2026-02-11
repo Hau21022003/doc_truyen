@@ -2,6 +2,7 @@ import {
   IconEye,
   IconEyeOff,
   IconKey,
+  IconLoading,
   IconMail,
   IconUser,
 } from "@/components/icons";
@@ -58,7 +59,7 @@ export default function RegisterForm({
   // Theo dõi sự thay đổi của isSuccess để gọi onSuccess
   useEffect(() => {
     if (isSuccess) {
-      toast.success("Login successful!");
+      toast.success(t("Register successful!"));
       onSuccess();
     }
   }, [isSuccess, onSuccess]);
@@ -101,6 +102,7 @@ export default function RegisterForm({
           variant={"outline"}
           className="flex-1 cursor-pointer"
           size={"lg"}
+          disabled={isPending}
           onClick={handleGoogleLogin}
         >
           <Image
@@ -117,6 +119,7 @@ export default function RegisterForm({
           variant={"outline"}
           className="flex-1 cursor-pointer"
           size={"lg"}
+          disabled={isPending}
           onClick={handleFacebookLogin}
         >
           <Image
@@ -270,7 +273,9 @@ export default function RegisterForm({
             type="submit"
             className="mt-1 bg-primary-orange text-primary-orange-foreground hover:bg-primary-orange/80 cursor-pointer"
           >
-            {t("Register")}
+            {/* {t("Register")} */}
+            {isPending && <IconLoading className="animate-spin" />}
+            {isPending ? `${t("Signing up")}...` : t("Register")}
           </Button>
         </FieldGroup>
       </form>

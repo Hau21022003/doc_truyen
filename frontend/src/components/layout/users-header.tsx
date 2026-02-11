@@ -63,12 +63,15 @@ export default function UsersHeader() {
         {/* đã khởi tạo và chưa login */}
         {isInitialized && !isAuthenticated && (
           <Fragment>
-            <Button onClick={openLoginModal} className="rounded-2xl">
+            <Button
+              onClick={openLoginModal}
+              className="rounded-2xl cursor-pointer"
+            >
               {t("Login")}
             </Button>
             <Button
               onClick={openRegisterModal}
-              className="rounded-2xl hidden md:block"
+              className="rounded-2xl hidden md:block cursor-pointer"
               variant={"outline"}
             >
               {t("Register")}

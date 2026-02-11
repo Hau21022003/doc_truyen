@@ -1,4 +1,4 @@
-import { IconEye, IconEyeOff } from "@/components/icons";
+import { IconEye, IconEyeOff, IconLoading } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import {
   Field,
@@ -55,7 +55,7 @@ export default function LoginForm({
   // Theo dõi sự thay đổi của isSuccess để gọi onSuccess
   useEffect(() => {
     if (isSuccess) {
-      toast.success("Login successful!");
+      toast.success(t("Login successful!"));
       onSuccess();
     }
   }, [isSuccess, onSuccess]);
@@ -97,6 +97,7 @@ export default function LoginForm({
           variant={"outline"}
           className="flex-1 cursor-pointer"
           size={"lg"}
+          disabled={isPending}
           onClick={handleGoogleLogin}
         >
           <Image
@@ -113,6 +114,7 @@ export default function LoginForm({
           variant={"outline"}
           className="flex-1 cursor-pointer"
           size={"lg"}
+          disabled={isPending}
           onClick={handleFacebookLogin}
         >
           <Image
@@ -197,9 +199,11 @@ export default function LoginForm({
           />
           <Button
             type="submit"
+            disabled={isPending}
             className="mt-1 bg-primary-orange text-primary-orange-foreground  hover:bg-primary-orange/80 cursor-pointer"
           >
-            {t("Login")}
+            {isPending && <IconLoading className="animate-spin" />}
+            {isPending ? `${t("Signing in")}...` : t("Login")}
           </Button>
         </FieldGroup>
       </form>
@@ -211,7 +215,7 @@ export default function LoginForm({
           variant={"link"}
           className="text-primary-orange underline cursor-pointer px-2"
         >
-          {t("Register")}
+          {t("Register now")}
         </Button>
       </div>
     </div>

@@ -7,7 +7,6 @@ import {
 } from "@/lib/error";
 import { HTTP_STATUS, SHARED_ENDPOINTS } from "@/shared/constants";
 import { authEvents } from "@/shared/events/auth.events";
-import { redirect } from "next/navigation";
 
 // Biến để theo dõi trạng thái refresh token
 let isRefreshing = false;

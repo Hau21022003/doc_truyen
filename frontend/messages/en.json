@@ -21,12 +21,14 @@
       "Welcome Back": "Welcome Back",
       "Please enter your credentials to continue": "Please enter your credentials to continue",
       "Login": "Login",
-      "Register": "Register",
+      "Register now": "Register now",
       "Password": "Password",
       "Enter your password": "Enter your password",
       "Enter your email": "Enter your email",
       "Or": "Or",
-      "Don't have an account?": "Don't have an account?"
+      "Don't have an account?": "Don't have an account?",
+      "Signing in": "Signing in",
+      "Login successful!": "Login successful!"
     },
     "Register": {
       "Create New Account": "Create New Account",
@@ -42,7 +44,9 @@
       "Confirm your password": "Confirm your password",
       "Or": "Or",
       "Already have an account?": "Already have an account?",
-      "Login": "Login"
+      "Login": "Login",
+      "Signing up": "Signing up",
+      "Register successful!": "Register successful!"
     }
   }
 }

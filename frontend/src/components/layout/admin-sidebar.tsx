@@ -1,8 +1,7 @@
-// src/components/layout/admin/admin-sidebar.tsx
 import { IconLogo } from "@/components/icons/icon-logo";
-import { LayoutDashboard, Users, BookOpen, Settings } from "lucide-react";
-import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { BookOpen, LayoutDashboard, Settings, Users } from "lucide-react";
+import Link from "next/link";
 
 const sidebarLinks = [
   {

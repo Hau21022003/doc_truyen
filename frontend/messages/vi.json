@@ -21,12 +21,14 @@
       "Welcome Back": "Chào mừng bạn quay lại",
       "Please enter your credentials to continue": "Nhập thông tin đăng nhập để tiếp tục",
       "Login": "Đăng nhập",
-      "Register": "Đăng ký",
+      "Register now": "Đăng ký",
       "Password": "Mật khẩu",
       "Enter your password": "Nhập mật khẩu",
       "Enter your email": "Nhập email",
       "Or": "Hoặc",
-      "Don't have an account?": "Chưa có tài khoản?"
+      "Don't have an account?": "Chưa có tài khoản?",
+      "Signing in": "Đang đăng nhập",
+      "Login successful!": "Đăng nhập thành công!"
     },
     "Register": {
       "Create New Account": "Tạo tài khoản mới",
@@ -42,7 +44,9 @@
       "Confirm your password": "Nhập lại mật khẩu",
       "Or": "Hoặc",
       "Already have an account?": "Đã có tài khoản?",
-      "Login": "Đăng nhập"
+      "Login": "Đăng nhập",
+      "Signing up": "Đang đăng ký",
+      "Register successful!": "Đăng ký thành công!"
     }
   }
 }

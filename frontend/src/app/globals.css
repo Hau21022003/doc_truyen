@@ -38,7 +38,7 @@
   --color-card-foreground: var(--card-foreground);
   /* Thêm */
   --color-btn-primary: var(--btn-primary);
-  --color-primary-foreground: var(--btn-primary-foreground);
+  --color-btn-primary-foreground: var(--btn-primary-foreground);
   --color-primary-orange: var(--primary-orange);
   --color-primary-orange-foreground: var(--primary-orange-foreground);
 

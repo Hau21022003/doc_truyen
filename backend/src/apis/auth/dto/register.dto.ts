@@ -1,3 +1,4 @@
+import { IsStrongPassword } from '@/common';
 import { SUPPORTED_TIMEZONES } from '@/common/constants/timezone.constant';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsIn, IsNotEmpty, IsOptional, IsString } from 'class-validator';
@@ -25,6 +26,7 @@ export class RegisterDto {
   })
   @IsNotEmpty()
   @IsString()
+  @IsStrongPassword()
   password: string;
 
   @ApiProperty({

@@ -5,6 +5,7 @@ export * from "./icon-eye-off";
 export * from "./icon-hamburger";
 export * from "./icon-key";
 export * from "./icon-layout-dashboard";
+export * from "./icon-loading";
 export * from "./icon-logo";
 export * from "./icon-mail";
 export * from "./icon-notifcations";

@@ -1,6 +1,5 @@
-import React from "react";
-import { IconProps, iconVariants } from "./icon-variants";
 import { cn } from "@/lib/utils";
+import { IconProps, iconVariants } from "./icon-variants";
 
 export function IconLayoutDashboard({
   className,
