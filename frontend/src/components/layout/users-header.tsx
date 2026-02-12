@@ -5,18 +5,19 @@ import {
   IconLogo,
   IconNotifcations,
 } from "@/components/icons";
-import LocalSwitcher from "@/components/language-switcher";
-import { ModeToggle } from "@/components/mode-toggle-button";
+import { ModeToggle } from "@/components/layout/mode-toggle-button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useAuthModal } from "@/features/auth/hooks/use-auth-modal.hook";
 import { useLogoutMutation } from "@/features/auth/mutations";
+import { useConfirm } from "@/providers/confirm-provider";
 import { useAuthStore } from "@/shared/stores";
-import { generateAvatarUrl } from "@/shared/utils";
+import { devLog, generateAvatarUrl } from "@/shared/utils";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { Fragment, useMemo } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
+import LocalSwitcher from "./language-switcher";
 
 export default function UsersHeader() {
   const { isAuthenticated, isInitialized, user } = useAuthStore();
@@ -33,6 +34,22 @@ export default function UsersHeader() {
     ],
     [t],
   );
+
+  const { confirm } = useConfirm();
+  const handleLogout = async () => {
+    const confirmed = await confirm({
+      title: "Delete Story",
+      description:
+        "Are you sure you want to delete this story? This action cannot be undone.",
+      confirmText: "Delete",
+      cancelText: "Cancel",
+      variant: "destructive",
+    });
+
+    if (confirmed) {
+      devLog("Logout", "");
+    }
+  };
 
   return (
     <div className="h-18 w-full flex items-center justify-between max-w-6xl">
@@ -85,7 +102,7 @@ export default function UsersHeader() {
             <IconNotifcations size={"lg"} />
             <IconBookmark size={"lg"} />
             {user && (
-              <Avatar size="lg" onClick={() => logout()}>
+              <Avatar size="lg" onClick={() => handleLogout()}>
                 <AvatarImage
                   src={generateAvatarUrl(user.id, user.avatar)}
                   alt="@shadcn"

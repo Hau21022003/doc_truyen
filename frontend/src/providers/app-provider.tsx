@@ -1,8 +1,9 @@
 "use client";
 
-import { ReactQueryProvider } from "./react-query-provider";
-import { AuthProvider } from "./auth-provider";
 import { ThemeProvider } from "next-themes";
+import { AuthProvider } from "./auth-provider";
+import { ConfirmProvider } from "./confirm-provider";
+import { ReactQueryProvider } from "./react-query-provider";
 
 interface AppProviderProps {
   children: React.ReactNode;
@@ -18,7 +19,7 @@ export function AppProvider({ children }: AppProviderProps) {
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <ConfirmProvider>{children}</ConfirmProvider>
         </ThemeProvider>
       </AuthProvider>
     </ReactQueryProvider>

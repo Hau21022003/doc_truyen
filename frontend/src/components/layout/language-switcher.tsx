@@ -12,7 +12,7 @@ import { useLocale } from "next-intl";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useTransition } from "react";
-import IconCheck from "./icons/icon-check";
+import { IconCheck } from "../icons";
 
 // Define available languages with their properties
 const languages = [
