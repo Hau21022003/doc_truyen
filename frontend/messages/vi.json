@@ -14,7 +14,34 @@
     "Completed": "Completed",
     "Manhwa": "Manhwa",
     "Novel": "Novel",
-    "Manga": "Manga"
+    "Manga": "Manga",
+    "Log out": "Đăng xuất",
+    "Are you sure you want to log out?": "Bạn có chắc chắn muốn đăng xuất không?",
+    "Cancel": "Hủy",
+    "Settings": "Cài đặt",
+    "Appearance": "Giao diện",
+    "light": "sáng",
+    "dark": "tối",
+    "system": "hệ thống",
+    "Language": "Ngôn ngữ",
+    "Profile": "Thông tin cá nhân",
+    "Story Notifications": "Thông báo chương mới",
+    "Get notified when followed stories release new chapters": "Nhận thông báo khi truyện bạn theo dõi có chương mới",
+    "Updating notification settings": "Đang cập nhật cài đặt thông báo",
+    "Notification settings updated": "Đã cập nhật cài đặt thông báo",
+    "Failed to update notification settings": "Cập nhật cài đặt thông báo thất bại"
+  },
+  "EditProfileModal": {
+    "Edit Profile": "Chỉnh sửa hồ sơ",
+    "Update": "Cập nhật",
+    "Close": "Đóng",
+    "Select your timezone for accurate time display": "Chọn múi giờ của bạn để hiển thị thời gian chính xác",
+    "Timezone": "Múi giờ",
+    "Name": "Tên hiển thị",
+    "Enter your name": "Nhập tên hiển thị",
+    "Select your timezone": "Chọn múi giờ của bạn",
+    "Updating": "Đang cập nhật",
+    "Update profile successful!": "Cập nhật hồ sơ thành công!"
   },
   "AuthModal": {
     "Login": {

@@ -6,6 +6,7 @@
  */
 export const devDelay = (ms: number): Promise<void> => {
   if (process.env.NODE_ENV === "development") {
+    console.log("Delay: ", ms);
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
   // Return an immediately resolved promise for production

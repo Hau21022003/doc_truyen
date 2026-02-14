@@ -1,4 +1,3 @@
-// src/shared/stores/auth-modal.store.ts
 import { create } from "zustand";
 
 interface AuthModalState {

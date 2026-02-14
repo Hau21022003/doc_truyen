@@ -1,4 +1,4 @@
-import { AuthProvider } from '@/apis/users/entities/user.entity';
+import { AuthProvider } from '@/modules/users/entities/user.entity';
 
 export interface OAuthUserInfo {
   email: string;

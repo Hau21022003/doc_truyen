@@ -87,6 +87,19 @@ export class AppConfigService {
     return this.config.getOrThrow<string>('oauth.facebook.callbackURL');
   }
 
+  // ========== CLOUDINARY ==========
+  get cloudinaryCloudName(): string {
+    return this.config.getOrThrow<string>('cloudinary.cloud_name');
+  }
+
+  get cloudinaryApiKey(): string {
+    return this.config.getOrThrow<string>('cloudinary.api_key');
+  }
+
+  get cloudinaryApiSecret(): string {
+    return this.config.getOrThrow<string>('cloudinary.api_secret');
+  }
+
   // ========== CLIENT APPLICATION ==========
   get clientUrl(): string {
     return this.config.getOrThrow<string>('CLIENT_URL');

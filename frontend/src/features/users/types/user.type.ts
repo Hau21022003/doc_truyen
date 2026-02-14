@@ -4,7 +4,7 @@ import { UserRole } from "../constants/user-role.constant";
 export interface User {
   id: string;
   email: string;
-  name?: string;
+  name: string;
   avatar?: string;
   isActive: boolean;
   role: UserRole;
@@ -12,4 +12,5 @@ export interface User {
   createdAt: string;
   updatedAt: string;
   timezone: TimezoneValue;
+  enableStoryNotifications: boolean;
 }

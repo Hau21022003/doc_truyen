@@ -1,25 +1,27 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { APP_GUARD } from '@nestjs/core';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { AppConfigModule } from 'src/config/app-config.module';
+import databaseConfig from 'src/config/database.config';
+import jwtConfig from 'src/config/jwt.config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ConfigModule } from '@nestjs/config';
-import { AppConfigModule } from 'src/config/app-config.module';
-import jwtConfig from 'src/config/jwt.config';
-import databaseConfig from 'src/config/database.config';
-import { UsersModule } from 'src/apis/users/users.module';
-import { GenresModule } from './apis/genres/genres.module';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { AppConfigService } from './config/app-config.service';
 import { ValidationProvidersModule } from './common/providers/validation-providers.module';
-import { AuthModule } from './apis/auth/auth.module';
+import { AppConfigService } from './config/app-config.service';
+import cloudinaryConfig from './config/cloudinary.config';
 import oauthConfig from './config/oauth.config';
-import { APP_GUARD } from '@nestjs/core';
-import { JwtAuthGuard } from './apis/auth/guards/jwt-auth.guard';
+import { AuthModule } from './modules/auth/auth.module';
+import { JwtAuthGuard } from './modules/auth/guards';
+import { GenresModule } from './modules/genres/genres.module';
+import { MediaModule } from './modules/media/media.module';
+import { UsersModule } from './modules/users/users.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [jwtConfig, databaseConfig, oauthConfig],
+      load: [jwtConfig, databaseConfig, oauthConfig, cloudinaryConfig],
     }),
     TypeOrmModule.forRootAsync({
       inject: [AppConfigService],
@@ -40,6 +42,7 @@ import { JwtAuthGuard } from './apis/auth/guards/jwt-auth.guard';
     GenresModule,
     ValidationProvidersModule,
     AuthModule,
+    MediaModule,
   ],
   controllers: [AppController],
   providers: [

@@ -1,17 +1,16 @@
-import { useEffect, ReactNode } from "react";
-import { useAuthStore } from "@/shared/stores";
-import { useProfileQuery } from "@/features/auth/queries/auth.query";
-import { Loader2 } from "lucide-react";
-import { AUTH_EVENTS } from "@/shared/events/auth.events";
 import { useAuthModal } from "@/features/auth/hooks/use-auth-modal.hook";
+import { useProfileQuery } from "@/features/auth/queries/auth.query";
+import { AUTH_EVENTS } from "@/shared/events/auth.events";
+import { useAuthStore } from "@/shared/stores";
+import { ReactNode, useEffect } from "react";
 
 interface AuthProviderProps {
   children: ReactNode;
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
-  const { user, setUser } = useAuthStore();
-  const { data: profile, isLoading, isError } = useProfileQuery();
+  const { setUser } = useAuthStore();
+  const { data: profile, isError } = useProfileQuery();
   const { openLoginModal } = useAuthModal();
 
   useEffect(() => {
@@ -40,15 +39,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setUser(null);
     }
   }, [isError, setUser]);
-
-  // Show loading state while checking authentication
-  // if (isLoading) {
-  //   return (
-  //     <div className="flex h-screen w-screen items-center justify-center">
-  //       <Loader2 className="h-8 w-8 animate-spin" />
-  //     </div>
-  //   );
-  // }
 
   return <>{children}</>;
 }

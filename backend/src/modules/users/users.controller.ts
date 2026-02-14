@@ -1,3 +1,4 @@
+import { createMulterOptions, FILE_SIZES_MB } from '@/common';
 import {
   Body,
   ConflictException,
@@ -10,9 +11,21 @@ import {
   Patch,
   Post,
   Query,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
-import { ApiCookieAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { CreateUserDto, QueryUserDto, UpdateUserDto, UserListResponseDto, UserResponseDto } from './dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiBody, ApiConsumes, ApiCookieAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { type JwtPayload } from '../auth/types/jwt-payload';
+import {
+  CreateUserDto,
+  QueryUserDto,
+  UpdateProfileDto,
+  UpdateUserDto,
+  UserListResponseDto,
+  UserResponseDto,
+} from './dto';
 import { UsersService } from './users.service';
 
 @ApiTags('users')
@@ -22,7 +35,6 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Tạo user mới' })
   @ApiResponse({ status: 201, description: 'User đã được tạo thành công.', type: UserResponseDto })
   async create(@Body() createUserDto: CreateUserDto) {
     try {
@@ -37,14 +49,12 @@ export class UsersController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Lấy danh sách user' })
   @ApiResponse({ status: 200, description: 'Danh sách user.', type: UserListResponseDto })
   findAll(@Query() query: QueryUserDto) {
     return this.usersService.findAll(query);
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Lấy thông tin user theo ID' })
   @ApiResponse({ status: 200, description: 'Thông tin user.', type: UserResponseDto })
   async findOne(@Param('id', ParseUUIDPipe) id: string) {
     try {
@@ -57,8 +67,19 @@ export class UsersController {
     }
   }
 
+  @Patch('profile')
+  @UseInterceptors(FileInterceptor('avatar', createMulterOptions(FILE_SIZES_MB.AVATAR)))
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({ type: UpdateProfileDto })
+  async updateProfile(
+    @CurrentUser() user: JwtPayload,
+    @UploadedFile() avatarFile: Express.Multer.File,
+    @Body() updateProfileDto: UpdateProfileDto,
+  ) {
+    return this.usersService.updateProfile(user.sub, updateProfileDto, avatarFile);
+  }
+
   @Patch(':id')
-  @ApiOperation({ summary: 'Cập nhật thông tin user' })
   @ApiResponse({ status: 200, description: 'User đã được cập nhật.', type: UserResponseDto })
   async update(@Param('id', ParseUUIDPipe) id: string, @Body() updateUserDto: UpdateUserDto) {
     try {
@@ -76,7 +97,6 @@ export class UsersController {
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Xóa user' })
   @ApiResponse({ status: 200, description: 'User đã được xóa.', type: UserResponseDto })
   async remove(@Param('id', ParseUUIDPipe) id: string) {
     try {

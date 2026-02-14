@@ -6,8 +6,7 @@ import { UsersService } from '../users/users.service';
 import { AuthService } from './auth.service';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { Public } from './decorators/public.decorator';
-import { LoginDto } from './dto/login.dto';
-import { RegisterDto } from './dto/register.dto';
+import { LoginDto, RegisterDto } from './dto';
 import { FacebookAuthGuard, GoogleOauthGuard, RefreshTokenGuard } from './guards';
 import { type JwtPayload } from './types/jwt-payload';
 

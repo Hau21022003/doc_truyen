@@ -3,7 +3,8 @@ import { AppConfigService } from '@/config/app-config.service';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Like, Repository } from 'typeorm';
-import { CreateUserDto, QueryUserDto, UpdateUserDto, UserListResponseDto } from './dto';
+import { MediaService } from '../media/media.service';
+import { CreateUserDto, QueryUserDto, UpdateProfileDto, UpdateUserDto, UserListResponseDto } from './dto';
 import { RefreshTokenInfo, User } from './entities/user.entity';
 
 @Injectable()
@@ -12,6 +13,7 @@ export class UsersService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private readonly configService: AppConfigService,
+    private readonly mediaService: MediaService,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
@@ -99,6 +101,42 @@ export class UsersService {
     }
 
     Object.assign(user, updateUserDto);
+    const updatedUser = await this.userRepository.save(user);
+    return updatedUser;
+  }
+
+  async updateProfile(
+    userId: string,
+    updateProfileDto: UpdateProfileDto,
+    avatarFile?: Express.Multer.File,
+  ): Promise<User> {
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found`);
+    }
+
+    // Chuẩn bị data update
+    const updateData: any = { ...updateProfileDto };
+
+    // Xử lý avatar nếu có
+    if (avatarFile) {
+      // Xóa ảnh cũ nếu có
+      if (user.avatarPublicId) {
+        await this.mediaService.deleteImage(user.avatarPublicId);
+      }
+
+      const uploadResult = await this.mediaService.uploadImage(avatarFile, {
+        folder: 'avatars',
+        publicId: `user_${userId}`, // ID cố định cho mỗi user
+      });
+
+      updateData.avatar = uploadResult.url;
+      updateData.avatarPublicId = uploadResult.publicId;
+    }
+
+    // Update database
+    Object.assign(user, updateData);
     const updatedUser = await this.userRepository.save(user);
     return updatedUser;
   }

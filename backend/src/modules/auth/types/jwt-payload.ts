@@ -1,4 +1,4 @@
-import { UserRole } from '@/apis/users/entities/user.entity';
+import { UserRole } from '@/modules/users/entities/user.entity';
 
 export type JwtPayload = {
   sub: string;

@@ -14,7 +14,34 @@
     "Completed": "Completed",
     "Manhwa": "Manhwa",
     "Novel": "Novel",
-    "Manga": "Manga"
+    "Manga": "Manga",
+    "Log out": "Log out",
+    "Are you sure you want to log out?": "Are you sure you want to log out?",
+    "Cancel": "Cancel",
+    "Settings": "Settings",
+    "Appearance": "Appearance",
+    "light": "light",
+    "dark": "dark",
+    "system": "system",
+    "Language": "Language",
+    "Profile": "Profile",
+    "Story Notifications": "Story Notifications",
+    "Get notified when followed stories release new chapters": "Get notified when followed stories release new chapters",
+    "Updating notification settings": "Updating notification settings",
+    "Notification settings updated": "Notification settings updated",
+    "Failed to update notification settings": "Failed to update notification settings"
+  },
+  "EditProfileModal": {
+    "Edit Profile": "Edit Profile",
+    "Update": "Update",
+    "Close": "Close",
+    "Select your timezone for accurate time display": "Select your timezone for accurate time display",
+    "Timezone": "Timezone",
+    "Name": "Name",
+    "Enter your name": "Enter your name",
+    "Select your timezone": "Select your timezone",
+    "Updating": "Updating",
+    "Update profile successful!": "Update profile successful!"
   },
   "AuthModal": {
     "Login": {
