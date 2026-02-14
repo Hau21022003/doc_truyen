@@ -102,6 +102,10 @@ export class AppConfigService {
 
   // ========== CLIENT APPLICATION ==========
   get clientUrl(): string {
-    return this.config.getOrThrow<string>('CLIENT_URL');
+    return this.config.getOrThrow<string>('app.client_url');
+  }
+
+  get adminUrl(): string {
+    return this.config.getOrThrow<string>('app.admin_url');
   }
 }

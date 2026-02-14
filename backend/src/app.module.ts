@@ -9,6 +9,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ValidationProvidersModule } from './common/providers/validation-providers.module';
 import { AppConfigService } from './config/app-config.service';
+import appConfig from './config/app.config';
 import cloudinaryConfig from './config/cloudinary.config';
 import oauthConfig from './config/oauth.config';
 import { AuthModule } from './modules/auth/auth.module';
@@ -21,7 +22,7 @@ import { UsersModule } from './modules/users/users.module';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [jwtConfig, databaseConfig, oauthConfig, cloudinaryConfig],
+      load: [appConfig, jwtConfig, databaseConfig, oauthConfig, cloudinaryConfig],
     }),
     TypeOrmModule.forRootAsync({
       inject: [AppConfigService],
@@ -35,6 +36,9 @@ import { UsersModule } from './modules/users/users.module';
         autoLoadEntities: true,
         synchronize: config.dbSynchronize,
         logging: config.dbLogging,
+        extra: {
+          options: '-c timezone=UTC',
+        },
       }),
     }),
     AppConfigModule,

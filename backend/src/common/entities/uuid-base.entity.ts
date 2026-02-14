@@ -1,4 +1,4 @@
-import { CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn } from 'typeorm';
+import { CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
 /**
  * Base entity cho các entities sử dụng ID kiểu UUID
@@ -10,15 +10,12 @@ export abstract class UuidBaseEntity {
   id: string;
 
   @CreateDateColumn({
-    type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP',
+    type: 'timestamptz',
   })
   createdAt: Date;
 
   @UpdateDateColumn({
-    type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP',
-    onUpdate: 'CURRENT_TIMESTAMP',
+    type: 'timestamptz',
   })
   updatedAt: Date;
 }

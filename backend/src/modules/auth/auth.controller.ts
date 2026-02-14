@@ -2,6 +2,7 @@ import { AppConfigService } from '@/config/app-config.service';
 import { Body, Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { ApiBody, ApiCookieAuth, ApiTags } from '@nestjs/swagger';
 import { CookieOptions, type Request, type Response } from 'express';
+import { User, UserRole } from '../users/entities/user.entity';
 import { UsersService } from '../users/users.service';
 import { AuthService } from './auth.service';
 import { CurrentUser } from './decorators/current-user.decorator';
@@ -131,7 +132,8 @@ export class AuthController {
   async googleAuthRedirect(@Req() req: Request, @Res({ passthrough: true }) response: Response) {
     const result = await this.authService.googleLogin(req);
     this.setCookies(response, result);
-    return response.redirect(this.configService.clientUrl);
+    // return response.redirect(this.configService.clientUrl);
+    return response.redirect(this.getRedirectUrl(result.account));
   }
 
   @Public()
@@ -146,6 +148,20 @@ export class AuthController {
     const user = req.user;
     const result = await this.authService.facebookLogin(user);
     this.setCookies(response, result);
-    return response.redirect(this.configService.clientUrl);
+    // return response.redirect(this.configService.clientUrl);
+    return response.redirect(this.getRedirectUrl(result.account));
+  }
+
+  /**
+   * Xác định URL redirect dựa trên vai trò người dùng
+   */
+  private getRedirectUrl(user: User): string {
+    // Nếu là admin, chuyển đến trang admin
+    if (user.role === UserRole.SYSTEM_ADMIN || user.role === UserRole.CONTENT_ADMIN) {
+      return this.configService.adminUrl;
+    }
+
+    // Người dùng thường đến trang client
+    return this.configService.clientUrl;
   }
 }

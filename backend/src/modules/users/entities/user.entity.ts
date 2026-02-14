@@ -66,7 +66,7 @@ export class User extends UuidBaseEntity {
   @Column({ nullable: true })
   facebookId?: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'timestamptz' })
   lastLoginAt?: Date;
 
   @Column({ nullable: true })

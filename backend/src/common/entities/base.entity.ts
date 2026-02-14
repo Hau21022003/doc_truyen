@@ -1,25 +1,22 @@
-import { CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn, VersionColumn, DeleteDateColumn } from 'typeorm';
+import { CreateDateColumn, DeleteDateColumn, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
 export abstract class BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
   @CreateDateColumn({
-    type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP',
+    type: 'timestamptz',
   })
   createdAt: Date;
 
   @UpdateDateColumn({
-    type: 'timestamp',
-    default: () => 'CURRENT_TIMESTAMP',
-    onUpdate: 'CURRENT_TIMESTAMP',
+    type: 'timestamptz',
   })
   updatedAt: Date;
 
   // Soft delete
   @DeleteDateColumn({
-    type: 'timestamp',
+    type: 'timestamptz',
     nullable: true,
   })
   deletedAt?: Date;

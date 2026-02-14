@@ -8,4 +8,5 @@ export default registerAs('database', () => ({
   name: process.env.DB_NAME,
   synchronize: process.env.DB_SYNCHRONIZE === 'true',
   logging: process.env.DB_LOGGING === 'true',
+  timezone: 'UTC',
 }));

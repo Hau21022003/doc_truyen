@@ -137,7 +137,7 @@ export default function EditProfileModal() {
               <img
                 src={avatarPreview || generateAvatarUrl(user.id, user.avatar)}
                 alt={user.name}
-                className="w-20 h-20 rounded-md"
+                className="w-30 h-30 rounded-md"
                 width={24}
                 height={24}
               />
@@ -153,10 +153,10 @@ export default function EditProfileModal() {
                 className={cn(
                   "cursor-pointer",
                   "absolute right-0 bottom-0 flex items-center justify-center",
-                  "rounded-full h-6 w-6 bg-gray-200 dark:bg-[#262626] ring-4 ring-white dark:ring-[#0a0a0a] ",
+                  "rounded-full h-8 w-8 bg-gray-200 dark:bg-[#262626] ring-4 ring-white dark:ring-[#0a0a0a] ",
                 )}
               >
-                <IconCamera size={"xs"} />
+                <IconCamera size={"sm"} />
               </div>
             </div>
           </div>
