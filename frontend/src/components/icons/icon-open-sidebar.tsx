@@ -6,7 +6,6 @@ export function IconOpenSidebar({
   size,
   color,
   variant,
-  title,
   ...props
 }: IconProps) {
   return (
@@ -18,7 +17,6 @@ export function IconOpenSidebar({
       viewBox="0 0 24 24"
       className={cn(iconVariants({ size, color, variant }), className)}
     >
-      <title>{title ?? "open-sidebar-alt-solid"}</title>
       <g fill="currentColor">
         <path d="M13 21h6a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-6z" />
         <path

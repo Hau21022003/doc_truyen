@@ -1,6 +1,5 @@
-import React from "react";
-import { IconProps, iconVariants } from "./icon-variants";
 import { cn } from "@/lib/utils";
+import { IconProps, iconVariants } from "./icon-variants";
 
 export function IconLogo({
   className,
@@ -18,7 +17,6 @@ export function IconLogo({
       viewBox="0 0 48 48"
       className={cn(iconVariants({ size, color, variant }), className)}
     >
-      <title>bird</title>
       <defs>
         <mask id="SVGU1VKibWi">
           <g fill="none">

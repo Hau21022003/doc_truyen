@@ -17,7 +17,6 @@ export function IconCamera({
       viewBox="0 0 24 24"
       className={cn(iconVariants({ size, color, variant }), className)}
     >
-      <title>camera-bold</title>
       <path
         fill="currentColor"
         fill-rule="evenodd"

@@ -8,6 +8,13 @@
     "deployNow": "Deploy Now",
     "documentation": "Documentation"
   },
+  "AppLayout": {
+    "Language": "Language",
+    "Appearance": "Appearance",
+    "light": "light",
+    "dark": "dark",
+    "system": "system"
+  },
   "UserHeader": {
     "Login": "Login",
     "Register": "Register",
@@ -19,6 +26,8 @@
     "Are you sure you want to log out?": "Are you sure you want to log out?",
     "Cancel": "Cancel",
     "Settings": "Settings",
+    "Notifications": "Notifications",
+    "Bookmark": "Bookmark",
     "Appearance": "Appearance",
     "light": "light",
     "dark": "dark",

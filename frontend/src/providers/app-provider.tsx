@@ -1,5 +1,6 @@
 "use client";
 
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "next-themes";
 import { AuthProvider } from "./auth-provider";
 import { ConfirmProvider } from "./confirm-provider";
@@ -19,7 +20,9 @@ export function AppProvider({ children }: AppProviderProps) {
           enableSystem
           disableTransitionOnChange
         >
-          <ConfirmProvider>{children}</ConfirmProvider>
+          <ConfirmProvider>
+            <TooltipProvider>{children}</TooltipProvider>
+          </ConfirmProvider>
         </ThemeProvider>
       </AuthProvider>
     </ReactQueryProvider>

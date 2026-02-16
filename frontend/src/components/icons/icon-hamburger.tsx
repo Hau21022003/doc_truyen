@@ -17,7 +17,6 @@ export function IconHamburger({
       viewBox="0 0 24 24"
       className={cn(iconVariants({ size, color, variant }), className)}
     >
-      <title>hamburger</title>
       <path
         fill="none"
         stroke="currentColor"

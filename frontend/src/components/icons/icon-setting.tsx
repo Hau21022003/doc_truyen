@@ -17,7 +17,6 @@ export function IconSetting({
       viewBox="0 0 24 24"
       className={cn(iconVariants({ size, color, variant }), className)}
     >
-      <title>setting-fill</title>
       <path
         fill="currentColor"
         fillRule="evenodd"

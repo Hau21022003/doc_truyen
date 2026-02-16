@@ -17,7 +17,6 @@ export function IconEyeOff({
       viewBox="0 0 24 24"
       className={cn(iconVariants({ size, color, variant }), className)}
     >
-      <title>eye-off</title>
       <g
         fill="none"
         stroke="currentColor"

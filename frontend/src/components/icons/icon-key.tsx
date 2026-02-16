@@ -17,7 +17,6 @@ export function IconKey({
       viewBox="0 0 24 24"
       className={cn(iconVariants({ size, color, variant }), className)}
     >
-      <title>key-bold</title>
       <path
         fill="currentColor"
         fillRule="evenodd"

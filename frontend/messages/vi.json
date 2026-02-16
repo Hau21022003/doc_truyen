@@ -8,6 +8,13 @@
     "deployNow": "Triển khai ngay",
     "documentation": "Tài liệu"
   },
+  "AppLayout": {
+    "Language": "Ngôn ngữ",
+    "Appearance": "Giao diện",
+    "light": "sáng",
+    "dark": "tối",
+    "system": "hệ thống"
+  },
   "UserHeader": {
     "Login": "Đăng nhập",
     "Register": "Đăng kí",
@@ -19,6 +26,8 @@
     "Are you sure you want to log out?": "Bạn có chắc chắn muốn đăng xuất không?",
     "Cancel": "Hủy",
     "Settings": "Cài đặt",
+    "Notifications": "Thông báo",
+    "Bookmark": "Dấu trang",
     "Appearance": "Giao diện",
     "light": "sáng",
     "dark": "tối",

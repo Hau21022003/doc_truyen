@@ -17,7 +17,6 @@ export function IconEye({
       viewBox="0 0 24 24"
       className={cn(iconVariants({ size, color, variant }), className)}
     >
-      <title>eye</title>
       <g
         fill="none"
         stroke="currentColor"

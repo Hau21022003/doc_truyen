@@ -8,6 +8,7 @@ import { useConfirm } from "@/providers/confirm-provider";
 import { useSidebar } from "@/providers/sidebar-provider";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
+import { forwardRef, useMemo } from "react";
 import { toast } from "sonner";
 import {
   IconCloseSidebar,
@@ -19,31 +20,115 @@ import {
   IconTag,
   IconUser,
 } from "../icons";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../ui/dialog";
+import {
+  Popover,
+  PopoverContent,
+  PopoverHeader,
+  PopoverTitle,
+  PopoverTrigger,
+} from "../ui/popover";
+import { Separator } from "../ui/separator";
 import { Sheet, SheetContent } from "../ui/sheet";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
+import { LanguageSection } from "./language-section";
+import { ThemeSection } from "./theme-section";
 
-const sidebarLinks = [
+const SidebarItem = forwardRef<
+  HTMLDivElement,
   {
-    title: "Dashboard",
-    href: "/admin",
-    icon: IconLayout,
-  },
+    href?: string;
+    icon: React.ComponentType<any>;
+    title: string;
+    isActive?: boolean;
+    isExpanded: boolean;
+    onClick?: () => void;
+    tooltipText?: string;
+    showTooltip?: boolean;
+  }
+>(function SidebarItem(
   {
-    title: "Tags",
-    href: "/admin/tags",
-    icon: IconTag,
+    href,
+    icon: Icon,
+    title,
+    isActive,
+    isExpanded,
+    onClick,
+    tooltipText,
+    showTooltip = true,
+
+    ...props // ⭐ VERY IMPORTANT
   },
-  {
-    title: "Users",
-    href: "/admin/users",
-    icon: IconUser,
-  },
-];
+  ref,
+) {
+  const className = cn(
+    "h-10 flex items-center gap-3 rounded-lg text-muted-foreground transition-all",
+    "hover:bg-accent hover:text-accent-foreground font-medium text-sm",
+    isExpanded ? "px-3 py-2" : "px-2 py-2 w-10",
+    isActive && "text-primary",
+  );
+
+  const content = (
+    <>
+      <Icon variant="default" color="custom" />
+      {isExpanded && title}
+    </>
+  );
+
+  if (href) {
+    const linkItem = (
+      <Link href={href} className={className}>
+        {content}
+      </Link>
+    );
+
+    if (showTooltip && !isExpanded) {
+      return (
+        <Tooltip>
+          <TooltipTrigger asChild>{linkItem}</TooltipTrigger>
+          <TooltipContent side="right">
+            <p>{tooltipText || title}</p>
+          </TooltipContent>
+        </Tooltip>
+      );
+    }
+
+    return linkItem;
+  }
+
+  if (showTooltip && !isExpanded) {
+    return (
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <div ref={ref} {...props} onClick={onClick} className={className}>
+            {content}
+          </div>
+        </TooltipTrigger>
+        <TooltipContent side="right">
+          <p>{tooltipText || title}</p>
+        </TooltipContent>
+      </Tooltip>
+    );
+  }
+
+  return (
+    <div ref={ref} {...props} onClick={onClick} className={className}>
+      {content}
+    </div>
+  );
+});
 
 export function AdminSidebar() {
   const t = useTranslations("AdminLayout");
   const router = useRouter();
   const pathname = usePathname();
-  const { state, open, openMobile, setOpenMobile, isMobile, toggleSidebar } =
+  const { state, openMobile, setOpenMobile, isMobile, toggleSidebar } =
     useSidebar();
 
   const { mutateAsync: logout } = useLogoutMutation();
@@ -53,6 +138,27 @@ export function AdminSidebar() {
     await logout();
     router.push("/");
   };
+
+  const sidebarLinks = useMemo(
+    () => [
+      {
+        title: t("Dashboard"),
+        href: "/admin",
+        icon: IconLayout,
+      },
+      {
+        title: t("Tags"),
+        href: "/admin/tags",
+        icon: IconTag,
+      },
+      {
+        title: t("Users"),
+        href: "/admin/users",
+        icon: IconUser,
+      },
+    ],
+    [t],
+  );
 
   const handleLogout = async () => {
     const confirmed = await confirm({
@@ -74,8 +180,11 @@ export function AdminSidebar() {
     }
   };
 
+  const isExpanded = state === "expanded";
+
   const sidebarContent = (
     <div className="flex h-full flex-col gap-2 bg-background">
+      {/* Sibar header - logo và button đóng mở sidebar */}
       <div className={cn("flex items-center justify-between px-4 lg:h-20")}>
         {/* LEFT */}
         <div className="flex items-center">
@@ -87,93 +196,114 @@ export function AdminSidebar() {
                 `text-primary-orange  transition-all`,
                 state === "collapsed" && "group-hover:opacity-0",
               )}
-              size={state === "expanded" ? "xl" : "lg"}
+              size={isExpanded ? "xl" : "lg"}
             />
 
             {/* BUTTON OPEN (overlay) */}
             {state === "collapsed" && !isMobile && (
-              <button
-                onClick={toggleSidebar}
-                className="absolute inset-1 flex items-center justify-center p-2 rounded-md hover:bg-accent cursor-pointer"
-              >
-                <IconOpenSidebar
-                  className={cn(
-                    "text-gray-600 dark:text-gray-400 hover:text-primary",
-                    "absolute opacity-0 group-hover:opacity-100 transition",
-                  )}
-                  title={t("Open sidebar")}
-                />
-              </button>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button
+                    onClick={toggleSidebar}
+                    className="absolute inset-1 flex items-center justify-center p-2 rounded-md hover:bg-accent cursor-pointer text-muted-foreground hover:text-accent-foreground"
+                  >
+                    <IconOpenSidebar className="absolute opacity-0 group-hover:opacity-100 transition" />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent side="right">
+                  <p>{t("Open sidebar")}</p>
+                </TooltipContent>
+              </Tooltip>
             )}
           </div>
 
           {/* TEXT */}
-          {state === "expanded" && (
+          {isExpanded && (
             <span className="ml-4 font-medium text-lg">Admin</span>
           )}
         </div>
 
         {/* RIGHT BUTTON (CLOSE WHEN EXPANDED) */}
-        {state === "expanded" && !isMobile && (
-          <IconCloseSidebar
-            className="cursor-pointer text-gray-600 dark:text-gray-400 hover:dark:text-primary"
-            title={t("Close sidebar")}
-            onClick={toggleSidebar}
-          />
+        {isExpanded && !isMobile && (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <IconCloseSidebar
+                className="cursor-pointer text-muted-foreground hover:text-accent-foreground"
+                onClick={toggleSidebar}
+              />
+            </TooltipTrigger>
+            <TooltipContent side="right">
+              <p>{t("Close sidebar")}</p>
+            </TooltipContent>
+          </Tooltip>
         )}
       </div>
 
       <nav className="grid gap-2 px-4 text-sm font-medium">
         {sidebarLinks.map((link) => (
-          <Link
+          <SidebarItem
             key={link.href}
             href={link.href}
-            className={cn(
-              "h-10 flex items-center gap-3 rounded-lg text-muted-foreground transition-all",
-              "hover:bg-accent hover:text-accent-foreground",
-              state === "expanded" ? "px-3 py-2" : "px-2 py-2 w-10",
-              pathname === link.href && "text-primary",
-            )}
-          >
-            <link.icon
-              variant={"default"}
-              color="custom"
-              title={t(link.title)}
-            />
-            {state === "expanded" && t(link.title)}
-          </Link>
+            icon={link.icon}
+            title={link.title}
+            isActive={pathname === link.href}
+            isExpanded={isExpanded}
+          />
         ))}
       </nav>
 
       {/* Logout button at bottom */}
       <div className="mt-auto px-4 pb-4 grid gap-2">
-        <button
-          onClick={handleLogout}
-          className={cn(
-            "h-10 w-full flex items-center gap-3 rounded-lg text-muted-foreground transition-all",
-            "hover:bg-accent hover:text-accent-foreground font-medium",
-            state === "expanded" ? "px-3 py-2" : "px-2 py-2 w-10",
-          )}
-        >
-          <IconSetting
-            variant={"default"}
-            color="custom"
-            title={t("Settings")}
-          />
-          {state === "expanded" && t("Settings")}
-        </button>
+        {isMobile ? (
+          <Dialog>
+            <DialogTrigger asChild>
+              <SidebarItem
+                icon={IconSetting}
+                title={t("Settings")}
+                isExpanded={isExpanded}
+                tooltipText={t("Settings")}
+                showTooltip={false}
+              />
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>{t("Settings")}</DialogTitle>
+              </DialogHeader>
+              <ThemeSection />
+              <LanguageSection />
+            </DialogContent>
+          </Dialog>
+        ) : (
+          <Popover>
+            <PopoverTrigger asChild>
+              <SidebarItem
+                icon={IconSetting}
+                title={t("Settings")}
+                isExpanded={isExpanded}
+                tooltipText={t("Settings")}
+              />
+            </PopoverTrigger>
+            <PopoverContent align="start" className="p-0 w-64">
+              <PopoverHeader className="px-4 py-3">
+                <PopoverTitle>{t("Settings")}</PopoverTitle>
+              </PopoverHeader>
 
-        <button
+              <Separator />
+
+              <div className="py-2">
+                <ThemeSection />
+                <LanguageSection />
+              </div>
+            </PopoverContent>
+          </Popover>
+        )}
+        <SidebarItem
+          icon={IconLogout}
+          title={t("Log out")}
+          isExpanded={isExpanded}
           onClick={handleLogout}
-          className={cn(
-            "h-10 w-full flex items-center gap-3 rounded-lg text-muted-foreground transition-all",
-            "hover:bg-accent hover:text-accent-foreground font-medium",
-            state === "expanded" ? "px-3 py-2" : "px-2 py-2 w-10",
-          )}
-        >
-          <IconLogout variant={"default"} color="custom" title={t("Log out")} />
-          {state === "expanded" && t("Log out")}
-        </button>
+          tooltipText={t("Log out")}
+        />
       </div>
     </div>
   );

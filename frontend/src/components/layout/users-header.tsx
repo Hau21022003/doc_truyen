@@ -2,15 +2,11 @@
 
 import {
   IconBookmark,
-  IconCheck,
   IconHamburger,
-  IconLanguage,
   IconLogo,
   IconLogout,
-  IconMoon,
   IconNotifcations,
   IconSetting,
-  IconSun,
   IconUser,
 } from "@/components/icons";
 import { Button } from "@/components/ui/button";
@@ -25,18 +21,11 @@ import { useConfirm } from "@/providers/confirm-provider";
 import { useAuthStore } from "@/shared/stores";
 import { generateAvatarUrl } from "@/shared/utils";
 import { ChevronDownIcon } from "lucide-react";
-import { useLocale, useTranslations } from "next-intl";
-import { useTheme } from "next-themes";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { Fragment, useMemo, useTransition } from "react";
+import { Fragment, useMemo } from "react";
 import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "../ui/collapsible";
 import {
   Popover,
   PopoverContent,
@@ -47,46 +36,20 @@ import {
 import { Separator } from "../ui/separator";
 import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
 import { Switch } from "../ui/switch";
-
-const themes = ["light", "dark", "system"] as const;
-const languages = [
-  {
-    code: "en",
-    label: "English",
-  },
-  {
-    code: "vi",
-    label: "Tiếng Việt",
-  },
-] as const;
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
+import { LanguageSection } from "./language-section";
+import { ThemeSection } from "./theme-section";
 
 export default function UsersHeader() {
   const { isAuthenticated, isInitialized, user } = useAuthStore();
   const { openLoginModal, openRegisterModal, requireAuth } = useAuthModal();
   const { mutate: logout } = useLogoutMutation();
   const t = useTranslations("UserHeader");
-  const { setTheme, theme } = useTheme();
   const { openModal } = useEditProfileModalStore();
   const {
     mutateAsync: updateNotifications,
     isPending: isUpdatingNotifications,
   } = useUpdateProfileMutation();
-
-  const [isUiTransitionPending, startTransition] = useTransition();
-  const locale = useLocale();
-  const router = useRouter();
-  const pathname = usePathname();
-
-  const handleLanguageChange = (nextLocale: string) => {
-    const pathnameWithoutLocale = pathname.replace(`/${locale}`, "") || "/";
-    startTransition(() => {
-      router.replace(`/${nextLocale}${pathnameWithoutLocale}`);
-    });
-  };
-
-  // Find the current language object
-  const currentLanguage =
-    languages.find((lang) => lang.code === locale) || languages[0];
 
   const links = useMemo(
     () => [
@@ -181,37 +144,60 @@ export default function UsersHeader() {
           {/* Hiển thị icon bookmark và thông báo */}
           {isInitialized && isAuthenticated && (
             <Fragment>
-              <IconNotifcations size={"lg"} />
-              <IconBookmark size={"lg"} />
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <IconNotifcations size={"lg"} />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{t("Notifications")}</p>
+                </TooltipContent>
+              </Tooltip>
+
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <IconBookmark size={"lg"} />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{t("Bookmark")}</p>
+                </TooltipContent>
+              </Tooltip>
             </Fragment>
           )}
 
           {/* Chưa đăng nhập: hiển thị nút cài đặt chung */}
           {/* Đăng nhập: hiển thị avatar */}
           <Popover>
-            <PopoverTrigger asChild>
-              {user ? (
-                <div className="relative">
-                  <Avatar size="lg" className="cursor-pointer">
-                    <AvatarImage
-                      src={generateAvatarUrl(user.id, user.avatar)}
-                      alt={user.name}
-                    />
-                    <AvatarFallback>{user.name}</AvatarFallback>
-                  </Avatar>
-                  <div
-                    className={cn(
-                      "absolute right-0 bottom-0 flex items-center justify-center",
-                      "rounded-full h-3.5 w-3.5 bg-gray-200 dark:bg-[#262626] ring-3 ring-white dark:ring-[#0a0a0a] ",
-                    )}
-                  >
-                    <ChevronDownIcon className="h-[0.8rem] w-[0.8rem]" />
-                  </div>
-                </div>
-              ) : (
-                <IconSetting size={"lg"} className="cursor-pointer" />
-              )}
-            </PopoverTrigger>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <PopoverTrigger asChild>
+                  {user ? (
+                    <div className="relative">
+                      <Avatar size="lg" className="cursor-pointer">
+                        <AvatarImage
+                          src={generateAvatarUrl(user.id, user.avatar)}
+                          alt={user.name}
+                        />
+                        <AvatarFallback>{user.name}</AvatarFallback>
+                      </Avatar>
+                      <div
+                        className={cn(
+                          "absolute right-0 bottom-0 flex items-center justify-center",
+                          "rounded-full h-3.5 w-3.5 bg-gray-200 dark:bg-[#262626] ring-3 ring-white dark:ring-[#0a0a0a] ",
+                        )}
+                      >
+                        <ChevronDownIcon className="h-[0.8rem] w-[0.8rem]" />
+                      </div>
+                    </div>
+                  ) : (
+                    <IconSetting size={"lg"} className="cursor-pointer" />
+                  )}
+                </PopoverTrigger>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{t("Settings")}</p>
+              </TooltipContent>
+            </Tooltip>
+
             <PopoverContent align="end" className="p-0">
               <PopoverHeader className="px-4 py-3">
                 <PopoverTitle>{t("Settings")}</PopoverTitle>
@@ -262,87 +248,8 @@ export default function UsersHeader() {
 
               {/* Theme - Language */}
               <div className="py-2">
-                {/* Theme Options */}
-                <Collapsible className="rounded-md">
-                  <CollapsibleTrigger asChild>
-                    <button
-                      className={cn(
-                        "inline-flex items-center justify-center gap-2 whitespace-nowrap ",
-                        "w-full group py-2 px-4 text-sm font-medium transition-all cursor-pointer",
-                        "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
-                      )}
-                    >
-                      <div className="inline-flex items-center gap-x-2">
-                        <IconSun className="h-[1.4rem] w-[1.4rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
-                        <IconMoon className="absolute h-[1.4rem] w-[1.4rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
-                        {`${t("Appearance")}:`}
-                        {theme && (
-                          <span className="capitalize">{t(theme)}</span>
-                        )}
-                      </div>
-                      <ChevronDownIcon className="ml-auto group-data-[state=open]:rotate-180" />
-                    </button>
-                  </CollapsibleTrigger>
-                  <CollapsibleContent className="flex flex-col items-start py-2 pt-0 text-sm">
-                    {themes.map((themeOption) => (
-                      <button
-                        key={themeOption}
-                        onClick={() => setTheme(themeOption)}
-                        className={cn(
-                          "inline-flex items-center gap-2 whitespace-nowrap ",
-                          "w-full group py-2 px-4 text-sm transition-all cursor-pointer",
-                          "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
-                          "group relative",
-                        )}
-                      >
-                        <p className="ml-8 capitalize">{t(themeOption)} </p>
-                        {theme === themeOption && <IconCheck />}
-                      </button>
-                    ))}
-                  </CollapsibleContent>
-                </Collapsible>
-
-                {/* Language Options */}
-                <Collapsible className="rounded-md">
-                  <CollapsibleTrigger asChild>
-                    <button
-                      className={cn(
-                        "inline-flex items-center justify-center gap-2 whitespace-nowrap ",
-                        "w-full group py-2 px-4 text-sm font-medium transition-all cursor-pointer",
-                        "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
-                      )}
-                      disabled={isUiTransitionPending}
-                    >
-                      <div className="inline-flex items-center gap-x-2">
-                        <IconLanguage className="h-[1.4rem] w-[1.4rem]" />
-                        {`${t("Language")}:`}
-                        <span className="capitalize">
-                          {currentLanguage.label}
-                        </span>
-                      </div>
-                      <ChevronDownIcon className="ml-auto group-data-[state=open]:rotate-180" />
-                    </button>
-                  </CollapsibleTrigger>
-                  <CollapsibleContent className="flex flex-col items-start py-2 pt-0 text-sm">
-                    {languages.map((language) => (
-                      <button
-                        key={language.code}
-                        onClick={() => handleLanguageChange(language.code)}
-                        className={cn(
-                          "inline-flex items-center gap-2 whitespace-nowrap ",
-                          "w-full group py-2 px-4 text-sm transition-all cursor-pointer",
-                          "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
-                          "group relative",
-                        )}
-                      >
-                        <p className="ml-8 capitalize">{language.label} </p>
-                        {currentLanguage.code === language.code && (
-                          <IconCheck />
-                        )}
-                      </button>
-                    ))}
-                  </CollapsibleContent>
-                </Collapsible>
+                <ThemeSection />
+                <LanguageSection />
               </div>
 
               {/* Logout */}
