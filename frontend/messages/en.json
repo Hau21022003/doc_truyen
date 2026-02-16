@@ -31,6 +31,20 @@
     "Notification settings updated": "Notification settings updated",
     "Failed to update notification settings": "Failed to update notification settings"
   },
+  "AdminLayout": {
+    "Dashboard": "Dashboard",
+    "Open sidebar": "Open sidebar",
+    "Close sidebar": "Close sidebar",
+    "Tags": "Tags",
+    "Log out": "Log out",
+    "Are you sure you want to log out?": "Are you sure you want to log out?",
+    "Cancel": "Cancel",
+    "Logging out": "Logging out",
+    "Logged out successfully": "Logged out successfully",
+    "Logout failed": "Logout failed",
+    "Users": "Users",
+    "Settings": "Settings"
+  },
   "EditProfileModal": {
     "Edit Profile": "Edit Profile",
     "Update": "Update",

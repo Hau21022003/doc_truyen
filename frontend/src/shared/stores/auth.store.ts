@@ -7,6 +7,8 @@ interface AuthStore {
   isLoading: boolean;
   isInitialized: boolean; // Để biết liệu đã check auth lần đầu chưa
   setUser: (user: User | null) => void;
+  setLoading: (isLoading: boolean) => void;
+  setInitialized: () => void;
 }
 
 export const useAuthStore = create<AuthStore>((set) => ({
@@ -18,7 +20,9 @@ export const useAuthStore = create<AuthStore>((set) => ({
     set({
       user,
       isAuthenticated: !!user,
-      isLoading: false, // Khi đã có user, không còn loading
       isInitialized: true,
     }),
+
+  setLoading: (isLoading: boolean) => set({ isLoading }),
+  setInitialized: () => set({ isInitialized: true }),
 }));

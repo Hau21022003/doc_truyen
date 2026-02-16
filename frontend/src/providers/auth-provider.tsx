@@ -9,14 +9,22 @@ interface AuthProviderProps {
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
-  const { setUser } = useAuthStore();
-  const { data: profile, isError } = useProfileQuery();
+  const { setUser, setLoading } = useAuthStore();
+  const {
+    data: profile,
+    isError,
+    isLoading: isProfileQueryLoading,
+  } = useProfileQuery();
   const { openLoginModal } = useAuthModal();
 
   useEffect(() => {
     // Only update the store if profile data exists
     setUser(profile?.payload ?? null);
   }, [profile, setUser]);
+
+  useEffect(() => {
+    setLoading(isProfileQueryLoading);
+  }, [isProfileQueryLoading]);
 
   useEffect(() => {
     // Lắng nghe sự kiện token hết hạn

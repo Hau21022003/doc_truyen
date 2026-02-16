@@ -31,6 +31,20 @@
     "Notification settings updated": "Đã cập nhật cài đặt thông báo",
     "Failed to update notification settings": "Cập nhật cài đặt thông báo thất bại"
   },
+  "AdminLayout": {
+    "Dashboard": "Bảng điều khiển",
+    "Open sidebar": "Mở thanh bên",
+    "Close sidebar": "Đóng thanh bên",
+    "Tags": "Thẻ",
+    "Log out": "Đăng xuất",
+    "Are you sure you want to log out?": "Bạn có chắc chắn muốn đăng xuất không?",
+    "Cancel": "Hủy",
+    "Logging out": "Đang đăng xuất",
+    "Logged out successfully": "Đăng xuất thành công",
+    "Logout failed": "Đăng xuất thất bại",
+    "Users": "Người dùng",
+    "Settings": "Cài đặt"
+  },
   "EditProfileModal": {
     "Edit Profile": "Chỉnh sửa hồ sơ",
     "Update": "Cập nhật",

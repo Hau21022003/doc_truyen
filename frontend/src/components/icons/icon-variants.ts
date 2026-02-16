@@ -47,4 +47,5 @@ export type IconVariantsProps = VariantProps<typeof iconVariants>;
 export type IconProps = Omit<React.SVGProps<SVGSVGElement>, "size"> &
   IconVariantsProps & {
     asChild?: boolean;
+    title?: string;
   };

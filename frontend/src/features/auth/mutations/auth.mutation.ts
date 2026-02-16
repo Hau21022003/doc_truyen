@@ -1,7 +1,7 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { authService } from "../services";
-import { AUTH_QUERY_KEYS } from "../queries";
 import { useAuthStore } from "@/shared/stores";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { AUTH_QUERY_KEYS } from "../queries";
+import { authService } from "../services";
 
 /**
  * LOGIN
@@ -50,15 +50,16 @@ export const useLogoutMutation = () => {
     mutationFn: authService.logout,
 
     // Optimistic update - xóa user ngay lập tức
-    onMutate: async () => {
-      setUser(null);
-    },
+    // onMutate: async () => {
+    //   setUser(null);
+    // },
 
     onSuccess: async () => {
       // Clear toàn bộ auth cache
       await queryClient.removeQueries({
         queryKey: AUTH_QUERY_KEYS.profile,
       });
+      setUser(null);
     },
 
     onError: (error) => {

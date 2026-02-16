@@ -4,10 +4,10 @@ import { Loader2 } from "lucide-react";
 import { ReactNode } from "react";
 
 export function AdminGuard({ children }: { children: ReactNode }) {
-  const { user, isAuthenticated, isInitialized } = useAuthStore();
+  const { user, isAuthenticated, isInitialized, isLoading } = useAuthStore();
 
   // Nếu chưa có thông tin auth
-  if (!isInitialized) {
+  if (!isInitialized || isLoading) {
     return (
       <div className="flex h-screen items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin" />
