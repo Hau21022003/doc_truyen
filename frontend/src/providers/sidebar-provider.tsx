@@ -1,6 +1,7 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useState } from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
+import React, { createContext, useContext, useState } from "react";
 
 type SidebarContextType = {
   state: "expanded" | "collapsed";
@@ -17,15 +18,7 @@ const SidebarContext = createContext<SidebarContextType | null>(null);
 export function SidebarProvider({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(true);
   const [openMobile, setOpenMobile] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-
-  // detect mobile
-  useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < 768);
-    check();
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
-  }, []);
+  const isMobile = useIsMobile();
 
   const toggleSidebar = () => {
     if (isMobile) {

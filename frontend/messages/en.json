@@ -15,6 +15,15 @@
     "dark": "dark",
     "system": "system"
   },
+  "table": {
+    "pagination": {
+      "of": "of",
+      "items": "items",
+      "itemsPerPage": "Items per page",
+      "previous": "Previous",
+      "next": "Next"
+    }
+  },
   "UserHeader": {
     "Login": "Login",
     "Register": "Register",

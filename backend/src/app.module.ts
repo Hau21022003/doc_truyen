@@ -14,8 +14,8 @@ import cloudinaryConfig from './config/cloudinary.config';
 import oauthConfig from './config/oauth.config';
 import { AuthModule } from './modules/auth/auth.module';
 import { JwtAuthGuard } from './modules/auth/guards';
-import { GenresModule } from './modules/genres/genres.module';
 import { MediaModule } from './modules/media/media.module';
+import { TagsModule } from './modules/tags/tags.module';
 import { UsersModule } from './modules/users/users.module';
 
 @Module({
@@ -43,7 +43,7 @@ import { UsersModule } from './modules/users/users.module';
     }),
     AppConfigModule,
     UsersModule,
-    GenresModule,
+    TagsModule,
     ValidationProvidersModule,
     AuthModule,
     MediaModule,

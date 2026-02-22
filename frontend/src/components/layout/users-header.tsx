@@ -10,8 +10,8 @@ import {
   IconUser,
 } from "@/components/icons";
 import { Button } from "@/components/ui/button";
+import { useLogoutMutation } from "@/features/auth/auth.mutation";
 import { useAuthModal } from "@/features/auth/hooks/use-auth-modal.hook";
-import { useLogoutMutation } from "@/features/auth/mutations";
 import EditProfileModal from "@/features/users/components/edit-profile-modal";
 import { useUpdateProfileMutation } from "@/features/users/mutations";
 import { useEditProfileModalStore } from "@/features/users/stores/edit-profile-modal.store";

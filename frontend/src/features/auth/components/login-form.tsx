@@ -22,8 +22,8 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { useLoginMutation } from "../mutations";
-import { LoginInput, loginSchema } from "../schemas/auth.schema";
+import { useLoginMutation } from "../auth.mutation";
+import { LoginInput, loginSchema } from "../auth.schema";
 
 interface LoginFormProps {
   onSuccess: () => void;

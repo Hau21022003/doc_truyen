@@ -1,4 +1,4 @@
-import { AUTH_QUERY_KEYS } from "@/features/auth/queries";
+import { AUTH_QUERY_KEYS } from "@/features/auth/auth.query";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { UpdateProfileInput } from "../schemas/update-profile.schema";
 import { userService } from "../services/user.service";

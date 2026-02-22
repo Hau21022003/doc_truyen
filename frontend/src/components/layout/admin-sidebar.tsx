@@ -1,6 +1,6 @@
 "use client";
 
-import { useLogoutMutation } from "@/features/auth/mutations";
+import { useLogoutMutation } from "@/features/auth/auth.mutation";
 import { usePathname, useRouter } from "@/i18n/navigation";
 import { handleErrorApi } from "@/lib/error";
 import { cn } from "@/lib/utils";
