@@ -24,6 +24,15 @@
       "next": "Next"
     }
   },
+  "filter": {
+    "more": "More",
+    "clearAll": "Clear All",
+    "noMoreFilters": "No more filters available",
+    "selectFilter": "Select a filter to add",
+    "filterBy": "Filter by",
+    "removeFilter": "Remove Filter",
+    "search": "Search"
+  },
   "UserHeader": {
     "Login": "Login",
     "Register": "Register",

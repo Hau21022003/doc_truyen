@@ -269,8 +269,8 @@ export function AdminSidebar() {
               <DialogHeader>
                 <DialogTitle>{t("Settings")}</DialogTitle>
               </DialogHeader>
-              <ThemeSection />
-              <LanguageSection />
+              <ThemeSection expand={true} />
+              <LanguageSection expand={true} />
             </DialogContent>
           </Dialog>
         ) : (
@@ -291,8 +291,8 @@ export function AdminSidebar() {
               <Separator />
 
               <div className="py-2">
-                <ThemeSection />
-                <LanguageSection />
+                <ThemeSection expand={true} />
+                <LanguageSection expand={true} />
               </div>
             </PopoverContent>
           </Popover>

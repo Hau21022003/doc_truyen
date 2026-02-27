@@ -41,6 +41,8 @@
   --color-btn-primary-foreground: var(--btn-primary-foreground);
   --color-primary-orange: var(--primary-orange);
   --color-primary-orange-foreground: var(--primary-orange-foreground);
+  --color-primary-purple: var(--primary-purple);
+  --color-primary-purple-foreground: var(--primary-purple-foreground);
 
   --color-card: var(--card);
   --radius-sm: calc(var(--radius) - 4px);
@@ -63,8 +65,10 @@
   /* Thêm */
   --btn-primary: oklch(0.628 0.258 29);
   --btn-primary-foreground: oklch(0.985 0 0);
-  --primary-orange: #fa4517;
+  --primary-orange: #da6e2d;
   --primary-orange-foreground: oklch(0.985 0 0);
+  --primary-purple: #625bf6;
+  --primary-purple-foreground: oklch(0.985 0 0);
 
   --primary: oklch(0.205 0 0);
   --primary-foreground: oklch(0.985 0 0);

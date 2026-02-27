@@ -25,10 +25,12 @@ const languages = [
 
 interface LanguageSectionProps {
   languageKey?: string; // For customizing translation key, default: "Language"
+  expand?: boolean;
 }
 
 export function LanguageSection({
   languageKey = "Language",
+  expand = false,
 }: LanguageSectionProps) {
   const t = useTranslations("AppLayout"); // Can be changed to "AdminLayout" via parameter
   const [isUiTransitionPending, startTransition] = useTransition();
@@ -47,7 +49,7 @@ export function LanguageSection({
   };
 
   return (
-    <Collapsible className="rounded-md">
+    <Collapsible defaultOpen={expand} className="rounded-md">
       <CollapsibleTrigger asChild>
         <button
           className={cn(

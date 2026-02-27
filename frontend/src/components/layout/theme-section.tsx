@@ -15,14 +15,18 @@ const themes = ["light", "dark", "system"] as const;
 
 interface ThemeSectionProps {
   themeKey?: string;
+  expand?: boolean;
 }
 
-export function ThemeSection({ themeKey = "Appearance" }: ThemeSectionProps) {
+export function ThemeSection({
+  themeKey = "Appearance",
+  expand,
+}: ThemeSectionProps) {
   const t = useTranslations("AppLayout");
   const { setTheme, theme } = useTheme();
 
   return (
-    <Collapsible className="rounded-md">
+    <Collapsible defaultOpen={expand} className="rounded-md">
       <CollapsibleTrigger asChild>
         <button
           className={cn(
