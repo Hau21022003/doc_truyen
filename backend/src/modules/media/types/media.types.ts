@@ -6,5 +6,5 @@ export interface UploadOptions {
 
 export interface UploadResult {
   url: string;
-  publicId: string;
+  // publicId: string;
 }

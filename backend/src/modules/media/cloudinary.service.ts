@@ -2,7 +2,7 @@ import { AppConfigService } from '@/config/app-config.service';
 import { Injectable } from '@nestjs/common';
 import { v2 as cloudinary, UploadApiResponse } from 'cloudinary';
 import { Readable } from 'stream';
-import { UploadOptions } from './media.types';
+import { UploadOptions } from './types/media.types';
 
 @Injectable()
 export class CloudinaryService {
@@ -14,7 +14,10 @@ export class CloudinaryService {
     });
   }
 
-  async uploadImage(file: Express.Multer.File, options?: UploadOptions): Promise<UploadApiResponse> {
+  async uploadImage(
+    file: Express.Multer.File,
+    options?: UploadOptions,
+  ): Promise<UploadApiResponse> {
     const uploadOptions = {
       resource_type: 'auto' as const,
       folder: options?.folder,
@@ -26,11 +29,14 @@ export class CloudinaryService {
       // Upload từ buffer
       const stream = Readable.from(file.buffer);
       return new Promise((resolve, reject) => {
-        const uploadStream = cloudinary.uploader.upload_stream(uploadOptions, (error, result) => {
-          if (error) return reject(error);
-          if (!result) return reject(new Error('Upload failed'));
-          resolve(result);
-        });
+        const uploadStream = cloudinary.uploader.upload_stream(
+          uploadOptions,
+          (error, result) => {
+            if (error) return reject(error);
+            if (!result) return reject(new Error('Upload failed'));
+            resolve(result);
+          },
+        );
         stream.pipe(uploadStream);
       });
     }
@@ -41,5 +47,9 @@ export class CloudinaryService {
 
   async deleteImage(publicId: string) {
     return cloudinary.uploader.destroy(publicId);
+  }
+
+  async deleteMany(publicIds: string[]) {
+    return cloudinary.api.delete_resources(publicIds);
   }
 }

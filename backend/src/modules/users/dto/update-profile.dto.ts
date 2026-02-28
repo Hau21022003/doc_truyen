@@ -5,9 +5,9 @@ import { Transform } from 'class-transformer';
 import { IsBoolean, IsIn, IsOptional, IsString } from 'class-validator';
 
 export class UpdateProfileDto {
-  @ApiProperty({ type: 'string', format: 'binary', required: false })
-  @IsOptional()
-  avatar?: any;
+  // @ApiProperty({ type: 'string', format: 'binary', required: false })
+  // @IsOptional()
+  // avatar?: any;
 
   @ApiProperty({ example: 'John Doe', required: false })
   @IsOptional()

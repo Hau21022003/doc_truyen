@@ -1,4 +1,4 @@
-import { UuidBaseEntity } from '@/common/entities/uuid-base.entity';
+import { UuidBaseEntity } from '@/common/entities/uuid-base-entity';
 import { Exclude } from 'class-transformer';
 import { Column, Entity } from 'typeorm';
 
@@ -36,9 +36,9 @@ export class User extends UuidBaseEntity {
   @Column({ nullable: true })
   avatar?: string;
 
-  @Column({ nullable: true })
-  @Exclude()
-  avatarPublicId?: string; // dành cho xóa file trên cloudinary
+  // @Column({ nullable: true })
+  // @Exclude()
+  // avatarPublicId?: string; // dành cho xóa file trên cloudinary
 
   @Column({ default: true })
   isActive: boolean;

@@ -1,7 +1,15 @@
-import { PaginatedResponseDto, QueryBaseDto, QueryBuilderHelper } from '@/common';
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  PaginatedResponseDto,
+  QueryBaseDto,
+  QueryBuilderHelper,
+} from '@/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { FindOptionsWhere, Repository } from 'typeorm';
 import { CreateTagDto } from './dto/create-genre.dto';
 import { UpdateTagDto } from './dto/update-genre.dto';
 import { Tag } from './entities/tag.entity';
@@ -25,17 +33,26 @@ export class TagsService {
     let queryBuilder = this.tagRepository.createQueryBuilder('tag');
 
     // Apply search using helper
-    queryBuilder = QueryBuilderHelper.applySearch(queryBuilder, 'tag', search, ['name', 'description']);
-
-    // Apply sorting using helper
-    queryBuilder = QueryBuilderHelper.applySorting(queryBuilder, 'tag', sortBy, sortOrder, [
+    queryBuilder = QueryBuilderHelper.applySearch(queryBuilder, 'tag', search, [
       'name',
-      'createdAt',
-      'updatedAt',
+      'description',
     ]);
 
+    // Apply sorting using helper
+    queryBuilder = QueryBuilderHelper.applySorting(
+      queryBuilder,
+      'tag',
+      sortBy,
+      sortOrder,
+      ['name', 'createdAt', 'updatedAt'],
+    );
+
     // Apply pagination using helper
-    queryBuilder = QueryBuilderHelper.applyPagination(queryBuilder, page, limit);
+    queryBuilder = QueryBuilderHelper.applyPagination(
+      queryBuilder,
+      page,
+      limit,
+    );
 
     const [data, total] = await queryBuilder.getManyAndCount();
 
@@ -68,13 +85,22 @@ export class TagsService {
     return await this.tagRepository.remove(genre);
   }
 
-  private async checkUniqueFields(data: { name?: string; slug?: string }, ignoreId?: number) {
+  async findBy(where: FindOptionsWhere<Tag>): Promise<Tag[]> {
+    return this.tagRepository.find({ where });
+  }
+
+  private async checkUniqueFields(
+    data: { name?: string; slug?: string },
+    ignoreId?: number,
+  ) {
     if (data.name) {
       const existingByName = await this.tagRepository.findOne({
         where: { name: data.name },
       });
       if (existingByName && (!ignoreId || existingByName.id !== ignoreId)) {
-        throw new ConflictException(`Tag with name '${data.name}' already exists`);
+        throw new ConflictException(
+          `Tag with name '${data.name}' already exists`,
+        );
       }
     }
 
@@ -83,7 +109,9 @@ export class TagsService {
         where: { slug: data.slug },
       });
       if (existingBySlug && (!ignoreId || existingBySlug.id !== ignoreId)) {
-        throw new ConflictException(`Tag with slug '${data.slug}' already exists`);
+        throw new ConflictException(
+          `Tag with slug '${data.slug}' already exists`,
+        );
       }
     }
   }

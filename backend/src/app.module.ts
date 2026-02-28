@@ -13,8 +13,11 @@ import appConfig from './config/app.config';
 import cloudinaryConfig from './config/cloudinary.config';
 import oauthConfig from './config/oauth.config';
 import { AuthModule } from './modules/auth/auth.module';
-import { JwtAuthGuard } from './modules/auth/guards';
+import { JwtAuthGuard, RolesGuard } from './modules/auth/guards';
+import { ChapterModule } from './modules/chapter/chapter.module';
 import { MediaModule } from './modules/media/media.module';
+import { StoryInteractionsModule } from './modules/story-interactions/story-interactions.module';
+import { StoryModule } from './modules/story/story.module';
 import { TagsModule } from './modules/tags/tags.module';
 import { UsersModule } from './modules/users/users.module';
 
@@ -22,7 +25,13 @@ import { UsersModule } from './modules/users/users.module';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [appConfig, jwtConfig, databaseConfig, oauthConfig, cloudinaryConfig],
+      load: [
+        appConfig,
+        jwtConfig,
+        databaseConfig,
+        oauthConfig,
+        cloudinaryConfig,
+      ],
     }),
     TypeOrmModule.forRootAsync({
       inject: [AppConfigService],
@@ -34,6 +43,7 @@ import { UsersModule } from './modules/users/users.module';
         password: config.dbPassword,
         database: config.dbName,
         autoLoadEntities: true,
+        migrations: [__dirname + '/database/migrations/*{.ts,.js}'],
         synchronize: config.dbSynchronize,
         logging: config.dbLogging,
         extra: {
@@ -47,6 +57,9 @@ import { UsersModule } from './modules/users/users.module';
     ValidationProvidersModule,
     AuthModule,
     MediaModule,
+    StoryModule,
+    ChapterModule,
+    StoryInteractionsModule,
   ],
   controllers: [AppController],
   providers: [
@@ -54,6 +67,10 @@ import { UsersModule } from './modules/users/users.module';
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
     },
   ],
 })

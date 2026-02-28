@@ -4,7 +4,13 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Like, Repository } from 'typeorm';
 import { MediaService } from '../media/media.service';
-import { CreateUserDto, QueryUserDto, UpdateProfileDto, UpdateUserDto, UserListResponseDto } from './dto';
+import {
+  CreateUserDto,
+  QueryUserDto,
+  UpdateProfileDto,
+  UpdateUserDto,
+  UserListResponseDto,
+} from './dto';
 import { RefreshTokenInfo, User } from './entities/user.entity';
 
 @Injectable()
@@ -122,8 +128,8 @@ export class UsersService {
     // Xử lý avatar nếu có
     if (avatarFile) {
       // Xóa ảnh cũ nếu có
-      if (user.avatarPublicId) {
-        await this.mediaService.deleteImage(user.avatarPublicId);
+      if (user.avatar) {
+        await this.mediaService.deleteByUrl(user.avatar);
       }
 
       const uploadResult = await this.mediaService.uploadImage(avatarFile, {
@@ -132,7 +138,6 @@ export class UsersService {
       });
 
       updateData.avatar = uploadResult.url;
-      updateData.avatarPublicId = uploadResult.publicId;
     }
 
     // Update database
@@ -164,7 +169,10 @@ export class UsersService {
     return user;
   }
 
-  async updateRefreshToken(userId: string, refreshToken: string): Promise<void> {
+  async updateRefreshToken(
+    userId: string,
+    refreshToken: string,
+  ): Promise<void> {
     await this.userRepository.update(userId, {
       refreshToken: refreshToken,
     });
@@ -173,7 +181,10 @@ export class UsersService {
   /**
    * Kiểm tra xem refresh token có còn hợp lệ không
    */
-  async validateRefreshToken(userId: string, refreshToken: string): Promise<boolean> {
+  async validateRefreshToken(
+    userId: string,
+    refreshToken: string,
+  ): Promise<boolean> {
     const user = await this.userRepository.findOne({
       where: { id: userId },
       select: { id: true, refreshTokens: true },
@@ -200,7 +211,11 @@ export class UsersService {
   /**
    * Thêm một refresh token mới
    */
-  async addRefreshToken(userId: string, refreshToken: string, deviceInfo?: { deviceName?: string }): Promise<void> {
+  async addRefreshToken(
+    userId: string,
+    refreshToken: string,
+    deviceInfo?: { deviceName?: string },
+  ): Promise<void> {
     const user = await this.userRepository.findOne({
       where: { id: userId },
       select: { id: true, refreshTokens: true },
@@ -210,7 +225,9 @@ export class UsersService {
       throw new NotFoundException(`User with ID ${userId} not found`);
     }
 
-    const expiresAt = new Date(Date.now() + this.configService.jwtRefreshExpiresInMs);
+    const expiresAt = new Date(
+      Date.now() + this.configService.jwtRefreshExpiresInMs,
+    );
     const tokenHash = await hashPassword(refreshToken);
 
     const newToken: RefreshTokenInfo = {
@@ -221,10 +238,14 @@ export class UsersService {
     };
 
     // Thêm token mới vào mảng
-    const updatedTokens = user.refreshTokens ? [...user.refreshTokens, newToken] : [newToken];
+    const updatedTokens = user.refreshTokens
+      ? [...user.refreshTokens, newToken]
+      : [newToken];
 
     // Xóa các token đã hết hạn
-    const validTokens = updatedTokens.filter((token) => new Date(token.expiresAt).getTime() > Date.now());
+    const validTokens = updatedTokens.filter(
+      (token) => new Date(token.expiresAt).getTime() > Date.now(),
+    );
 
     await this.userRepository.update(userId, {
       refreshTokens: validTokens,
@@ -234,7 +255,10 @@ export class UsersService {
   /**
    * Thu hồi một refresh token cụ thể
    */
-  async revokeRefreshToken(userId: string, refreshToken: string): Promise<void> {
+  async revokeRefreshToken(
+    userId: string,
+    refreshToken: string,
+  ): Promise<void> {
     const user = await this.userRepository.findOne({
       where: { id: userId },
       select: { id: true, refreshTokens: true },

@@ -57,6 +57,10 @@ const buildUrl = (
 };
 
 const parseResponse = async <T>(response: Response): Promise<T> => {
+  if (response.status === HTTP_STATUS.NO_CONTENT) {
+    return undefined as T;
+  }
+
   const contentType = response.headers.get("content-type");
 
   if (contentType?.includes("application/json")) {

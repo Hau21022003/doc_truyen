@@ -1,14 +1,14 @@
+import { Injectable } from '@nestjs/common';
+import { ModuleRef } from '@nestjs/core';
+import { getRepositoryToken } from '@nestjs/typeorm';
 import {
   registerDecorator,
-  ValidationOptions,
   ValidationArguments,
+  ValidationOptions,
   ValidatorConstraint,
   ValidatorConstraintInterface,
 } from 'class-validator';
-import { Injectable } from '@nestjs/common';
-import { ModuleRef } from '@nestjs/core';
-import { DataSource, Repository } from 'typeorm';
-import { getRepositoryToken } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 @ValidatorConstraint({ async: true })
@@ -19,7 +19,10 @@ export class IsExistConstraint implements ValidatorConstraintInterface {
     const [entityClass, property = 'id'] = args.constraints;
 
     try {
-      const repository = this.moduleRef.get<Repository<any>>(getRepositoryToken(entityClass), { strict: false });
+      const repository = this.moduleRef.get<Repository<any>>(
+        getRepositoryToken(entityClass),
+        { strict: false },
+      );
 
       if (!repository) return false;
 
@@ -27,7 +30,10 @@ export class IsExistConstraint implements ValidatorConstraintInterface {
 
       return !!record;
     } catch (error) {
-      console.error(`Validation error for ${entityClass.name}.${property}:`, error);
+      console.error(
+        `Validation error for ${entityClass.name}.${property}:`,
+        error,
+      );
       return false;
     }
   }
@@ -38,7 +44,11 @@ export class IsExistConstraint implements ValidatorConstraintInterface {
   }
 }
 
-export function IsExist<T>(entityClass: new () => T, property: string, validationOptions?: ValidationOptions) {
+export function IsExist<T>(
+  entityClass: new () => T,
+  property: string,
+  validationOptions?: ValidationOptions,
+) {
   return function (object: Object, propertyName: string) {
     registerDecorator({
       target: object.constructor,
