@@ -16,6 +16,8 @@ import { Tag } from './entities/tag.entity';
 
 @Injectable()
 export class TagsService {
+  private readonly ENTITY_ALIAS = 'tag';
+
   constructor(
     @InjectRepository(Tag)
     private readonly tagRepository: Repository<Tag>,
@@ -28,15 +30,22 @@ export class TagsService {
   }
 
   async findAll(query: QueryBaseDto): Promise<PaginatedResponseDto<Tag>> {
-    const { page, limit, skip, search, sortBy, sortOrder } = query;
+    const { page, limit, search, sortBy, sortOrder } = query;
 
-    let queryBuilder = this.tagRepository.createQueryBuilder('tag');
+    let queryBuilder = this.tagRepository.createQueryBuilder(this.ENTITY_ALIAS);
+
+    queryBuilder.loadRelationCountAndMap(
+      `${this.ENTITY_ALIAS}.storyCount`,
+      `${this.ENTITY_ALIAS}.stories`,
+    );
 
     // Apply search using helper
-    queryBuilder = QueryBuilderHelper.applySearch(queryBuilder, 'tag', search, [
-      'name',
-      'description',
-    ]);
+    queryBuilder = QueryBuilderHelper.applySearch(
+      queryBuilder,
+      this.ENTITY_ALIAS,
+      search,
+      ['name', 'slug'],
+    );
 
     // Apply sorting using helper
     queryBuilder = QueryBuilderHelper.applySorting(

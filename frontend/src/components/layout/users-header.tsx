@@ -13,8 +13,8 @@ import { Button } from "@/components/ui/button";
 import { useLogoutMutation } from "@/features/auth/auth.mutation";
 import { useAuthModal } from "@/features/auth/hooks/use-auth-modal.hook";
 import EditProfileModal from "@/features/users/components/edit-profile-modal";
-import { useUpdateProfileMutation } from "@/features/users/mutations";
 import { useEditProfileModalStore } from "@/features/users/stores/edit-profile-modal.store";
+import { useUpdateProfileMutation } from "@/features/users/use-update-profile.mutation";
 import { handleErrorApi } from "@/lib/error";
 import { cn } from "@/lib/utils";
 import { useConfirm } from "@/providers/confirm-provider";
@@ -44,7 +44,7 @@ export default function UsersHeader() {
   const { isAuthenticated, isInitialized, user } = useAuthStore();
   const { openLoginModal, openRegisterModal, requireAuth } = useAuthModal();
   const { mutate: logout } = useLogoutMutation();
-  const t = useTranslations("UserHeader");
+  const t = useTranslations("layout.UserHeader");
   const { openModal } = useEditProfileModalStore();
   const {
     mutateAsync: updateNotifications,

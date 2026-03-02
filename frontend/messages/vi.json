@@ -1,71 +1,96 @@
 {
-  "HomePage": {
-    "title": "Chào mừng đến với trang web của chúng tôi",
-    "description": "Để bắt đầu, chỉnh sửa file page.tsx.",
-    "lookingFor": "Tìm kiếm điểm khởi đầu hoặc hướng dẫn thêm?",
-    "templates": "Mẫu",
-    "learning": "Học tập",
-    "deployNow": "Triển khai ngay",
-    "documentation": "Tài liệu"
+  "table": {
+    "pagination": {
+      "of": "trên",
+      "items": "mục",
+      "itemsPerPage": "Số mục mỗi trang",
+      "previous": "Trước",
+      "next": "Sau"
+    }
   },
-  "AppLayout": {
-    "Language": "Ngôn ngữ",
-    "Appearance": "Giao diện",
-    "light": "sáng",
-    "dark": "tối",
-    "system": "hệ thống"
+  "filter": {
+    "more": "Thêm",
+    "clearAll": "Xóa tất cả",
+    "noMoreFilters": "Không còn bộ lọc nào",
+    "selectFilter": "Chọn bộ lọc để thêm",
+    "filterBy": "Lọc theo",
+    "removeFilter": "Xóa bộ lọc",
+    "search": "Tìm kiếm",
+    "presets": "Mẫu có sẵn",
+    "custom": "Tùy chỉnh",
+    "add_filter": "Thêm bộ lọc",
+    "preset": {
+      "today": "Hôm nay",
+      "last7Days": "7 ngày gần đây",
+      "last30Days": "30 ngày gần đây",
+      "thisMonth": "Tháng này",
+      "lastMonth": "Tháng trước"
+    }
   },
-  "UserHeader": {
-    "Login": "Đăng nhập",
-    "Register": "Đăng kí",
-    "Completed": "Completed",
-    "Manhwa": "Manhwa",
-    "Novel": "Novel",
-    "Manga": "Manga",
-    "Log out": "Đăng xuất",
-    "Are you sure you want to log out?": "Bạn có chắc chắn muốn đăng xuất không?",
-    "Cancel": "Hủy",
-    "Settings": "Cài đặt",
-    "Notifications": "Thông báo",
-    "Bookmark": "Dấu trang",
-    "Appearance": "Giao diện",
-    "light": "sáng",
-    "dark": "tối",
-    "system": "hệ thống",
-    "Language": "Ngôn ngữ",
-    "Profile": "Thông tin cá nhân",
-    "Story Notifications": "Thông báo chương mới",
-    "Get notified when followed stories release new chapters": "Nhận thông báo khi truyện bạn theo dõi có chương mới",
-    "Updating notification settings": "Đang cập nhật cài đặt thông báo",
-    "Notification settings updated": "Đã cập nhật cài đặt thông báo",
-    "Failed to update notification settings": "Cập nhật cài đặt thông báo thất bại"
+  "layout": {
+    "AppLayout": {
+      "Language": "Ngôn ngữ",
+      "Appearance": "Giao diện",
+      "light": "sáng",
+      "dark": "tối",
+      "system": "hệ thống"
+    },
+    "UserHeader": {
+      "Login": "Đăng nhập",
+      "Register": "Đăng kí",
+      "Completed": "Completed",
+      "Manhwa": "Manhwa",
+      "Novel": "Novel",
+      "Manga": "Manga",
+      "Log out": "Đăng xuất",
+      "Are you sure you want to log out?": "Bạn có chắc chắn muốn đăng xuất không?",
+      "Cancel": "Hủy",
+      "Settings": "Cài đặt",
+      "Notifications": "Thông báo",
+      "Bookmark": "Dấu trang",
+      "Appearance": "Giao diện",
+      "light": "sáng",
+      "dark": "tối",
+      "system": "hệ thống",
+      "Language": "Ngôn ngữ",
+      "Profile": "Thông tin cá nhân",
+      "Story Notifications": "Thông báo chương mới",
+      "Get notified when followed stories release new chapters": "Nhận thông báo khi truyện bạn theo dõi có chương mới",
+      "Updating notification settings": "Đang cập nhật cài đặt thông báo",
+      "Notification settings updated": "Đã cập nhật cài đặt thông báo",
+      "Failed to update notification settings": "Cập nhật cài đặt thông báo thất bại"
+    },
+    "AdminLayout": {
+      "Dashboard": "Bảng điều khiển",
+      "Open sidebar": "Mở thanh bên",
+      "Close sidebar": "Đóng thanh bên",
+      "Tags": "Thẻ",
+      "Log out": "Đăng xuất",
+      "Are you sure you want to log out?": "Bạn có chắc chắn muốn đăng xuất không?",
+      "Cancel": "Hủy",
+      "Logging out": "Đang đăng xuất",
+      "Logged out successfully": "Đăng xuất thành công",
+      "Logout failed": "Đăng xuất thất bại",
+      "Users": "Người dùng",
+      "Settings": "Cài đặt"
+    }
   },
-  "AdminLayout": {
-    "Dashboard": "Bảng điều khiển",
-    "Open sidebar": "Mở thanh bên",
-    "Close sidebar": "Đóng thanh bên",
-    "Tags": "Thẻ",
-    "Log out": "Đăng xuất",
-    "Are you sure you want to log out?": "Bạn có chắc chắn muốn đăng xuất không?",
-    "Cancel": "Hủy",
-    "Logging out": "Đang đăng xuất",
-    "Logged out successfully": "Đăng xuất thành công",
-    "Logout failed": "Đăng xuất thất bại",
-    "Users": "Người dùng",
-    "Settings": "Cài đặt"
+
+  "users": {
+    "EditProfileModal": {
+      "Edit Profile": "Chỉnh sửa hồ sơ",
+      "Update": "Cập nhật",
+      "Close": "Đóng",
+      "Select your timezone for accurate time display": "Chọn múi giờ của bạn để hiển thị thời gian chính xác",
+      "Timezone": "Múi giờ",
+      "Name": "Tên hiển thị",
+      "Enter your name": "Nhập tên hiển thị",
+      "Select your timezone": "Chọn múi giờ của bạn",
+      "Updating": "Đang cập nhật",
+      "Update profile successful!": "Cập nhật hồ sơ thành công!"
+    }
   },
-  "EditProfileModal": {
-    "Edit Profile": "Chỉnh sửa hồ sơ",
-    "Update": "Cập nhật",
-    "Close": "Đóng",
-    "Select your timezone for accurate time display": "Chọn múi giờ của bạn để hiển thị thời gian chính xác",
-    "Timezone": "Múi giờ",
-    "Name": "Tên hiển thị",
-    "Enter your name": "Nhập tên hiển thị",
-    "Select your timezone": "Chọn múi giờ của bạn",
-    "Updating": "Đang cập nhật",
-    "Update profile successful!": "Cập nhật hồ sơ thành công!"
-  },
+
   "AuthModal": {
     "Login": {
       "Welcome Back": "Chào mừng bạn quay lại",

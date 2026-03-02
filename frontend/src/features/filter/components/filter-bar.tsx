@@ -51,7 +51,7 @@ export function FilterBar({ configs }: FilterBarProps) {
       />
       {hasChanged && (
         <button
-          className="px-1 cursor-pointer text-muted-foreground inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0"
+          className="px-1 cursor-pointer text-muted-foreground inline-flex items-center justify-center gap-1 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0"
           onClick={resetFilters}
         >
           <IconX color="custom" />

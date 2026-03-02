@@ -45,7 +45,7 @@ export class CreateChapterContentDto {
   @ApiPropertyOptional({
     description:
       'Temp ID của ảnh đã upload (dùng để chuyển trạng thái từ draft sang published)',
-    example: 'temp_chapter_12345',
+    example: '6c84fb90-12c4-11e1-840d-7b25c5ee775a',
   })
   @IsOptional()
   @IsString()

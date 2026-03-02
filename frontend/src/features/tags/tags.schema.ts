@@ -15,13 +15,7 @@ export type UpdateTagInput = z.infer<typeof updateTagSchema>;
 export const tagQuerySchema = paginationSchema.extend({
   search: z.string().trim().optional(),
   sortBy: z.enum(["name", "createdAt", "storyCount"]).optional(),
-  sortOrder: z.enum(["asc", "desc"]).default("desc"),
+  sortOrder: z.enum(["asc", "desc"]).default("desc").optional(),
 });
 
 export type TagQueryInput = z.infer<typeof tagQuerySchema>;
-
-// export const tagParamsSchema = z.object({
-//   id: z.number().or(z.string().transform(Number)),
-// });
-
-// export type TagParamsInput = z.infer<typeof tagParamsSchema>;

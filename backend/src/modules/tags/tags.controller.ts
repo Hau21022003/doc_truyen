@@ -1,5 +1,16 @@
 import { PaginatedResponseDto, QueryBaseDto } from '@/common/dto';
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Patch, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateTagDto } from './dto/create-genre.dto';
 import { UpdateTagDto } from './dto/update-genre.dto';
@@ -19,7 +30,9 @@ export class TagsController {
 
   @Get()
   @ApiResponse({ status: 200, type: PaginatedResponseDto<Tag> })
+  // async findAll(@Query() query: QueryBaseDto) {
   async findAll(@Query() query: QueryBaseDto) {
+    console.log('query', query);
     return await this.tagsService.findAll(query);
   }
 

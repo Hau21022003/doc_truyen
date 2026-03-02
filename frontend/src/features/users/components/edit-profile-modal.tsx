@@ -42,15 +42,15 @@ import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { useUpdateProfileMutation } from "../mutations";
+import { useEditProfileModalStore } from "../stores/edit-profile-modal.store";
 import {
   UpdateProfileInput,
   updateProfileSchema,
-} from "../schemas/update-profile.schema";
-import { useEditProfileModalStore } from "../stores/edit-profile-modal.store";
+} from "../update-profile.schema";
+import { useUpdateProfileMutation } from "../use-update-profile.mutation";
 
 export default function EditProfileModal() {
-  const t = useTranslations("EditProfileModal");
+  const t = useTranslations("users.EditProfileModal");
   const { isOpen, closeModal } = useEditProfileModalStore();
   const [avatarFile, setAvatarFile] = useState<File>();
   const [avatarPreview, setAvatarPreview] = useState<string>();

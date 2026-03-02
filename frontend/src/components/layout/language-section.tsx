@@ -32,7 +32,7 @@ export function LanguageSection({
   languageKey = "Language",
   expand = false,
 }: LanguageSectionProps) {
-  const t = useTranslations("AppLayout"); // Can be changed to "AdminLayout" via parameter
+  const t = useTranslations("layout.AppLayout"); // Can be changed to "AdminLayout" via parameter
   const [isUiTransitionPending, startTransition] = useTransition();
   const locale = useLocale();
   const router = useRouter();

@@ -125,7 +125,7 @@ const SidebarItem = forwardRef<
 });
 
 export function AdminSidebar() {
-  const t = useTranslations("AdminLayout");
+  const t = useTranslations("layout.AdminLayout");
   const router = useRouter();
   const pathname = usePathname();
   const { state, openMobile, setOpenMobile, isMobile, toggleSidebar } =

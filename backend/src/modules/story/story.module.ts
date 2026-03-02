@@ -10,5 +10,6 @@ import { StoryService } from './story.service';
   imports: [TypeOrmModule.forFeature([Story]), TagsModule, MediaModule],
   controllers: [StoryController],
   providers: [StoryService],
+  exports: [StoryService],
 })
 export class StoryModule {}

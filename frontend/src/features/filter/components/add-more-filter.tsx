@@ -37,7 +37,7 @@ export default function AddMoreFilter({
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <button className="px-1 cursor-pointer text-primary-purple inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0">
+        <button className="px-1 cursor-pointer text-primary-purple inline-flex items-center justify-center gap-1 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0">
           <IconPlus color="custom" size={"xs"} />
           <p>{t("add_filter")}</p>
         </button>

@@ -1,6 +1,7 @@
 import { IconCheck } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { getWidthFromPopoverSize } from "../filter.utils";
 import { FilterContentProps } from "./filter-content.types";
 
 export function SelectFilterContent({
@@ -14,8 +15,15 @@ export function SelectFilterContent({
     onClose();
   };
 
+  const popoverWidth = getWidthFromPopoverSize(config.popoverSize);
+
   return (
-    <div className="flex flex-col gap-1 max-h-[300px] overflow-y-auto">
+    <div
+      className={cn(
+        "p-2 flex flex-col gap-1 max-h-[300px] overflow-y-auto",
+        popoverWidth,
+      )}
+    >
       {config.options?.map((option) => {
         const isSelected = value === option.value;
         const content = option.render ? option.render() : option.label;

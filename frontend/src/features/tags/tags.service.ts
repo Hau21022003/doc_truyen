@@ -1,6 +1,6 @@
 import http from "@/lib/http";
 import { PaginationResponse } from "@/shared/types/paginated-response.type";
-import { CreateTagInput, UpdateTagInput } from "./tags.schema";
+import { CreateTagInput, TagQueryInput, UpdateTagInput } from "./tags.schema";
 import { Tag } from "./tags.types";
 
 export const tagsService = {
@@ -8,11 +8,13 @@ export const tagsService = {
   create: (data: CreateTagInput) => http.post<Tag>("/tags", data),
 
   // Get all tags with pagination
-  findAll: (params?: { page?: number; limit?: number }) =>
-    http.get<PaginationResponse<Tag>>("/tags", { params }),
+  findAll: (params?: TagQueryInput) => {
+    console.log("param", params);
+    return http.get<PaginationResponse<Tag>>("/tags", { params });
+  },
 
   // Get a specific tag by ID
-  findOne: (id: number) => http.get<Tag>(`/tags/${id}`),
+  // findOne: (id: number) => http.get<Tag>(`/tags/${id}`),
 
   // Update a tag
   update: (id: number, data: UpdateTagInput) =>

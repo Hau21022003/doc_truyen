@@ -1,3 +1,4 @@
+export * from "./icon-archive";
 export * from "./icon-arrow-down";
 export * from "./icon-arrow-down-fill";
 export * from "./icon-arrow-up";
@@ -24,6 +25,7 @@ export * from "./icon-moon";
 export * from "./icon-next";
 export * from "./icon-notifcations";
 export * from "./icon-open-sidebar";
+export * from "./icon-pen";
 export * from "./icon-plus";
 export * from "./icon-previous";
 export * from "./icon-setting";

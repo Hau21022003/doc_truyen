@@ -10,9 +10,8 @@ export class Tag extends IntegerIdBaseEntity {
   @Column({ unique: true })
   slug: string;
 
-  @Column({ default: 0 })
-  storyCount: number;
-
   @ManyToMany(() => Story, (story) => story.tags)
   stories: Story[];
+
+  storyCount?: number;
 }

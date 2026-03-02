@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 import { Search } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
+import { getWidthFromPopoverSize } from "../filter.utils";
 import { FilterContentProps } from "./filter-content.types";
 
 export function ComboboxFilterContent({
@@ -41,9 +42,11 @@ export function ComboboxFilterContent({
     return label.includes(searchTerm.toLowerCase());
   });
 
+  const popoverWidth = getWidthFromPopoverSize(config.popoverSize);
+
   return (
-    <div className="flex flex-col gap-1 p-1">
-      <InputGroup className="max-w-xs">
+    <div className={cn("flex flex-col gap-1 p-2", popoverWidth)}>
+      <InputGroup>
         <InputGroupInput
           placeholder={config.placeholder || `${t("search")}...`}
           value={searchTerm}

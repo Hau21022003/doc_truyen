@@ -33,6 +33,8 @@ export class MediaController {
         },
         tempId: {
           type: 'string',
+          description: 'Temporary ID to link uploaded media before publishing',
+          example: '6c84fb90-12c4-11e1-840d-7b25c5ee775a',
         },
       },
       required: ['file'],

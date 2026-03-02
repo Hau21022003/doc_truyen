@@ -31,6 +31,7 @@ const filterConfigs: AnyFilterConfig[] = [
     label: "Combobox Filter",
     type: "combobox",
     defaultVisible: false,
+    popoverSize: "lg",
     options: Array.from({ length: 50 }, (_, i) => ({
       id: (i + 1).toString(),
       name: `User ${i + 1}11111111111111111111111111111111111111111`,

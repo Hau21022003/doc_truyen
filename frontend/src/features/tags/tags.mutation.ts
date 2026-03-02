@@ -32,9 +32,9 @@ export const useUpdateTagMutation = () => {
 
     onSuccess: (_, { id }) => {
       // Invalidate specific tag and tags list
-      queryClient.invalidateQueries({
-        queryKey: TAGS_QUERY_KEYS.detail(id),
-      });
+      // queryClient.invalidateQueries({
+      //   queryKey: TAGS_QUERY_KEYS.detail(id),
+      // });
       queryClient.invalidateQueries({
         queryKey: TAGS_QUERY_KEYS.lists(),
       });
@@ -53,9 +53,9 @@ export const useDeleteTagMutation = () => {
 
     onSuccess: (_, id) => {
       // Remove specific tag from cache
-      queryClient.removeQueries({
-        queryKey: TAGS_QUERY_KEYS.detail(id),
-      });
+      // queryClient.removeQueries({
+      //   queryKey: TAGS_QUERY_KEYS.detail(id),
+      // });
 
       // Invalidate tags list
       queryClient.invalidateQueries({

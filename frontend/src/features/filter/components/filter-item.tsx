@@ -14,15 +14,18 @@ import {
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { formatDate } from "@/shared/utils";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { FILTER_TYPE } from "../filter.constants";
 import { AnyFilterConfig, FilterState } from "../filter.types";
+import { isSameRange } from "../filter.utils";
 import {
   ComboboxFilterContent,
   DateRangeFilterContent,
   SelectFilterContent,
   TextFilterContent,
 } from "../popovers";
+import { DATE_RANGE_PRESETS } from "../types/date-range-presets.types";
 
 const FILTER_TYPE_COMPONENTS = {
   [FILTER_TYPE.TEXT]: TextFilterContent,
@@ -66,9 +69,8 @@ export function FilterItem({
   const isActive =
     state.value !== undefined && state.value !== null && state.value !== "";
 
-  const popoverWidth = getWidthFromPopoverSize(config.popoverSize);
+  const t = useTranslations("filter");
 
-  // const formattedValue = formatFilterValue(config, state.value);
   const renderValueDisplay = () => {
     const value = state.value;
     if (!value) return "";
@@ -129,6 +131,15 @@ export function FilterItem({
           "from" in value &&
           "to" in value
         ) {
+          const matchedPreset = Object.entries(DATE_RANGE_PRESETS).find(
+            ([, getRange]) => isSameRange(value, getRange()),
+          );
+
+          if (matchedPreset) {
+            const [key] = matchedPreset;
+            return t(`preset.${key}`);
+          }
+
           return `${formatDate(value.from)} - ${formatDate(value.to)}`;
         }
 
@@ -192,7 +203,8 @@ export function FilterItem({
         </div>
       </PopoverTrigger>
       <PopoverContent
-        className={cn("p-1 flex flex-col items-center", popoverWidth)}
+        // className={cn("p-1 flex flex-col items-center", popoverWidth)}
+        className="p-0 flex flex-col items-center w-fit"
         align={align}
       >
         <FilterContentComponent

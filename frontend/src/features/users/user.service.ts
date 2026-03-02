@@ -1,5 +1,5 @@
 import http from "@/lib/http";
-import { UpdateProfileInput } from "../schemas/update-profile.schema";
+import { UpdateProfileInput } from "./update-profile.schema";
 
 export const userService = {
   updateProfile: async (data: UpdateProfileInput, avatarFile?: File) => {

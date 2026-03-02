@@ -22,7 +22,7 @@ export function ThemeSection({
   themeKey = "Appearance",
   expand,
 }: ThemeSectionProps) {
-  const t = useTranslations("AppLayout");
+  const t = useTranslations("layout.AppLayout");
   const { setTheme, theme } = useTheme();
 
   return (

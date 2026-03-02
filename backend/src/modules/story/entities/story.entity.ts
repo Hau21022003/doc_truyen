@@ -23,8 +23,8 @@ export class Story extends IntegerIdBaseEntity {
   @Column({ type: 'text', nullable: true })
   description?: string;
 
-  @Column({ nullable: true })
-  coverImage?: string;
+  @Column({ nullable: true, type: 'varchar' })
+  coverImage: string | null;
 
   @Column({ nullable: true })
   authorName: string;
@@ -43,8 +43,9 @@ export class Story extends IntegerIdBaseEntity {
   })
   progress: StoryProgress;
 
-  @Column({ nullable: true })
-  lastAddedChapterDate?: Date; // To know when last chapter added
+  // To know when last chapter added
+  @Column({ nullable: true, type: 'timestamptz' })
+  lastAddedChapterDate?: Date;
 
   @Column({ default: 0 })
   viewCount: number;

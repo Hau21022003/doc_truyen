@@ -1,5 +1,5 @@
 import { TimezoneValue } from "@/shared/constants";
-import { UserRole } from "../constants/user-role.constant";
+import { UserRole } from "./user-role.constants";
 
 export interface User {
   id: string;
