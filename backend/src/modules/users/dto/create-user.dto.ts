@@ -1,4 +1,4 @@
-import { SUPPORTED_TIMEZONES } from '@/common/constants/timezone.constant';
+import { SUPPORTED_TIMEZONES } from '@/common/constants/timezone.constants';
 import { IsStrongPassword, IsUnique, StringTrim } from '@/common/decorators';
 import { ApiProperty } from '@nestjs/swagger';
 import {

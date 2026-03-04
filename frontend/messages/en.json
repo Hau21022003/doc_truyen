@@ -1,4 +1,37 @@
 {
+  "common": {
+    "actions": {
+      "create": "Create",
+      "creating": "Creating...",
+      "update": "Update",
+      "updating": "Updating...",
+      "delete": "Delete",
+      "deleting": "Deleting...",
+      "cancel": "Cancel",
+      "confirm": "Confirm",
+      "close": "Close",
+      "search": "Search",
+      "searchPlaceholder": "Search...",
+      "searching": "Searching...",
+      "actions": "Actions"
+    },
+    "selection": {
+      "clear": "Clear selection",
+      "selected": "{count} selected"
+    },
+    "delete": {
+      "singleConfirm": "Are you sure you want to delete \"{itemName}\"?",
+      "singleSuccess": "Successfully deleted \"{itemName}\".",
+      "singleFailed": "Failed to delete item.",
+      "multiple": "Delete selected items",
+      "multipleConfirm": "Are you sure you want to delete {count} selected items?",
+      "multipleSuccess": "Successfully deleted {count} items.",
+      "multipleFailed": "Failed to delete selected items."
+    },
+    "dialog": {
+      "confirmDescription": "Are you sure?"
+    }
+  },
   "table": {
     "pagination": {
       "of": "of",
@@ -6,7 +39,11 @@
       "itemsPerPage": "Items per page",
       "previous": "Previous",
       "next": "Next"
-    }
+    },
+    "filter": "Filter",
+    "hide": "Hide",
+    "errorTitle": "Oops! An error occurred",
+    "retry": "retry"
   },
   "filter": {
     "more": "More",
@@ -91,7 +128,29 @@
   },
 
   "tags": {
-    "deleteConfirm": "Delete tag \"{name}\"?"
+    "deleteConfirm": "Delete tag \"{name}\"?",
+    "createTag": "Create Tag",
+    "upsertModal": {
+      "createTitle": "Create Tag",
+      "editTitle": "Edit Tag",
+      "fields": {
+        "name": {
+          "label": "Name",
+          "placeholder": "Enter tag name"
+        },
+        "slug": {
+          "label": "Slug",
+          "placeholder": "Enter tag slug"
+        }
+      }
+    },
+    "columns": {
+      "name": "Name",
+      "slug": "Slug",
+      "storyCount": "Stories",
+      "createdAt": "Created At",
+      "updatedAt": "Updated At"
+    }
   },
 
   "AuthModal": {

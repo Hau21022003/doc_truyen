@@ -1,5 +1,5 @@
 import { StringTrim } from '@/common';
-import { SUPPORTED_TIMEZONES } from '@/common/constants/timezone.constant';
+import { SUPPORTED_TIMEZONES } from '@/common/constants/timezone.constants';
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 import { IsBoolean, IsIn, IsOptional, IsString } from 'class-validator';

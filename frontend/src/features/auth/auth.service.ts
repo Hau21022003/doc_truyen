@@ -1,6 +1,6 @@
-import { User } from "@/features/users/types";
 import http from "@/lib/http";
 import { SHARED_ENDPOINTS } from "@/shared/constants";
+import { User } from "../users/user.types";
 import { LoginInput, RegisterInput } from "./auth.schema";
 
 export const authService = {

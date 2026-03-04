@@ -1,5 +1,4 @@
 export const TAG_COLUMNS = {
-  // ID: "id",
   NAME: "name",
   SLUG: "slug",
   STORY_COUNT: "storyCount",

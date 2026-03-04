@@ -1,93 +1,140 @@
 "use client";
 
-import { IconArchive, IconPen } from "@/components/icons";
+import { BulkActionBar } from "@/components/bulk-action-bar";
+import CustomButton from "@/components/custom-button";
+import CustomCheckbox from "@/components/custom-checkbox";
+import { IconArchive, IconPen, IconPlus } from "@/components/icons";
 import { Button } from "@/components/ui/button";
-import { TableColumnConfigMap, useTableState } from "@/features/table";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "@/components/ui/input-group";
+import { useTableState } from "@/features/table";
 import {
   DataTable,
   ExtraColumnConfig,
 } from "@/features/table/components/data-table";
-import { TAG_COLUMNS, TagColumn } from "@/features/tags/tags.constants";
+import HideColumnSelect from "@/features/table/components/hide-column-select";
+import UpsertTagModal from "@/features/tags/components/upsert-tag-modal";
+import { useTagActions } from "@/features/tags/hooks/use-tag-actions";
+import { useTagTableConfig } from "@/features/tags/hooks/use-tag-table-config";
 import { TAGS_QUERY_KEYS, useTagsQuery } from "@/features/tags/tags.query";
 import { Tag } from "@/features/tags/tags.types";
-import { SUPPORTED_LOCALES } from "@/i18n/routing";
-import { useConfirm } from "@/providers/confirm-provider";
-import { useAuthStore } from "@/shared/stores";
-import { formatDate, truncate } from "@/shared/utils";
-import { useLocale, useTranslations } from "next-intl";
+import { useIsMobile, useUpsertModal } from "@/hooks";
+import { useDebounce } from "@/hooks/use-debounce";
+import { useRowSelection } from "@/hooks/use-row-selection";
+import { Search } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { useEffect, useMemo, useState } from "react";
 
 export default function TagsPage() {
-  const t = useTranslations("tags");
-  const locale = useLocale() as (typeof SUPPORTED_LOCALES)[number];
-  const { user } = useAuthStore();
-  const { confirm } = useConfirm();
+  const tTag = useTranslations("tags");
+  const tCommon = useTranslations("common");
+  const isMobile = useIsMobile();
+  const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce(search, 400);
 
-  const handleOpenEditModal = (tag: Tag) => {};
+  const {
+    isOpen: isOpenUpsertTagModal,
+    close: closeUpsertTagModal,
+    data: dataUpsertTagModal,
+    mode: modeUpsertTagModal,
+    openCreate: openCreateTagModal,
+    openEdit: openEditTagModal,
+  } = useUpsertModal<Tag>();
 
-  const handleDelete = async (tag: Tag) => {
-    const confirmed = await confirm({
-      title: t("delete"),
-      description: t("deleteConfirm", {
-        name: truncate(tag.name),
-      }),
-      confirmText: t("confirm"),
-      cancelText: t("cancel"),
-      variant: "destructive",
-    });
+  const {
+    selectedIds,
+    isAllSelected,
+    toggleRow,
+    toggleAll,
+    clearSelection,
+    isSelected,
+  } = useRowSelection<Tag>();
 
-    if (confirmed) {
-      console.log("delete", tag.id);
-    }
+  const { removeOne, removeMany } = useTagActions();
+
+  const handleBulkDelete = async () => {
+    const success = await removeMany(selectedIds);
+    if (success) clearSelection();
   };
 
-  const tableConfig: TableColumnConfigMap<TagColumn, Tag> = {
-    name: {
-      label: t(TAG_COLUMNS.NAME),
-      defaultVisible: true,
-      resizable: true,
-      sortable: true,
-    },
-    slug: {
-      label: t(TAG_COLUMNS.SLUG),
-      defaultVisible: true,
-      resizable: true,
-    },
-    storyCount: {
-      label: t(TAG_COLUMNS.STORY_COUNT),
-      defaultVisible: true,
-      resizable: true,
-    },
-    createdAt: {
-      label: t(TAG_COLUMNS.CREATED_AT),
-      defaultVisible: true,
-      resizable: true,
-      sortable: true,
-      format: (value) =>
-        formatDate(value, { locale, timeZone: user?.timezone }),
-    },
-    updatedAt: {
-      label: t(TAG_COLUMNS.UPDATED_AT),
-      defaultVisible: true,
-      resizable: true,
-      sortable: true,
-      format: (value) =>
-        formatDate(value, { locale, timeZone: user?.timezone }),
-    },
-  };
+  const tableConfig = useTagTableConfig();
+
+  const tableState = useTableState(tableConfig, {
+    persistKey: TAGS_QUERY_KEYS.lists().join(","),
+    defaultPageSize: 10,
+  });
+
+  useEffect(() => {
+    tableState.pagination.setPage(1);
+  }, [debouncedSearch]);
+
+  const searchParams = useMemo(
+    () => ({
+      limit: tableState.pagination.pageSize,
+      page: tableState.pagination.page,
+      search: debouncedSearch,
+      sortBy: tableState.sort.column as any,
+      sortOrder: tableState.sort.direction,
+    }),
+    [
+      tableState.pagination.pageSize,
+      tableState.pagination.page,
+      debouncedSearch,
+      tableState.sort.column,
+      tableState.sort.direction,
+    ],
+  );
+
+  const {
+    data: tagsData,
+    error: tagsQueryError,
+    isLoading: isTagsQueryLoading,
+    refetch: refetchTags,
+  } = useTagsQuery(searchParams);
+
+  const data = tagsData?.payload.data ?? [];
 
   const extraColumns: ExtraColumnConfig<Tag>[] = [
     {
+      key: "checkbox",
+      render: (tag) => (
+        <div className="flex items-center justify-center h-full">
+          <CustomCheckbox
+            color={"purple"}
+            checked={isSelected(tag)}
+            onCheckedChange={() => toggleRow(tag)}
+          />
+        </div>
+      ),
+      renderHeader() {
+        return (
+          <div className="flex items-center justify-center h-full">
+            <CustomCheckbox
+              color={"purple"}
+              checked={isAllSelected(data)}
+              onCheckedChange={() => toggleAll(data)}
+            />
+          </div>
+        );
+      },
+      width: 30,
+      sticky: "left",
+    },
+    {
       key: "actions",
-      width: 150,
+      width: 80,
       align: "center",
       sticky: "right",
-      label: "Actions",
-      render: (tag, index) => (
+      label: tCommon("actions.actions"),
+      render: (tag) => (
         <div className="flex gap-2">
           <Button
             variant={"outline"}
             size="icon"
-            onClick={() => handleOpenEditModal(tag)}
+            onClick={() => openEditTagModal(tag)}
             className="[&_svg:not([class*='size-'])]:size-5"
           >
             <IconPen color="custom" />
@@ -95,7 +142,7 @@ export default function TagsPage() {
           <Button
             size="icon"
             variant={"outline"}
-            onClick={() => handleDelete(tag)}
+            onClick={() => removeOne(tag)}
             className="[&_svg:not([class*='size-'])]:size-5"
           >
             <IconArchive color="custom" className="text-destructive" />
@@ -105,31 +152,55 @@ export default function TagsPage() {
     },
   ];
 
-  const tableState = useTableState(tableConfig, {
-    persistKey: TAGS_QUERY_KEYS.lists().join(","),
-    defaultPageSize: 10,
-  });
-
-  const {
-    data: tagsData,
-    isError: isTagsQueryError,
-    isLoading: isTagsQueryLoading,
-  } = useTagsQuery({
-    limit: tableState.pagination.pageSize,
-    page: tableState.pagination.page,
-    // search: tableState.
-    sortBy: tableState.sort.column as any,
-    sortOrder: tableState.sort.direction,
-  });
-
   return (
-    <div className="p-4 md:p-6 ">
+    <div className="p-4 md:p-6 space-y-2">
+      <div className="flex justify-between items-center gap-2">
+        <div className="flex-1">
+          <InputGroup className="w-full max-w-xs">
+            <InputGroupInput
+              placeholder={tCommon("actions.searchPlaceholder")}
+              value={search || ""}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+            <InputGroupAddon>
+              <Search />
+            </InputGroupAddon>
+          </InputGroup>
+        </div>
+        <div className="flex items-center gap-2">
+          <HideColumnSelect tableState={tableState} />
+          <CustomButton
+            onClick={openCreateTagModal}
+            color="orange"
+            size={isMobile ? "icon" : "default"}
+          >
+            <IconPlus color="custom" />
+            {!isMobile && <p>{tTag("createTag")}</p>}
+          </CustomButton>
+        </div>
+      </div>
+
       <DataTable
-        data={tagsData?.payload.data || []}
+        data={data}
         totalCount={tagsData?.payload.total || 0}
         tableState={tableState}
         extraColumns={extraColumns}
         isLoading={isTagsQueryLoading}
+        error={tagsQueryError}
+        onErrorRetry={refetchTags}
+      />
+
+      <BulkActionBar
+        count={selectedIds.length}
+        onDelete={handleBulkDelete}
+        onClear={clearSelection}
+      />
+
+      <UpsertTagModal
+        mode={modeUpsertTagModal}
+        onClose={closeUpsertTagModal}
+        isOpen={isOpenUpsertTagModal}
+        data={dataUpsertTagModal}
       />
     </div>
   );

@@ -1,90 +1,105 @@
 import { useCallback, useMemo, useState } from "react";
 import {
+  ColumnStateMap,
   TableColumnConfigMap,
   TableColumnKey,
   TableColumnsState,
   VisibleColumnConfig,
-  VisibleState,
 } from "../table.types";
 
 export function useTableColumns<TColumn extends TableColumnKey, TRow>(
   config: TableColumnConfigMap<TColumn, TRow>,
+  initialState?: Record<TColumn, { visible?: boolean; width?: number }>,
 ): TableColumnsState<TColumn, TRow> {
-  const [visibleMap, setVisibleMap] = useState<VisibleState<TColumn>>(() => {
-    const init = {} as VisibleState<TColumn>;
+  const [columns, setColumns] = useState<ColumnStateMap<TColumn, TRow>>(() => {
+    const init = {} as ColumnStateMap<TColumn, TRow>;
 
     (Object.keys(config) as TColumn[]).forEach((key) => {
-      init[key] = config[key].defaultVisible;
+      const saved = initialState?.[key];
+
+      init[key] = {
+        visible: saved?.visible ?? config[key].defaultVisible,
+        width: saved?.width ?? config[key].width,
+        config: config[key],
+      };
     });
 
     return init;
   });
 
-  const [columnWidthMap, setColumnWidthMap] = useState<
-    Record<TColumn, number | undefined>
-  >(() => {
-    const init = {} as Record<TColumn, number | undefined>;
-    (Object.keys(config) as TColumn[]).forEach((key) => {
-      init[key] = config[key].width;
-    });
-    return init;
-  });
-
-  // visible columns list
+  // ✅ derive visible column keys
   const visibleColumns = useMemo(() => {
-    return (Object.keys(config) as TColumn[]).filter((key) => visibleMap[key]);
-  }, [config, visibleMap]);
+    return (Object.keys(columns) as TColumn[]).filter(
+      (key) => columns[key].visible,
+    );
+  }, [columns]);
 
-  // full column config but only visible ones
+  // ✅ derive full visible column config
   const visibleColumnConfigs: VisibleColumnConfig<TColumn, TRow>[] =
     useMemo(() => {
       return visibleColumns.map((key) => {
-        const { width: initWidth, ...rest } = config[key];
+        const col = columns[key];
+        const { width: initWidth, ...rest } = col.config;
+
         return {
           key,
           ...rest,
           initWidth,
-          width: columnWidthMap[key],
+          width: col.width,
         };
       });
-    }, [visibleColumns, config]);
+    }, [visibleColumns, columns]);
 
-  // set visible manually
+  // ✅ actions
+
   const setColumnVisible = useCallback((column: TColumn, visible: boolean) => {
-    setVisibleMap((prev) => ({
+    setColumns((prev) => ({
       ...prev,
-      [column]: visible,
+      [column]: {
+        ...prev[column],
+        visible,
+      },
     }));
   }, []);
 
-  // reset về default
-  const resetColumns = useCallback(() => {
-    const reset = {} as VisibleState<TColumn>;
-
-    (Object.keys(config) as TColumn[]).forEach((key) => {
-      reset[key] = config[key].defaultVisible;
-    });
-
-    setVisibleMap(reset);
-  }, [config]);
-
   const toggleColumn = useCallback((column: TColumn) => {
-    setVisibleMap((prev) => ({
+    setColumns((prev) => ({
       ...prev,
-      [column]: !prev[column],
+      [column]: {
+        ...prev[column],
+        visible: !prev[column].visible,
+      },
     }));
   }, []);
 
   const setColumnWidth = useCallback((column: TColumn, width: number) => {
-    setColumnWidthMap((prev) => ({
+    setColumns((prev) => ({
       ...prev,
-      [column]: width,
+      [column]: {
+        ...prev[column],
+        width,
+      },
     }));
   }, []);
 
+  const resetColumns = useCallback(() => {
+    setColumns(() => {
+      const reset = {} as ColumnStateMap<TColumn, TRow>;
+
+      (Object.keys(config) as TColumn[]).forEach((key) => {
+        reset[key] = {
+          visible: config[key].defaultVisible,
+          width: config[key].width,
+          config: config[key],
+        };
+      });
+
+      return reset;
+    });
+  }, [config]);
+
   return {
-    config,
-    visibleMap,
+    columns,
     visibleColumns,
     visibleColumnConfigs,
 

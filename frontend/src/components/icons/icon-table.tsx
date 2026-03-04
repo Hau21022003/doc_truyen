@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import { IconProps, iconVariants } from "./icon-variants";
 
-export function IconPrevious({
+export function IconTable({
   className,
   size,
   color,
@@ -18,13 +18,11 @@ export function IconPrevious({
       className={cn(iconVariants({ size, color, variant }), className)}
     >
       <path
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        d="m15 6l-6 6l6 6"
+        fill="currentColor"
+        d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m.5 2v6.2h-6.8V4.4h6.2c.3 0 .5.2.5.5ZM5 4.5h6.2v6.8H4.4V5.1c0-.3.2-.5.5-.5ZM4.5 19v-6.2h6.8v6.8H5.1c-.3 0-.5-.2-.5-.5Zm14.5.5h-6.2v-6.8h6.8v6.2c0 .3-.2.5-.5.5Z"
       />
     </svg>
   );
 }
 
-export default IconPrevious;
+export default IconTable;

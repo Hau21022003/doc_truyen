@@ -44,13 +44,37 @@ export type VisibleColumnConfig<
 };
 
 /**
+ * Đại diện cho thông tin hiển thị của một cột
+ */
+export type ColumnVisibilityInfo<TRow> = {
+  visible: boolean;
+  config: TableColumnConfig<TRow>;
+};
+
+export type ColumnState<TRow> = {
+  visible: boolean;
+  width?: number;
+  config: TableColumnConfig<TRow>;
+};
+
+export type ColumnStateMap<TColumn extends TableColumnKey, TRow> = Record<
+  TColumn,
+  ColumnState<TRow>
+>;
+
+/**
  * Type cho column management state (trả về từ useTableColumns)
  */
 export type TableColumnsState<TColumn extends TableColumnKey, TRow> = {
-  config: TableColumnConfigMap<TColumn, TRow>;
-  visibleMap: VisibleState<TColumn>;
+  columns: ColumnStateMap<TColumn, TRow>;
   visibleColumns: TColumn[];
   visibleColumnConfigs: VisibleColumnConfig<TColumn, TRow>[];
+
+  // config: TableColumnConfigMap<TColumn, TRow>;
+  // visibleMap: VisibleState<TColumn>;
+  // visibleMapWithConfig: Record<TColumn, ColumnVisibilityInfo<TRow>>;
+  // visibleColumns: TColumn[];
+  // visibleColumnConfigs: VisibleColumnConfig<TColumn, TRow>[];
   toggleColumn: (column: TColumn) => void;
   setColumnVisible: (column: TColumn, visible: boolean) => void;
   resetColumns: () => void;

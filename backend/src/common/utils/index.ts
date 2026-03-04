@@ -1,8 +1,4 @@
-// String utilities
-export * from './string.util';
-
-// Crypto utilities
 export * from './crypto.util';
-
-// File utilities
+export * from './date.util';
 export * from './file.util';
+export * from './string.util';

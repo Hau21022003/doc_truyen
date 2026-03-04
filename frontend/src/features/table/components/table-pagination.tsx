@@ -143,7 +143,7 @@ export default function TablePagination({
         </span>
       </div>
       {/* Right */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center justify-center flex-wrap gap-2">
         <Button
           onClick={() => props.setPage(1)}
           disabled={props.currentPage === 1}

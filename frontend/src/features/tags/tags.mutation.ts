@@ -30,11 +30,7 @@ export const useUpdateTagMutation = () => {
     mutationFn: ({ id, data }: { id: number; data: any }) =>
       tagsService.update(id, data),
 
-    onSuccess: (_, { id }) => {
-      // Invalidate specific tag and tags list
-      // queryClient.invalidateQueries({
-      //   queryKey: TAGS_QUERY_KEYS.detail(id),
-      // });
+    onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: TAGS_QUERY_KEYS.lists(),
       });
@@ -52,12 +48,23 @@ export const useDeleteTagMutation = () => {
     mutationFn: tagsService.remove,
 
     onSuccess: (_, id) => {
-      // Remove specific tag from cache
-      // queryClient.removeQueries({
-      //   queryKey: TAGS_QUERY_KEYS.detail(id),
-      // });
+      queryClient.invalidateQueries({
+        queryKey: TAGS_QUERY_KEYS.lists(),
+      });
+    },
+  });
+};
 
-      // Invalidate tags list
+/**
+ * DELETE MANY TAG
+ */
+export const useDeleteManyTagMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: tagsService.removeMany,
+
+    onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: TAGS_QUERY_KEYS.lists(),
       });

@@ -62,45 +62,68 @@ export interface ApiErrorResponse {
   }>;
 }
 
+export type ParsedError = {
+  message: string;
+  fieldErrors?: Record<string, string>;
+};
+
+export function parseApiError(error: unknown): ParsedError {
+  if (error instanceof EntityError) {
+    const fieldErrors: Record<string, string> = {};
+
+    error.payload.errors.forEach(({ field, errors }) => {
+      fieldErrors[field] = errors[0];
+    });
+
+    return {
+      message: error.message,
+      fieldErrors,
+    };
+  }
+
+  if (error instanceof HttpError) {
+    return { message: error.payload.message };
+  }
+
+  if (typeof error === "object" && error && "message" in error) {
+    return {
+      message: String((error as { message: unknown }).message),
+    };
+  }
+
+  return { message: "Unknown error" };
+}
+
+export function getErrorMessage(error: unknown): string {
+  const parsed = parseApiError(error);
+  return parsed.message;
+}
+
 export const handleErrorApi = <T extends FieldValues>({
   error,
   setError,
-  duration = 5000,
+  duration = 3000,
 }: {
   error: unknown;
   setError?: UseFormSetError<T>;
   duration?: number;
 }) => {
-  if (error instanceof EntityError) {
-    if (setError) {
-      error.payload.errors.forEach(({ field, errors: messages }) => {
-        setError(field as Path<T>, {
-          type: "server",
-          message: messages[0],
-        });
-      });
-    } else {
-      toast.error("Validation Error", {
-        description: error.message,
-        duration,
-        style: { whiteSpace: "pre-line" },
-      });
-    }
-    return;
-  }
+  const parsed = parseApiError(error);
 
-  if (error instanceof HttpError) {
-    toast.error("Error", { description: error.payload.message, duration });
-    return;
-  }
-
-  if (typeof error === "object" && error && "message" in error) {
-    toast.error("Error", {
-      description: String((error as { message: unknown }).message),
-      duration,
+  // form case
+  if (setError && parsed.fieldErrors) {
+    Object.entries(parsed.fieldErrors).forEach(([field, message]) => {
+      setError(field as Path<T>, {
+        type: "server",
+        message,
+      });
     });
     return;
   }
 
-  toast.error("Error", { description: "Unknown error", duration });
+  // fallback toast
+  toast.error("Error", {
+    description: parsed.message,
+    duration,
+  });
 };

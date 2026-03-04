@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import { IconProps, iconVariants } from "./icon-variants";
 
-export function IconPrevious({
+export function IconXCircleOutline({
   className,
   size,
   color,
@@ -20,11 +20,13 @@ export function IconPrevious({
       <path
         fill="none"
         stroke="currentColor"
-        strokeWidth="2"
-        d="m15 6l-6 6l6 6"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="m15 9l-6 6m0-6l6 6m6-3a9 9 0 1 1-18 0a9 9 0 0 1 18 0"
       />
     </svg>
   );
 }
 
-export default IconPrevious;
+export default IconXCircleOutline;

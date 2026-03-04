@@ -10,6 +10,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { useTranslations } from "next-intl";
 import { createContext, ReactNode, useContext, useState } from "react";
 
 interface ConfirmOptions {
@@ -35,6 +36,7 @@ export function ConfirmProvider({ children }: { children: ReactNode }) {
   const [confirmState, setConfirmState] = useState<ConfirmState>({
     isOpen: false,
   });
+  const t = useTranslations("common");
 
   const confirm = (options: ConfirmOptions = {}): Promise<boolean> => {
     return new Promise((resolve) => {
@@ -66,21 +68,21 @@ export function ConfirmProvider({ children }: { children: ReactNode }) {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
-              {confirmState.title || "Confirm"}
+              {confirmState.title || t("actions.confirm")}
             </AlertDialogTitle>
             <AlertDialogDescription>
-              {confirmState.description || "Are you sure?"}
+              {confirmState.description || t("dialog.confirmDescription")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>
-              {confirmState.cancelText || "Cancel"}
+              {confirmState.cancelText || t("actions.cancel")}
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={handleConfirm}
               variant={confirmState.variant}
             >
-              {confirmState.confirmText || "Confirm"}
+              {confirmState.confirmText || t("actions.confirm")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

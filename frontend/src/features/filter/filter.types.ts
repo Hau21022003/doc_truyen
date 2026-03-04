@@ -37,7 +37,7 @@ export type FilterConfig<T extends FilterType = FilterType> = {
     value: string;
     render?: () => React.ReactNode;
   }>; // chỉ dùng cho select/combobox
-
+  render?: () => React.ReactNode; // dùng cho render trigger
   onChange?: (value: FilterTypeToValue<T>) => void;
   // callback khi filter thay đổi
   // Use indexed access type

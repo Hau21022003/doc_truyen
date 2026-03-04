@@ -1,4 +1,4 @@
-export * from "./avatar.util";
+export * from "./avatar.utils";
 export * from "./date.utils";
 export * from "./delay.utils";
 export * from "./logger.utils";

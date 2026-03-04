@@ -1,6 +1,6 @@
 "use client";
 
-import { IconArrowDown, IconCircleXFill } from "@/components/icons";
+import { IconArrowDown, IconXCircleFill } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import {
   Popover,
@@ -33,21 +33,6 @@ const FILTER_TYPE_COMPONENTS = {
   [FILTER_TYPE.COMBOBOX]: ComboboxFilterContent,
   [FILTER_TYPE.DATE_RANGE]: DateRangeFilterContent,
 } as const;
-
-const getWidthFromPopoverSize = (size?: "sm" | "md" | "lg" | "xl") => {
-  switch (size) {
-    case "sm":
-      return "max-w-40";
-    case "md":
-      return "max-w-48";
-    case "lg":
-      return "max-w-64";
-    case "xl":
-      return "max-w-80";
-    default:
-      return undefined;
-  }
-};
 
 interface FilterItemProps {
   config: AnyFilterConfig;
@@ -157,7 +142,7 @@ export function FilterItem({
       <PopoverTrigger asChild>
         <div className="relative">
           {isActive && (
-            <IconCircleXFill
+            <IconXCircleFill
               className="text-muted-foreground absolute left-2 top-1/2 -translate-y-1/2 cursor-pointer"
               color="custom"
               size={"xs"}
@@ -178,7 +163,7 @@ export function FilterItem({
             <Tooltip>
               <TooltipTrigger asChild>
                 <span className="truncate pr-4 flex items-center gap-2 text-muted-foreground">
-                  <p>{config.label}</p>
+                  {config.render ? config.render() : <p>{config.label}</p>}
                   {isActive && (
                     <>
                       <div className="h-[16px] border-l-2 border-input" />

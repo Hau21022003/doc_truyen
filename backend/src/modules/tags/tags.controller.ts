@@ -13,6 +13,7 @@ import {
 } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateTagDto } from './dto/create-genre.dto';
+import { DeleteManyTagsDto } from './dto/delete-many-tags.dto';
 import { UpdateTagDto } from './dto/update-genre.dto';
 import { Tag } from './entities/tag.entity';
 import { TagsService } from './tags.service';
@@ -30,9 +31,7 @@ export class TagsController {
 
   @Get()
   @ApiResponse({ status: 200, type: PaginatedResponseDto<Tag> })
-  // async findAll(@Query() query: QueryBaseDto) {
   async findAll(@Query() query: QueryBaseDto) {
-    console.log('query', query);
     return await this.tagsService.findAll(query);
   }
 
@@ -46,6 +45,12 @@ export class TagsController {
   @ApiResponse({ status: 200, type: Tag })
   async update(@Param('id') id: string, @Body() updateGenreDto: UpdateTagDto) {
     return await this.tagsService.update(+id, updateGenreDto);
+  }
+
+  @Delete('bulk')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async removeMany(@Query() query: DeleteManyTagsDto) {
+    return this.tagsService.removeMany(query.ids);
   }
 
   @Delete(':id')

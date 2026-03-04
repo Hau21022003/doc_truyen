@@ -1,8 +1,8 @@
 "use client";
 
+import CustomCheckbox from "@/components/custom-checkbox";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   Field,
   FieldContent,
@@ -88,10 +88,11 @@ export function DateRangeFilterContent({
             return (
               <FieldGroup key={preset} className="px-3 py-1">
                 <Field orientation="horizontal">
-                  <Checkbox
+                  <CustomCheckbox
+                    size={"sm"}
                     id={`preset-${preset}`}
                     checked={checked}
-                    className="border-gray-300 data-[state=checked]:bg-primary-purple data-[state=checked]:border-primary-purple data-[state=checked]:text-white"
+                    color="purple"
                     onCheckedChange={() => {
                       if (checked) {
                         setSelectedPreset(null);

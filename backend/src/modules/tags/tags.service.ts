@@ -2,6 +2,7 @@ import {
   PaginatedResponseDto,
   QueryBaseDto,
   QueryBuilderHelper,
+  toSlug,
 } from '@/common';
 import {
   ConflictException,
@@ -9,7 +10,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOptionsWhere, Repository } from 'typeorm';
+import { FindOptionsWhere, In, Repository } from 'typeorm';
 import { CreateTagDto } from './dto/create-genre.dto';
 import { UpdateTagDto } from './dto/update-genre.dto';
 import { Tag } from './entities/tag.entity';
@@ -24,6 +25,8 @@ export class TagsService {
   ) {}
 
   async create(createTagDto: CreateTagDto): Promise<Tag> {
+    this.normalizeSlug(createTagDto);
+
     await this.checkUniqueFields(createTagDto);
     const newTag = this.tagRepository.create(createTagDto);
     return await this.tagRepository.save(newTag);
@@ -84,7 +87,11 @@ export class TagsService {
 
   async update(id: number, updateTagDto: UpdateTagDto): Promise<Tag> {
     const tag = await this.findOne(id);
+
+    this.normalizeSlug(updateTagDto);
+
     await this.checkUniqueFields(updateTagDto, id);
+
     Object.assign(tag, updateTagDto);
     return await this.tagRepository.save(tag);
   }
@@ -92,6 +99,16 @@ export class TagsService {
   async remove(id: number) {
     const genre = await this.findOne(id);
     return await this.tagRepository.remove(genre);
+  }
+
+  async removeMany(ids: number[]) {
+    const tags = await this.tagRepository.findBy({ id: In(ids) });
+
+    if (tags.length !== ids.length) {
+      throw new NotFoundException('Some tags not found');
+    }
+
+    return this.tagRepository.remove(tags);
   }
 
   async findBy(where: FindOptionsWhere<Tag>): Promise<Tag[]> {
@@ -122,6 +139,12 @@ export class TagsService {
           `Tag with slug '${data.slug}' already exists`,
         );
       }
+    }
+  }
+
+  private normalizeSlug(data: { name?: string; slug?: string }) {
+    if (data.slug) {
+      data.slug = toSlug(data.slug);
     }
   }
 }

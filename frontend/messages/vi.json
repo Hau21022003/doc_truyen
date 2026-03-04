@@ -1,4 +1,37 @@
 {
+  "common": {
+    "actions": {
+      "create": "Tạo",
+      "creating": "Đang tạo...",
+      "update": "Cập nhật",
+      "updating": "Đang cập nhật...",
+      "delete": "Xóa",
+      "deleting": "Đang xóa...",
+      "cancel": "Hủy",
+      "confirm": "Xác nhận",
+      "close": "Đóng",
+      "search": "Tìm kiếm",
+      "searchPlaceholder": "Tìm kiếm...",
+      "searching": "Đang tìm kiếm...",
+      "actions": "Thao tác"
+    },
+    "selection": {
+      "clear": "Bỏ chọn",
+      "selected": "Đã chọn {count}"
+    },
+    "delete": {
+      "singleConfirm": "Bạn có chắc muốn xóa \"{itemName}\" không?",
+      "singleSuccess": "Đã xóa \"{itemName}\" thành công.",
+      "singleFailed": "Xóa mục thất bại.",
+      "multiple": "Xóa các mục đã chọn",
+      "multipleConfirm": "Bạn có chắc muốn xóa {count} mục đã chọn không?",
+      "multipleSuccess": "Đã xóa thành công {count} mục.",
+      "multipleFailed": "Xóa các mục đã chọn thất bại."
+    },
+    "dialog": {
+      "confirmDescription": "Bạn có chắc không?"
+    }
+  },
   "table": {
     "pagination": {
       "of": "trên",
@@ -6,7 +39,11 @@
       "itemsPerPage": "Số mục mỗi trang",
       "previous": "Trước",
       "next": "Sau"
-    }
+    },
+    "filter": "Lọc",
+    "hide": "Ẩn",
+    "errorTitle": "Oops! Đã xảy ra lỗi",
+    "retry": "Thử lại"
   },
   "filter": {
     "more": "Thêm",
@@ -88,6 +125,32 @@
       "Select your timezone": "Chọn múi giờ của bạn",
       "Updating": "Đang cập nhật",
       "Update profile successful!": "Cập nhật hồ sơ thành công!"
+    }
+  },
+
+  "tags": {
+    "deleteConfirm": "Bạn có chắc muốn xóa tag \"{name}\" không?",
+    "createTag": "Tạo Tag",
+    "upsertModal": {
+      "createTitle": "Tạo thẻ",
+      "editTitle": "Chỉnh sửa thẻ",
+      "fields": {
+        "name": {
+          "label": "Tên",
+          "placeholder": "Nhập tên thẻ"
+        },
+        "slug": {
+          "label": "Slug",
+          "placeholder": "Nhập slug của thẻ"
+        }
+      }
+    },
+    "columns": {
+      "name": "Tên",
+      "slug": "Slug",
+      "storyCount": "Số truyện",
+      "createdAt": "Ngày tạo",
+      "updatedAt": "Ngày cập nhật"
     }
   },
 
