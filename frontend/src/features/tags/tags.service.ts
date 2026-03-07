@@ -7,8 +7,10 @@ import { Tag } from "./tags.types";
 export const tagsService = {
   create: (data: UpsertTagInput) => http.post<Tag>("/tags", data),
 
-  findAll: (params?: TagQueryInput) =>
+  query: (params?: TagQueryInput) =>
     http.get<PaginationResponse<Tag>>("/tags", { params }),
+
+  findAll: () => http.get<Tag[]>("/tags/all"),
 
   update: (id: number, data: UpsertTagInput) =>
     http.patch<Tag>(`/tags/${id}`, data),

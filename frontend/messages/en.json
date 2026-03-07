@@ -13,7 +13,18 @@
       "search": "Search",
       "searchPlaceholder": "Search...",
       "searching": "Searching...",
-      "actions": "Actions"
+      "actions": "Actions",
+      "contentPlaceholder": "Write your content...",
+      "upload": "Upload",
+      "uploading": "Uploading..."
+    },
+    "upload": {
+      "title": "Upload file",
+      "supportedFormats": "Supported formats: {formats}",
+      "maxFileSize": "Maximum file size: {maxSize}",
+      "chooseFile": "Choose file",
+      "uploadSuccess": "Upload successful",
+      "uploadFailed": "Upload failed"
     },
     "selection": {
       "clear": "Clear selection",
@@ -32,6 +43,7 @@
       "confirmDescription": "Are you sure?"
     }
   },
+
   "table": {
     "pagination": {
       "of": "of",
@@ -45,6 +57,7 @@
     "errorTitle": "Oops! An error occurred",
     "retry": "retry"
   },
+
   "filter": {
     "more": "More",
     "clearAll": "Clear All",
@@ -64,6 +77,7 @@
       "lastMonth": "Last month"
     }
   },
+
   "layout": {
     "UserHeader": {
       "Login": "Login",
@@ -102,7 +116,8 @@
       "Logged out successfully": "Logged out successfully",
       "Logout failed": "Logout failed",
       "Users": "Users",
-      "Settings": "Settings"
+      "Settings": "Settings",
+      "story": "Story"
     },
     "AppLayout": {
       "Language": "Language",
@@ -112,6 +127,7 @@
       "system": "system"
     }
   },
+
   "users": {
     "EditProfileModal": {
       "Edit Profile": "Edit Profile",
@@ -150,6 +166,52 @@
       "storyCount": "Stories",
       "createdAt": "Created At",
       "updatedAt": "Updated At"
+    }
+  },
+
+  "story": {
+    "upsertModal": {
+      "createTitle": "Create story",
+      "editTitle": "Edit story",
+      "fields": {
+        "coverImage": {
+          "label": "Cover image"
+        },
+        "authorName": {
+          "label": "Author name",
+          "placeholder": "Enter author name"
+        },
+        "title": {
+          "label": "Title",
+          "placeholder": "Enter story title"
+        },
+        "slug": {
+          "label": "Slug",
+          "placeholder": "Enter story slug"
+        },
+        "description": {
+          "label": "Description",
+          "placeholder": "Write story description..."
+        },
+        "status": {
+          "label": "Status",
+          "placeholder": "Select status"
+        },
+        "progress": {
+          "label": "Progress",
+          "placeholder": "Select progress"
+        }
+      }
+    },
+    "statusConstants": {
+      "draft": "Draft",
+      "published": "Published",
+      "archived": "Archived"
+    },
+    "progressConstants": {
+      "ongoing": "Ongoing",
+      "completed": "Completed",
+      "hiatus": "Hiatus"
     }
   },
 

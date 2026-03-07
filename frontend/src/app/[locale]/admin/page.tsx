@@ -1,8 +1,10 @@
 "use client";
 
+import TextEditor from "@/components/text-editor";
 import { FilterBar } from "@/features/filter/components/filter-bar";
 import { FILTER_TYPE } from "@/features/filter/filter.constants";
 import { AnyFilterConfig } from "@/features/filter/filter.types";
+import { useState } from "react";
 
 const filterConfigs: AnyFilterConfig[] = [
   {
@@ -69,9 +71,11 @@ const filterConfigs: AnyFilterConfig[] = [
 
 // const filterConfigs = [dateRangeFilterConfig];
 export default function DashboardPage() {
+  const [search, setSearch] = useState("");
   return (
-    <div>
+    <div className="p-10">
       <FilterBar configs={filterConfigs} />
+      <TextEditor setValue={setSearch} className="" value={search} />
     </div>
   );
 }

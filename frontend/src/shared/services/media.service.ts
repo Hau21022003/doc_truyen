@@ -9,7 +9,7 @@ export const mediaService = {
     formData.append("tempId", tempId);
 
     const response = await http.post<{ url: string }>(
-      "/media/upload",
+      "/media/upload-draft",
       formData,
     );
 

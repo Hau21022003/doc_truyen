@@ -5,6 +5,7 @@ import {
 } from "@/components/icons";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
+import { SORT_DIRECTIONS } from "@/shared/constants";
 import { useMemo } from "react";
 import { TableColumnKey, TableState } from "../table.types";
 import { getHeaderCell, getTableCell } from "../utils";
@@ -93,11 +94,6 @@ export function DataTable<TColumn extends TableColumnKey, TRow>({
   error,
   onErrorRetry,
 }: DataTableProps<TColumn, TRow>) {
-  // const leftExtraColumns = extraColumns.filter((col) => col.sticky === "left");
-  // const rightExtraColumns = extraColumns.filter(
-  //   (col) => col.sticky === "right",
-  // );
-  // const normalExtraColumns = extraColumns.filter((col) => !col.sticky);
   const {
     leftSticky: leftExtraColumns,
     rightSticky: rightExtraColumns,
@@ -114,28 +110,6 @@ export function DataTable<TColumn extends TableColumnKey, TRow>({
   const { leftOffsets: leftStickyOffsets, rightOffsets: rightStickyOffsets } =
     calculateStickyOffsets(extraColumns);
 
-  // const leftStickyOffsets: Record<string, number> = {};
-  // const rightStickyOffsets: Record<string, number> = {};
-
-  // let leftOffset = 0;
-  // let rightOffset = 0;
-
-  // // LEFT sticky
-  // extraColumns
-  //   .filter((col) => col.sticky === "left")
-  //   .forEach((col) => {
-  //     leftStickyOffsets[col.key] = leftOffset;
-  //     leftOffset += col.width || 60;
-  //   });
-
-  // // RIGHT sticky (phải đảo ngược)
-  // [...extraColumns]
-  //   .reverse()
-  //   .filter((col) => col.sticky === "right")
-  //   .forEach((col) => {
-  //     rightStickyOffsets[col.key] = rightOffset;
-  //     rightOffset += col.width || 60;
-  //   });
   if (error) {
     return (
       <ErrorTable error={error} onRetry={onErrorRetry} className={className} />
@@ -194,11 +168,12 @@ export function DataTable<TColumn extends TableColumnKey, TRow>({
                           <IconChevronSort color="custom" />
                         )}
                         {column.key === tableState.sort.column &&
-                          tableState.sort.direction === "asc" && (
+                          tableState.sort.direction === SORT_DIRECTIONS.ASC && (
                             <IconArrowDown color="custom" />
                           )}
                         {column.key === tableState.sort.column &&
-                          tableState.sort.direction === "desc" && (
+                          tableState.sort.direction ===
+                            SORT_DIRECTIONS.DESC && (
                             <IconArrowUp color="custom" />
                           )}
                       </div>

@@ -14,6 +14,9 @@ export class Chapter extends IntegerIdBaseEntity {
   @Column()
   title: string;
 
+  @Column()
+  slug: string;
+
   @Column({ type: 'int', nullable: true })
   chapterNumber: number; // Số thứ tự chương
 

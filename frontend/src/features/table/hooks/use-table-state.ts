@@ -1,3 +1,4 @@
+import { SORT_DIRECTIONS, SortDirection } from "@/shared/constants";
 import { useState } from "react";
 import {
   TableColumnConfigMap,
@@ -39,8 +40,8 @@ export function useTableState<TColumn extends TableColumnKey, TRow>(
   // Sorting state
   const [sortState, setSortState] = useState<{
     column: TColumn | null;
-    direction: "asc" | "desc";
-  }>({ column: null, direction: "asc" });
+    direction: SortDirection;
+  }>({ column: null, direction: SORT_DIRECTIONS.ASC });
 
   // Pagination state
   const [pagination, setPagination] = useState({
@@ -58,10 +59,13 @@ export function useTableState<TColumn extends TableColumnKey, TRow>(
         if (sortState.column === column) {
           setSortState((prev) => ({
             ...prev,
-            direction: prev.direction === "asc" ? "desc" : "asc",
+            direction:
+              prev.direction === SORT_DIRECTIONS.ASC
+                ? SORT_DIRECTIONS.DESC
+                : SORT_DIRECTIONS.ASC,
           }));
         } else {
-          setSortState({ column, direction: "asc" });
+          setSortState({ column, direction: SORT_DIRECTIONS.ASC });
         }
       },
     },

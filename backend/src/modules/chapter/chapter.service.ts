@@ -1,3 +1,4 @@
+import { toSlug } from '@/common';
 import { MediaUsage } from '@/modules/media/constants/media.constants';
 import { MediaService } from '@/modules/media/media.service';
 import { Injectable, NotFoundException } from '@nestjs/common';
@@ -21,6 +22,7 @@ export class ChapterService {
   ) {}
 
   async create(createChapterDto: CreateChapterDto): Promise<Chapter> {
+    this.normalizeSlug(createChapterDto);
     return await this.chapterRepository.manager.transaction(async (manager) => {
       const { contents, storyId, ...rest } = createChapterDto;
 
@@ -50,6 +52,7 @@ export class ChapterService {
     id: number,
     updateChapterDto: UpdateChapterDto,
   ): Promise<Chapter> {
+    this.normalizeSlug(updateChapterDto);
     return await this.chapterRepository.manager.transaction(async (manager) => {
       const chapter = await manager.findOne(Chapter, {
         where: { id },
@@ -199,5 +202,11 @@ export class ChapterService {
         }),
       ),
     );
+  }
+
+  private normalizeSlug(data: { title?: string; slug?: string }) {
+    if (data.slug) {
+      data.slug = toSlug(data.slug);
+    }
   }
 }

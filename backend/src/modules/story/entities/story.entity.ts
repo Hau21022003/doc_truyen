@@ -20,6 +20,9 @@ export class Story extends IntegerIdBaseEntity {
   @Column()
   title: string;
 
+  @Column({ unique: true })
+  slug: string;
+
   @Column({ type: 'text', nullable: true })
   description?: string;
 

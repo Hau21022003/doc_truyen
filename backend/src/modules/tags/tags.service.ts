@@ -32,7 +32,7 @@ export class TagsService {
     return await this.tagRepository.save(newTag);
   }
 
-  async findAll(query: QueryBaseDto): Promise<PaginatedResponseDto<Tag>> {
+  async query(query: QueryBaseDto): Promise<PaginatedResponseDto<Tag>> {
     const { page, limit, search, sortBy, sortOrder } = query;
 
     let queryBuilder = this.tagRepository.createQueryBuilder(this.ENTITY_ALIAS);
@@ -75,6 +75,10 @@ export class TagsService {
       total,
       totalPages: Math.ceil(total / limit),
     };
+  }
+
+  findAll() {
+    return this.tagRepository.find();
   }
 
   async findOne(id: number): Promise<Tag> {

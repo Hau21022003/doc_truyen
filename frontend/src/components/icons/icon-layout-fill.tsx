@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import { IconProps, iconVariants } from "./icon-variants";
 
-export function IconTag({
+export function IconLayoutFill({
   className,
   size,
   color,
@@ -19,10 +19,10 @@ export function IconTag({
     >
       <path
         fill="currentColor"
-        d="M11.172 2a3 3 0 0 1 2.121.879l7.71 7.71a3.41 3.41 0 0 1 0 4.822l-5.592 5.592a3.41 3.41 0 0 1-4.822 0l-7.71-7.71A3 3 0 0 1 2 11.172V6a4 4 0 0 1 4-4zM7.5 5.5a2 2 0 0 0-1.995 1.85L5.5 7.5a2 2 0 1 0 2-2"
+        d="M8 3a3 3 0 0 1 3 3v1a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3zm0 9a3 3 0 0 1 3 3v3a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3v-3a3 3 0 0 1 3-3zm10-9a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3h-2a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3z"
       />
     </svg>
   );
 }
 
-export default IconTag;
+export default IconLayoutFill;

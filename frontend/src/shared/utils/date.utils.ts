@@ -1,11 +1,12 @@
 import { SUPPORTED_LOCALES } from "@/i18n/routing";
+import { format } from "date-fns";
 import { TimezoneValue } from "../constants";
 
 export type SupportedLocale = (typeof SUPPORTED_LOCALES)[number];
 /**
  * Format a date according to the specified locale and optional timeZone
  */
-export function formatDate(
+function formatDate(
   date: Date | string | number,
   options: {
     locale?: SupportedLocale;
@@ -52,7 +53,7 @@ export function formatDate(
 /**
  * Format a relative time (e.g., "2 days ago")
  */
-export function formatRelativeTime(
+function formatRelativeTime(
   date: Date | string | number,
   locale: SupportedLocale = "vi",
 ): string {
@@ -94,3 +95,11 @@ export function formatRelativeTime(
   const formatter = new Intl.RelativeTimeFormat(locale, { numeric: "auto" });
   return formatter.format(-interval, unit);
 }
+
+export const dateUtils = {
+  formatDateToYMD: (date: Date | string) => {
+    return format(new Date(date), "yyyy-MM-dd");
+  },
+  formatRelativeTime,
+  formatDate,
+};

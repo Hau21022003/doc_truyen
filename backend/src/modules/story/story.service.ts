@@ -1,5 +1,12 @@
 import {
+  createDateRangeInUTC,
+  PaginatedResponseDto,
+  QueryBuilderHelper,
+  toSlug,
+} from '@/common';
+import {
   BadRequestException,
+  ConflictException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -8,12 +15,19 @@ import { In, Repository } from 'typeorm';
 import { MediaUsage } from '../media/constants/media.constants';
 import { MediaService } from '../media/media.service';
 import { TagsService } from '../tags/tags.service';
+import {
+  STORY_SEARCHABLE_COLUMNS,
+  STORY_SORTABLE_COLUMNS,
+} from './constants/story.constants';
 import { CreateStoryDto } from './dto/create-story.dto';
+import { QueryStoryDto } from './dto/query-story.dto';
 import { UpdateStoryDto } from './dto/update-story.dto';
 import { Story } from './entities/story.entity';
 
 @Injectable()
 export class StoryService {
+  private readonly ENTITY_ALIAS = 'story';
+
   constructor(
     @InjectRepository(Story)
     private storyRepository: Repository<Story>,
@@ -21,6 +35,10 @@ export class StoryService {
     private readonly mediaService: MediaService,
   ) {}
   async create(createStoryDto: CreateStoryDto): Promise<Story> {
+    this.normalizeSlug(createStoryDto);
+
+    await this.checkUniqueFields(createStoryDto);
+
     const { tagIds, coverImageTempId, ...rest } = createStoryDto;
 
     const tags = await this.validateAndGetTags(tagIds);
@@ -37,10 +55,89 @@ export class StoryService {
     return this.storyRepository.save(story);
   }
 
-  async findAll(): Promise<Story[]> {
-    return this.storyRepository.find({
-      relations: ['tags'],
+  async findAll(queryDto: QueryStoryDto): Promise<PaginatedResponseDto<Story>> {
+    const {
+      search,
+      status,
+      progress,
+      tagIds,
+      sortBy,
+      sortOrder,
+      page,
+      limit,
+      endDate,
+      startDate,
+      timezone,
+    } = queryDto;
+
+    let queryBuilder = this.storyRepository.createQueryBuilder(
+      this.ENTITY_ALIAS,
+    );
+
+    queryBuilder.leftJoinAndSelect(`${this.ENTITY_ALIAS}.tags`, 'tags');
+
+    // Apply search using helper
+    queryBuilder = QueryBuilderHelper.applySearch(
+      queryBuilder,
+      this.ENTITY_ALIAS,
+      search,
+      STORY_SEARCHABLE_COLUMNS,
+    );
+    const { utcEndDate, utcStartDate } = createDateRangeInUTC({
+      timezone,
+      endDate,
+      startDate,
     });
+    queryBuilder = QueryBuilderHelper.applyDateRange(
+      queryBuilder,
+      this.ENTITY_ALIAS,
+      'updatedAt',
+      utcStartDate,
+      utcEndDate,
+    );
+
+    // Apply sorting using helper
+    queryBuilder = QueryBuilderHelper.applySorting(
+      queryBuilder,
+      this.ENTITY_ALIAS,
+      sortBy,
+      sortOrder,
+      STORY_SORTABLE_COLUMNS,
+    );
+
+    // Apply pagination using helper
+    queryBuilder = QueryBuilderHelper.applyPagination(
+      queryBuilder,
+      page,
+      limit,
+    );
+
+    // business filters
+    if (status) {
+      queryBuilder.andWhere(`${this.ENTITY_ALIAS}.status = :status`, {
+        status,
+      });
+    }
+
+    if (progress) {
+      queryBuilder.andWhere(`${this.ENTITY_ALIAS}.progress = :progress`, {
+        progress,
+      });
+    }
+
+    if (tagIds?.length) {
+      queryBuilder.andWhere(`tags.id IN (:...tagIds)`, { tagIds });
+    }
+
+    const [data, total] = await queryBuilder.getManyAndCount();
+
+    return {
+      data,
+      page,
+      limit,
+      total,
+      totalPages: Math.ceil(total / limit),
+    };
   }
 
   async findOne(id: number): Promise<Story> {
@@ -57,9 +154,13 @@ export class StoryService {
   }
 
   async update(id: number, updateStoryDto: UpdateStoryDto): Promise<Story> {
-    const { tagIds, coverImageTempId, ...rest } = updateStoryDto;
-
     const story = await this.findOne(id);
+
+    this.normalizeSlug(updateStoryDto);
+
+    await this.checkUniqueFields(updateStoryDto, id);
+
+    const { tagIds, coverImageTempId, ...rest } = updateStoryDto;
 
     Object.assign(story, rest);
 
@@ -129,5 +230,24 @@ export class StoryService {
     }
 
     return media.url;
+  }
+
+  private async checkUniqueFields(data: { slug?: string }, ignoreId?: number) {
+    if (data.slug) {
+      const existingBySlug = await this.storyRepository.findOne({
+        where: { slug: data.slug },
+      });
+      if (existingBySlug && (!ignoreId || existingBySlug.id !== ignoreId)) {
+        throw new ConflictException(
+          `Story with slug '${data.slug}' already exists`,
+        );
+      }
+    }
+  }
+
+  private normalizeSlug(data: { title?: string; slug?: string }) {
+    if (data.slug) {
+      data.slug = toSlug(data.slug);
+    }
   }
 }

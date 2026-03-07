@@ -1,6 +1,6 @@
-import { ApiPropertyOptional } from '@nestjs/swagger';
-import { Transform } from 'class-transformer';
-import { IsDateString, IsIn, IsOptional, IsString } from 'class-validator';
+import { SortDirections } from '@/common/constants';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsDateString, IsEnum, IsOptional, IsString } from 'class-validator';
 import { DateRangeDto } from '../base/date-range.dto';
 import { FilterDto } from '../base/filter.dto';
 import { PaginationDto } from '../base/pagination.dto';
@@ -13,7 +13,6 @@ export class QueryBaseDto
   // FilterDto properties
   @ApiPropertyOptional({
     description: 'Search term',
-    example: 'keyword',
   })
   @IsOptional()
   @IsString()
@@ -21,8 +20,7 @@ export class QueryBaseDto
 
   // SortingDto properties
   @ApiPropertyOptional({
-    description: 'Sort field',
-    example: 'createdAt',
+    description: 'Sort field createdAt',
   })
   @IsOptional()
   @IsString()
@@ -31,29 +29,35 @@ export class QueryBaseDto
   @ApiPropertyOptional({
     description: 'Sort direction',
     example: 'DESC',
-    enum: ['ASC', 'DESC'],
+    enum: SortDirections,
   })
   @IsOptional()
-  @Transform(({ value }) => value?.toUpperCase())
-  @IsIn(['ASC', 'DESC'])
-  sortOrder?: 'ASC' | 'DESC' = 'DESC';
+  @IsEnum(SortDirections)
+  sortOrder?: SortDirections = SortDirections.ASC;
 
   // DateRangeDto properties
   @ApiPropertyOptional({
-    description: 'Start date for filtering',
-    example: '2023-01-01',
+    description: 'Start date for filtering (example: 2023-01-01)',
   })
   @IsOptional()
   @IsDateString()
   startDate?: string;
 
   @ApiPropertyOptional({
-    description: 'End date for filtering',
-    example: '2023-12-31',
+    description: 'End date for filtering (example: 2023-01-01)',
   })
   @IsOptional()
   @IsDateString()
   endDate?: string;
+
+  @ApiProperty({
+    example: 'Asia/Saigon',
+    description: 'IANA timezone',
+    default: 'UTC',
+  })
+  @IsOptional()
+  @IsString()
+  timezone: string;
 
   // Helper methods
   get hasSorting(): boolean {

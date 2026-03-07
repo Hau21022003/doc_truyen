@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsUUID } from 'class-validator';
 
-export class UploadDto {
+export class UploadDraftDto {
   @IsNotEmpty()
   @IsUUID()
   tempId: string;

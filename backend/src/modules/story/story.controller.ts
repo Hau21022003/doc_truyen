@@ -8,11 +8,13 @@ import {
   Param,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { Public } from '../auth/decorators/public.decorator';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { UserRole } from '../users/entities/user.entity';
 import { CreateStoryDto } from './dto/create-story.dto';
+import { QueryStoryDto } from './dto/query-story.dto';
 import { UpdateStoryDto } from './dto/update-story.dto';
 import { StoryService } from './story.service';
 
@@ -28,8 +30,8 @@ export class StoryController {
 
   @Get()
   @Public()
-  findAll() {
-    return this.storyService.findAll();
+  findAll(@Query() queryDto: QueryStoryDto) {
+    return this.storyService.findAll(queryDto);
   }
 
   @Get(':id')

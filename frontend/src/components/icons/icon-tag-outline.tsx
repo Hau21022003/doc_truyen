@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import { IconProps, iconVariants } from "./icon-variants";
 
-export function IconLayout({
+export function IconTagOutline({
   className,
   size,
   color,
@@ -19,10 +19,10 @@ export function IconLayout({
     >
       <path
         fill="currentColor"
-        d="M8 3a3 3 0 0 1 3 3v1a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3zm0 9a3 3 0 0 1 3 3v3a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3v-3a3 3 0 0 1 3-3zm10-9a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3h-2a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3z"
+        d="m21.41 11.58l-9-9A2 2 0 0 0 11 2H4a2 2 0 0 0-2 2v7a2 2 0 0 0 .59 1.42l9 9A2 2 0 0 0 13 22a2 2 0 0 0 1.41-.59l7-7A2 2 0 0 0 22 13a2 2 0 0 0-.59-1.42M13 20l-9-9V4h7l9 9M6.5 5A1.5 1.5 0 1 1 5 6.5A1.5 1.5 0 0 1 6.5 5"
       />
     </svg>
   );
 }
 
-export default IconLayout;
+export default IconTagOutline;

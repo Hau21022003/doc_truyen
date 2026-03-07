@@ -1,9 +1,9 @@
-import { fromZonedTime, toZonedTime } from 'date-fns-tz';
-import { startOfDay, endOfDay, format, parseISO } from 'date-fns';
+import { endOfDay, parseISO, startOfDay } from 'date-fns';
+import { fromZonedTime } from 'date-fns-tz';
 
 export interface DateRangeInput {
-  startDate?: string;
-  endDate?: string;
+  startDate?: string; // 2024-12-24
+  endDate?: string; // 2024-12-24
   timezone: string; // Bắt buộc: 'America/New_York', 'Asia/Ho_Chi_Minh', etc.
 }
 
@@ -19,7 +19,7 @@ export interface DateRangeOutput {
  * Chuyển đổi ngày tháng từ timezone của người dùng sang UTC để query database
  */
 export function createDateRangeInUTC(input: DateRangeInput): DateRangeOutput {
-  const { startDate, endDate, timezone } = input;
+  const { startDate, endDate, timezone = 'UTC' } = input;
 
   if (!startDate && !endDate) {
     return { timezone };

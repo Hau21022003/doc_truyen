@@ -7,7 +7,7 @@ import {
   IconLogout,
   IconNotifcations,
   IconSetting,
-  IconUser,
+  IconUserFill,
 } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { useLogoutMutation } from "@/features/auth/auth.mutation";
@@ -216,7 +216,7 @@ export default function UsersHeader() {
                         "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
                       )}
                     >
-                      <IconUser />
+                      <IconUserFill />
                       {t("Profile")}
                     </button>
 

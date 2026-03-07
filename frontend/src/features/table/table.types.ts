@@ -1,3 +1,5 @@
+import { SortDirection } from "@/shared/constants";
+
 export type TableColumnKey = string;
 
 export type TableColumnConfig<TRow> = {
@@ -90,11 +92,11 @@ export type TableState<
 > = TableColumnsState<TColumn, TRow> & {
   sort: {
     column: TColumn | null;
-    direction: "asc" | "desc";
+    direction: SortDirection;
     setSort: React.Dispatch<
       React.SetStateAction<{
         column: TColumn | null;
-        direction: "asc" | "desc";
+        direction: SortDirection;
       }>
     >;
     toggleSort: (column: TColumn) => void;

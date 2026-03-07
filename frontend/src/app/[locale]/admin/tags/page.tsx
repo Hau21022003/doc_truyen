@@ -55,6 +55,15 @@ export default function TagsPage() {
 
   const { removeOne, removeMany } = useTagActions();
 
+  const handleDelete = async (tag: Tag) => {
+    const success = await removeOne(tag);
+
+    // Xóa ID khỏi danh sách chọn
+    if (success && isSelected(tag)) {
+      toggleRow(tag);
+    }
+  };
+
   const handleBulkDelete = async () => {
     const success = await removeMany(selectedIds);
     if (success) clearSelection();
@@ -142,7 +151,7 @@ export default function TagsPage() {
           <Button
             size="icon"
             variant={"outline"}
-            onClick={() => removeOne(tag)}
+            onClick={() => handleDelete(tag)}
             className="[&_svg:not([class*='size-'])]:size-5"
           >
             <IconArchive color="custom" className="text-destructive" />

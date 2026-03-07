@@ -9,8 +9,7 @@ export const TAGS_QUERY_KEYS = {
     ...TAGS_QUERY_KEYS.lists(),
     params,
   ],
-  // details: () => [...TAGS_QUERY_KEYS.all, "detail"],
-  // detail: (id: number) => [...TAGS_QUERY_KEYS.details(), id],
+  allList: () => [...TAGS_QUERY_KEYS.all, "all"],
 };
 
 /**
@@ -19,17 +18,16 @@ export const TAGS_QUERY_KEYS = {
 export const useTagsQuery = (params?: TagQueryInput) => {
   return useQuery({
     queryKey: TAGS_QUERY_KEYS.list(params || {}),
-    queryFn: () => tagsService.findAll(params),
+    queryFn: () => tagsService.query(params),
   });
 };
 
-// /**
-//  * Get a specific tag by ID
-//  */
-// export const useTagQuery = (id: number) => {
-//   return useQuery({
-//     queryKey: TAGS_QUERY_KEYS.detail(id),
-//     queryFn: () => tagsService.findOne(id),
-//     enabled: !!id,
-//   });
-// };
+/**
+ * Get all tags (no pagination)
+ */
+export const useAllTagsQuery = () => {
+  return useQuery({
+    queryKey: TAGS_QUERY_KEYS.allList(),
+    queryFn: () => tagsService.findAll(),
+  });
+};

@@ -16,6 +16,9 @@ export const useCreateTagMutation = () => {
       queryClient.invalidateQueries({
         queryKey: TAGS_QUERY_KEYS.lists(),
       });
+      queryClient.invalidateQueries({
+        queryKey: TAGS_QUERY_KEYS.allList(),
+      });
     },
   });
 };
@@ -34,6 +37,9 @@ export const useUpdateTagMutation = () => {
       queryClient.invalidateQueries({
         queryKey: TAGS_QUERY_KEYS.lists(),
       });
+      queryClient.invalidateQueries({
+        queryKey: TAGS_QUERY_KEYS.allList(),
+      });
     },
   });
 };
@@ -51,6 +57,9 @@ export const useDeleteTagMutation = () => {
       queryClient.invalidateQueries({
         queryKey: TAGS_QUERY_KEYS.lists(),
       });
+      queryClient.invalidateQueries({
+        queryKey: TAGS_QUERY_KEYS.allList(),
+      });
     },
   });
 };
@@ -67,6 +76,9 @@ export const useDeleteManyTagMutation = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: TAGS_QUERY_KEYS.lists(),
+      });
+      queryClient.invalidateQueries({
+        queryKey: TAGS_QUERY_KEYS.allList(),
       });
     },
   });

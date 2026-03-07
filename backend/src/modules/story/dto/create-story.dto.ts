@@ -1,9 +1,11 @@
+import { StringTrim } from '@/common';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsArray,
   IsEnum,
   IsIn,
   IsInt,
+  IsNotEmpty,
   IsOptional,
   IsString,
   MaxLength,
@@ -18,9 +20,20 @@ export class CreateStoryDto {
     type: String,
   })
   @IsString()
+  @StringTrim()
   @MinLength(1)
   @MaxLength(200)
   title: string;
+
+  @ApiProperty({
+    description: 'The URL-friendly slug for the genre',
+    example: 'science-fiction',
+    type: String,
+  })
+  @IsString()
+  @StringTrim()
+  @IsNotEmpty()
+  slug: string;
 
   @ApiPropertyOptional({
     description: 'The description of the story',

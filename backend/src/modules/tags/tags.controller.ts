@@ -12,6 +12,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Public } from '../auth/decorators/public.decorator';
 import { CreateTagDto } from './dto/create-genre.dto';
 import { DeleteManyTagsDto } from './dto/delete-many-tags.dto';
 import { UpdateTagDto } from './dto/update-genre.dto';
@@ -31,8 +32,14 @@ export class TagsController {
 
   @Get()
   @ApiResponse({ status: 200, type: PaginatedResponseDto<Tag> })
-  async findAll(@Query() query: QueryBaseDto) {
-    return await this.tagsService.findAll(query);
+  async query(@Query() query: QueryBaseDto) {
+    return await this.tagsService.query(query);
+  }
+
+  @Public()
+  @Get('all')
+  findAll() {
+    return this.tagsService.findAll();
   }
 
   @Get(':id')

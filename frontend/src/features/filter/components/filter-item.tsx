@@ -13,7 +13,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import { formatDate } from "@/shared/utils";
+import { dateUtils } from "@/shared/utils";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { FILTER_TYPE } from "../filter.constants";
@@ -125,7 +125,7 @@ export function FilterItem({
             return t(`preset.${key}`);
           }
 
-          return `${formatDate(value.from)} - ${formatDate(value.to)}`;
+          return `${dateUtils.formatDate(value.from)} - ${dateUtils.formatDate(value.to)}`;
         }
 
         return "";

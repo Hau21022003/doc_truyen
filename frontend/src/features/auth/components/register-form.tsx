@@ -4,7 +4,7 @@ import {
   IconKey,
   IconLoading,
   IconMail,
-  IconUser,
+  IconUserFill,
 } from "@/components/icons";
 import IconCheck from "@/components/icons/icon-check";
 import { Button } from "@/components/ui/button";
@@ -150,7 +150,7 @@ export default function RegisterForm({
               <Field data-invalid={fieldState.invalid}>
                 <InputGroup>
                   <InputGroupAddon align="inline-start" className="pl-2">
-                    <IconUser className="cursor-pointer text-gray-500" />
+                    <IconUserFill className="cursor-pointer text-gray-500" />
                   </InputGroupAddon>
                   <InputGroupInput
                     {...field}

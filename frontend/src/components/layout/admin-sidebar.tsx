@@ -11,14 +11,19 @@ import Link from "next/link";
 import { forwardRef, useMemo } from "react";
 import { toast } from "sonner";
 import {
+  IconBookFill,
+  IconBookOutline,
   IconCloseSidebar,
-  IconLayout,
+  IconLayoutFill,
+  IconLayoutOutline,
   IconLogo,
   IconLogout,
   IconOpenSidebar,
   IconSetting,
-  IconTag,
-  IconUser,
+  IconTagFill,
+  IconTagOutline,
+  IconUserFill,
+  IconUserOutline,
 } from "../icons";
 import {
   Dialog,
@@ -45,6 +50,7 @@ const SidebarItem = forwardRef<
   {
     href?: string;
     icon: React.ComponentType<any>;
+    iconActive: React.ComponentType<any>;
     title: string;
     isActive?: boolean;
     isExpanded: boolean;
@@ -56,6 +62,7 @@ const SidebarItem = forwardRef<
   {
     href,
     icon: Icon,
+    iconActive: IconActive,
     title,
     isActive,
     isExpanded,
@@ -76,7 +83,11 @@ const SidebarItem = forwardRef<
 
   const content = (
     <>
-      <Icon variant="default" color="custom" />
+      {isActive ? (
+        <IconActive variant="default" color="custom" />
+      ) : (
+        <Icon variant="default" color="custom" />
+      )}
       {isExpanded && title}
     </>
   );
@@ -144,17 +155,26 @@ export function AdminSidebar() {
       {
         title: t("Dashboard"),
         href: "/admin",
-        icon: IconLayout,
+        icon: IconLayoutOutline,
+        iconActive: IconLayoutFill,
       },
       {
         title: t("Tags"),
         href: "/admin/tags",
-        icon: IconTag,
+        icon: IconTagOutline,
+        iconActive: IconTagFill,
+      },
+      {
+        title: t("story"),
+        href: "/admin/stories",
+        icon: IconBookOutline,
+        iconActive: IconBookFill,
       },
       {
         title: t("Users"),
         href: "/admin/users",
-        icon: IconUser,
+        icon: IconUserOutline,
+        iconActive: IconUserFill,
       },
     ],
     [t],
@@ -245,6 +265,7 @@ export function AdminSidebar() {
             key={link.href}
             href={link.href}
             icon={link.icon}
+            iconActive={link.iconActive}
             title={link.title}
             isActive={pathname === link.href}
             isExpanded={isExpanded}
@@ -259,6 +280,7 @@ export function AdminSidebar() {
             <DialogTrigger asChild>
               <SidebarItem
                 icon={IconSetting}
+                iconActive={IconSetting}
                 title={t("Settings")}
                 isExpanded={isExpanded}
                 tooltipText={t("Settings")}
@@ -278,6 +300,7 @@ export function AdminSidebar() {
             <PopoverTrigger asChild>
               <SidebarItem
                 icon={IconSetting}
+                iconActive={IconSetting}
                 title={t("Settings")}
                 isExpanded={isExpanded}
                 tooltipText={t("Settings")}
@@ -299,6 +322,7 @@ export function AdminSidebar() {
         )}
         <SidebarItem
           icon={IconLogout}
+          iconActive={IconLogout}
           title={t("Log out")}
           isExpanded={isExpanded}
           onClick={handleLogout}

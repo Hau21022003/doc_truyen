@@ -5,16 +5,29 @@ import {
   HttpError,
   HttpErrorPayload,
 } from "@/lib/error";
-import { HTTP_STATUS, SHARED_ENDPOINTS } from "@/shared/constants";
+import {
+  HTTP_STATUS,
+  QUERY_SEPARATORS,
+  SHARED_ENDPOINTS,
+} from "@/shared/constants";
 import { authEvents } from "@/shared/events/auth.events";
 
 // Biến để theo dõi trạng thái refresh token
 let isRefreshing = false;
 const refreshSubscribers: ((success: boolean) => void)[] = [];
 
+type QueryValue =
+  | string
+  | number
+  | boolean
+  | null
+  | undefined
+  | string[]
+  | number[];
+
 type CustomOptions = Omit<RequestInit, "method"> & {
   baseUrl?: string | undefined;
-  params?: Record<string, string | number | boolean>;
+  params?: Record<string, QueryValue>;
   timeout?: number; // ms
   // default true - Xác định có cần mở login modal không khi không login
   authRequired?: boolean;
@@ -36,7 +49,7 @@ export const triggerLoginRequired = () => {
 const buildUrl = (
   url: string,
   baseURL: string,
-  params?: Record<string, string | number | boolean>,
+  params?: Record<string, QueryValue>,
 ): string => {
   // Nếu url đã là URL đầy đủ, sử dụng nó trực tiếp
   const fullUrl = url.startsWith("http")
@@ -48,6 +61,13 @@ const buildUrl = (
   const searchParams = new URLSearchParams();
   Object.entries(params).forEach(([key, value]) => {
     if (value !== undefined && value !== null) {
+      if (Array.isArray(value)) {
+        if (value.length === 0) return;
+
+        searchParams.append(key, value.join(QUERY_SEPARATORS.LIST));
+        return;
+      }
+
       searchParams.append(key, String(value));
     }
   });

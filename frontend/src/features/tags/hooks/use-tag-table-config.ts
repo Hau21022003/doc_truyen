@@ -1,7 +1,7 @@
 import { TableColumnConfigMap } from "@/features/table";
 import { useTimeZone } from "@/hooks";
 import { SUPPORTED_LOCALES } from "@/i18n/routing";
-import { formatDate } from "@/shared/utils";
+import { dateUtils } from "@/shared/utils";
 import { useLocale, useTranslations } from "next-intl";
 import { useMemo } from "react";
 import { TAG_COLUMNS, TagColumn } from "../tags.constants";
@@ -34,14 +34,16 @@ export const useTagTableConfig = () => {
         defaultVisible: true,
         resizable: true,
         sortable: true,
-        format: (value) => formatDate(value, { locale, timeZone: timezone }),
+        format: (value) =>
+          dateUtils.formatDate(value, { locale, timeZone: timezone }),
       },
       updatedAt: {
         label: tTagColumns(TAG_COLUMNS.UPDATED_AT),
         defaultVisible: true,
         resizable: true,
         sortable: true,
-        format: (value) => formatDate(value, { locale, timeZone: timezone }),
+        format: (value) =>
+          dateUtils.formatDate(value, { locale, timeZone: timezone }),
       },
     }),
     [tTagColumns, locale, timezone],

@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import { IconProps, iconVariants } from "./icon-variants";
 
-export function IconUser({
+export function IconBookOutline({
   className,
   size,
   color,
@@ -17,12 +17,13 @@ export function IconUser({
       viewBox="0 0 24 24"
       className={cn(iconVariants({ size, color, variant }), className)}
     >
+      <path fill="currentColor" d="M8 6h9v2H8z" />
       <path
         fill="currentColor"
-        d="M12 2a5 5 0 1 1-5 5l.005-.217A5 5 0 0 1 12 2m2 12a5 5 0 0 1 5 5v1a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-1a5 5 0 0 1 5-5z"
+        d="M20 2H6C4.35 2 3 3.35 3 5v14c0 1.65 1.35 3 3 3h15v-2H6c-.55 0-1-.45-1-1s.45-1 1-1h14c.55 0 1-.45 1-1V3c0-.55-.45-1-1-1m-6 14H6c-.35 0-.69.07-1 .18V5c0-.55.45-1 1-1h13v12z"
       />
     </svg>
   );
 }
 
-export default IconUser;
+export default IconBookOutline;

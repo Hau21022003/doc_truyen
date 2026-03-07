@@ -1,4 +1,4 @@
-import { IsExist } from '@/common';
+import { IsExist, StringTrim } from '@/common';
 import { Story } from '@/modules/story/entities/story.entity';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
@@ -18,8 +18,20 @@ export class CreateChapterDto {
     description: 'Tiêu đề của chương',
     example: 'Chương 1: Bắt đầu hành trình',
   })
+  @StringTrim()
   @IsString()
+  @IsNotEmpty()
   title: string;
+
+  @ApiProperty({
+    description: 'The URL-friendly slug for the genre',
+    example: 'science-fiction',
+    type: String,
+  })
+  @IsString()
+  @StringTrim()
+  @IsNotEmpty()
+  slug: string;
 
   @ApiPropertyOptional({
     description: 'Số thứ tự của chương',

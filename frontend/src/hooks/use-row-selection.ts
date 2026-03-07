@@ -1,4 +1,3 @@
-// hooks/use-row-selection.ts
 import { useCallback, useMemo, useState } from "react";
 
 export function useRowSelection<T extends { id: number | string }>() {
@@ -16,32 +15,20 @@ export function useRowSelection<T extends { id: number | string }>() {
     });
   }, []);
 
-  // const toggleAll = useCallback((items: T[]) => {
-  //   setSelectedRows((prev) => {
-  //     // Nếu tất cả đều được chọn, xóa hết
-  //     if (
-  //       prev.size === items.length &&
-  //       items.every((item) => prev.has(item.id))
-  //     ) {
-  //       return new Set();
-  //     }
-
-  //     // Nếu không, chọn tất cả
-  //     return new Set(items.map((item) => item.id));
-  //   });
-  // }, []);
-
   const toggleAll = useCallback((items: T[]) => {
     setSelectedRows((prev) => {
-      const allSelected = items.every((item) => prev.has(item.id));
+      const newSet = new Set(prev);
+      const allSelected = items.every((item) => newSet.has(item.id));
 
       if (allSelected) {
-        const newSet = new Set(prev);
+        // remove current items
         items.forEach((item) => newSet.delete(item.id));
-        return newSet;
+      } else {
+        // add current items
+        items.forEach((item) => newSet.add(item.id));
       }
 
-      return new Set(items.map((item) => item.id));
+      return newSet;
     });
   }, []);
 

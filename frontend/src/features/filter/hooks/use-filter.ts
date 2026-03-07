@@ -76,6 +76,14 @@ export function useFilter(config: AnyFilterConfig[]) {
 
   const resetFilters = () => {
     setFilterStateMap(initialState);
+
+    // Gọi callbacks với giá trị reset
+    config.forEach((filterConfig) => {
+      const initialValue = filterConfig.defaultValue ?? null;
+      if (filterConfig?.onChange) {
+        (filterConfig as any).onChange(initialValue);
+      }
+    });
   };
 
   return {

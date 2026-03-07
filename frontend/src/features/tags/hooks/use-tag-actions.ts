@@ -1,6 +1,6 @@
 import { getErrorMessage } from "@/lib/error";
 import { useConfirm } from "@/providers/confirm-provider";
-import { truncate } from "@/shared/utils";
+import { stringUtils } from "@/shared/utils";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import {
@@ -20,7 +20,7 @@ export const useTagActions = () => {
     const confirmed = await confirm({
       title: tCommon("actions.delete"),
       description: tCommon("delete.singleConfirm", {
-        itemName: truncate(tag.name),
+        itemName: stringUtils.truncate(tag.name),
       }),
       variant: "destructive",
     });

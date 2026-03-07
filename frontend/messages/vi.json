@@ -13,7 +13,18 @@
       "search": "Tìm kiếm",
       "searchPlaceholder": "Tìm kiếm...",
       "searching": "Đang tìm kiếm...",
-      "actions": "Thao tác"
+      "actions": "Thao tác",
+      "contentPlaceholder": "Nhập nội dung...",
+      "upload": "Tải lên",
+      "uploading": "Đang tải lên..."
+    },
+    "upload": {
+      "title": "Tải tệp lên",
+      "supportedFormats": "Định dạng hỗ trợ: {formats}",
+      "maxFileSize": "Dung lượng tệp tối đa: {maxSize}",
+      "chooseFile": "Chọn tệp",
+      "uploadSuccess": "Tải lên thành công",
+      "uploadFailed": "Tải lên thất bại"
     },
     "selection": {
       "clear": "Bỏ chọn",
@@ -32,6 +43,7 @@
       "confirmDescription": "Bạn có chắc không?"
     }
   },
+
   "table": {
     "pagination": {
       "of": "trên",
@@ -45,6 +57,7 @@
     "errorTitle": "Oops! Đã xảy ra lỗi",
     "retry": "Thử lại"
   },
+
   "filter": {
     "more": "Thêm",
     "clearAll": "Xóa tất cả",
@@ -64,6 +77,7 @@
       "lastMonth": "Tháng trước"
     }
   },
+
   "layout": {
     "AppLayout": {
       "Language": "Ngôn ngữ",
@@ -109,7 +123,8 @@
       "Logged out successfully": "Đăng xuất thành công",
       "Logout failed": "Đăng xuất thất bại",
       "Users": "Người dùng",
-      "Settings": "Cài đặt"
+      "Settings": "Cài đặt",
+      "story": "Truyện"
     }
   },
 
@@ -151,6 +166,52 @@
       "storyCount": "Số truyện",
       "createdAt": "Ngày tạo",
       "updatedAt": "Ngày cập nhật"
+    }
+  },
+
+  "story": {
+    "upsertModal": {
+      "createTitle": "Tạo truyện",
+      "editTitle": "Chỉnh sửa truyện",
+      "fields": {
+        "coverImage": {
+          "label": "Ảnh bìa"
+        },
+        "authorName": {
+          "label": "Tên tác giả",
+          "placeholder": "Nhập tên tác giả"
+        },
+        "title": {
+          "label": "Tiêu đề",
+          "placeholder": "Nhập tiêu đề truyện"
+        },
+        "slug": {
+          "label": "Slug",
+          "placeholder": "Nhập slug truyện"
+        },
+        "description": {
+          "label": "Mô tả",
+          "placeholder": "Nhập mô tả truyện..."
+        },
+        "status": {
+          "label": "Trạng thái",
+          "placeholder": "Chọn trạng thái"
+        },
+        "progress": {
+          "label": "Tiến độ",
+          "placeholder": "Chọn tiến độ"
+        }
+      }
+    },
+    "statusConstants": {
+      "draft": "Bản nháp",
+      "published": "Đã xuất bản",
+      "archived": "Lưu trữ"
+    },
+    "progressConstants": {
+      "ongoing": "Đang tiến hành",
+      "completed": "Hoàn thành",
+      "hiatus": "Tạm ngưng"
     }
   },
 
