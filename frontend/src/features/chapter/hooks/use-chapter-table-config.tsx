@@ -27,12 +27,7 @@ export const useChapterTableConfig = () => {
         sortable: isChapterSortableColumn(CHAPTER_COLUMNS.CHAPTER_NUMBER),
         render: (row) => {
           return (
-            <p>
-              {row.chapterNumber &&
-                tChapter("chapterNumber", { number: row.chapterNumber })}
-              {row.chapterNumber && ": "}
-              {row.title}
-            </p>
+            <p className="line-clamp-3">{`Chap ${row.chapterNumber}: ${row.title}`}</p>
           );
         },
       },
@@ -45,8 +40,8 @@ export const useChapterTableConfig = () => {
       status: {
         label: tChapterColumns(CHAPTER_COLUMNS.STATUS),
         defaultVisible: true,
-        resizable: false,
-        width: 80,
+        resizable: true,
+        width: 120,
         sortable: isChapterSortableColumn(CHAPTER_COLUMNS.STATUS),
         render: (chapter) => {
           return chapter.status;
@@ -70,7 +65,7 @@ export const useChapterTableConfig = () => {
       },
       updatedAt: {
         label: tChapterColumns(CHAPTER_COLUMNS.UPDATED_AT),
-        defaultVisible: false,
+        defaultVisible: true,
         resizable: true,
         sortable: isChapterSortableColumn(CHAPTER_COLUMNS.UPDATED_AT),
         format: (value) =>

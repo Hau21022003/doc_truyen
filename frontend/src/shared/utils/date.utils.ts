@@ -15,6 +15,10 @@ function formatDate(
     timeZone?: TimezoneValue | string;
   } = {},
 ): string {
+  if (date === null || date === undefined || date === "") {
+    return "-";
+  }
+
   const {
     locale = "vi",
     format = "medium",

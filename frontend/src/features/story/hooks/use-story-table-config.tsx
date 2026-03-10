@@ -9,6 +9,7 @@ import { SUPPORTED_LOCALES } from "@/i18n/routing";
 import { dateUtils, stringUtils } from "@/shared/utils";
 import { imageUtils } from "@/shared/utils/image.utils";
 import { useLocale, useTranslations } from "next-intl";
+import Link from "next/link";
 import { useMemo } from "react";
 import {
   isStorySortableColumn,
@@ -31,23 +32,25 @@ export const useStoryTableConfig = () => {
         sortable: isStorySortableColumn(STORY_COLUMNS.TITLE),
         render: (story) => {
           return (
-            <div className="h-full flex items-center gap-2">
-              <img
-                src={
-                  story.coverImage
-                    ? imageUtils.optimizeCloudinary(story.coverImage, {
-                        width: 80,
-                        height: 80,
-                      })
-                    : ""
-                }
-                loading="lazy"
-                decoding="async"
-                alt={`CoverImage_${story.id}`}
-                className="w-14 h-14 rounded-md object-cover shrink-0"
-              />
-              <p className="line-clamp-2">{story.title}</p>
-            </div>
+            <Link href={`/admin/story/${story.id}/chapters`}>
+              <div className="h-full flex items-center gap-2">
+                <img
+                  src={
+                    story.coverImage
+                      ? imageUtils.optimizeCloudinary(story.coverImage, {
+                          width: 80,
+                          height: 80,
+                        })
+                      : ""
+                  }
+                  loading="lazy"
+                  decoding="async"
+                  alt={`CoverImage_${story.id}`}
+                  className="w-14 h-14 rounded-md object-cover shrink-0"
+                />
+                <p className="line-clamp-2">{story.title}</p>
+              </div>
+            </Link>
           );
         },
       },

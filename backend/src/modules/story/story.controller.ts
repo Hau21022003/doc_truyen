@@ -1,3 +1,4 @@
+import { ParseIdsPipe } from '@/common/pipes/parse-ids.pipe';
 import {
   Body,
   Controller,
@@ -6,6 +7,7 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   Query,
@@ -45,10 +47,17 @@ export class StoryController {
     return this.storyService.update(+id, updateStoryDto);
   }
 
+  @Delete('bulk')
+  @Roles(UserRole.SYSTEM_ADMIN)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async removeMany(@Query('ids', ParseIdsPipe) ids: number[]) {
+    return this.storyService.removeMany(ids);
+  }
+
   @Delete(':id')
   @Roles(UserRole.SYSTEM_ADMIN)
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param('id') id: string) {
-    return this.storyService.remove(+id);
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.storyService.remove(id);
   }
 }

@@ -9,12 +9,29 @@ export const CHAPTERS_QUERY_KEYS = {
     ...CHAPTERS_QUERY_KEYS.lists(),
     params,
   ],
-  detail: (id: number) => [...CHAPTERS_QUERY_KEYS.all, "detail", id],
-  storyChapters: (storyId: number) => [
-    ...CHAPTERS_QUERY_KEYS.all,
-    "story",
+  detail: (id?: number) => [...CHAPTERS_QUERY_KEYS.all, "detail", id],
+
+  story: () => [...CHAPTERS_QUERY_KEYS.all, "story"],
+
+  storyChapters: (storyId?: number) => [
+    ...CHAPTERS_QUERY_KEYS.story(),
     storyId,
   ],
+
+  storyChaptersList: (storyId?: number, params?: ChapterQueryInput) => [
+    ...CHAPTERS_QUERY_KEYS.storyChapters(storyId),
+    params,
+  ],
+
+  // storyChapters: (storyId?: number) => [
+  //   ...CHAPTERS_QUERY_KEYS.all,
+  //   "story",
+  //   storyId,
+  // ],
+  // storyChaptersList: (storyId?: number, params?: ChapterQueryInput) => [
+  //   ...CHAPTERS_QUERY_KEYS.storyChapters(storyId),
+  //   params,
+  // ],
 };
 
 /**
@@ -30,10 +47,10 @@ export const useChaptersQuery = (params?: ChapterQueryInput) => {
 /**
  * Get chapter by ID
  */
-export const useChapterQuery = (id: number, includeContent = false) => {
+export const useChapterQuery = (id?: number) => {
   return useQuery({
-    queryKey: [...CHAPTERS_QUERY_KEYS.detail(id), { includeContent }],
-    queryFn: () => chaptersService.getById(id, includeContent),
+    queryKey: [...CHAPTERS_QUERY_KEYS.detail(id)],
+    queryFn: () => chaptersService.getById(id!),
     enabled: !!id,
   });
 };
@@ -41,16 +58,16 @@ export const useChapterQuery = (id: number, includeContent = false) => {
 /**
  * Get chapters by story ID
  */
-export const useStoryChaptersQuery = (
-  storyId: number,
-  includeContent = false,
-) => {
+export const useStoryChaptersQuery = ({
+  params,
+  storyId,
+}: {
+  storyId?: number;
+  params: ChapterQueryInput;
+}) => {
   return useQuery({
-    queryKey: [
-      ...CHAPTERS_QUERY_KEYS.storyChapters(storyId),
-      { includeContent },
-    ],
-    queryFn: () => chaptersService.getByStoryId(storyId, includeContent),
+    queryKey: [...CHAPTERS_QUERY_KEYS.storyChaptersList(storyId, params)],
+    queryFn: () => chaptersService.getByStoryId(storyId!, params),
     enabled: !!storyId,
   });
 };

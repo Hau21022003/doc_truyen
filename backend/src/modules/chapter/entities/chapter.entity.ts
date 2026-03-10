@@ -27,8 +27,8 @@ export class Chapter extends IntegerIdBaseEntity {
   })
   status: ChapterStatus;
 
-  @Column({ nullable: true })
-  publishedAt?: Date; // Ngày xuất bản chương
+  @Column({ nullable: true, type: 'timestamptz' })
+  publishedAt: Date | null; // Ngày xuất bản chương
 
   @ManyToOne(() => Story, (story) => story.chapters, { onDelete: 'CASCADE' })
   story: Story;

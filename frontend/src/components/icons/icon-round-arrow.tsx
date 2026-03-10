@@ -1,0 +1,45 @@
+import { cn } from "@/lib/utils";
+import { IconProps, iconVariants } from "./icon-variants";
+
+export function IconRoundArrow({
+  className,
+  size,
+  color,
+  variant,
+  ...props
+}: IconProps) {
+  return (
+    // <svg
+    //   {...props}
+    //   xmlns="http://www.w3.org/2000/svg"
+    //   width="1em"
+    //   height="1em"
+    //   viewBox="0 0 24 24"
+    //   className={cn(iconVariants({ size, color, variant }), className)}
+    // >
+    //   <path
+    //     fill="none"
+    //     stroke="currentColor"
+    //     strokeLinecap="round"
+    //     strokeLinejoin="round"
+    //     strokeWidth="1.5"
+    //     d="M19.5 12q0-1.848-.138-3.662a4.006 4.006 0 0 0-3.7-3.7a49 49 0 0 0-7.324 0a4.006 4.006 0 0 0-3.7 3.7q-.025.33-.046.662M19.5 12l3-3m-3 3l-3-3m-12 3q0 1.848.138 3.662a4.006 4.006 0 0 0 3.7 3.7a49 49 0 0 0 7.324 0a4.006 4.006 0 0 0 3.7-3.7q.025-.33.046-.662M4.5 12l3 3m-3-3l-3 3"
+    //   />
+    // </svg>
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="1em"
+      height="1em"
+      viewBox="0 0 15 15"
+      className={cn(iconVariants({ size, color, variant }), className)}
+    >
+      <path
+        fill="currentColor"
+        d="M7.988 1.563a.52.52 0 0 1 .608-.417l.269.056c2.764.638 5.188 3.036 5.188 6.501c0 1.537-.7 2.745-1.515 3.663c-.585.659-1.255 1.193-1.793 1.602h1.637a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5v-3a.5.5 0 0 1 1 0v1.846l.182-.138c.534-.405 1.152-.892 1.694-1.502c.715-.804 1.252-1.776 1.252-2.97c0-3.012-2.16-5.073-4.606-5.533l-.102-.03a.52.52 0 0 1-.314-.578M.86 7.297c0-1.536.7-2.744 1.515-3.663c.585-.658 1.255-1.192 1.793-1.602H2.532a.5.5 0 0 1 0-1h3a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-1 0V2.687l-.182.137c-.534.405-1.152.892-1.694 1.502c-.715.804-1.252 1.776-1.252 2.971c0 3.044 2.207 5.118 4.685 5.547a.522.522 0 0 1-.177 1.027C3.5 13.367.86 10.913.86 7.297"
+      />
+    </svg>
+  );
+}
+
+export default IconRoundArrow;

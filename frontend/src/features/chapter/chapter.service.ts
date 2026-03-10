@@ -15,12 +15,12 @@ export const chaptersService = {
       params: { includeContent: includeContent.toString() },
     }),
 
-  getByStoryId: (storyId: number, includeContent = false) =>
-    http.get<ChapterWithContent[]>(`/stories/${storyId}/chapters`, {
-      params: { includeContent: includeContent.toString() },
+  getByStoryId: (storyId: number, query: ChapterQueryInput) =>
+    http.get<PaginationResponse<Chapter>>(`/chapters/story/${storyId}`, {
+      params: query,
     }),
 
-  update: (id: number, data: UpsertChapterInput) =>
+  update: async (id: number, data: UpsertChapterInput) =>
     http.patch<Chapter>(`/chapters/${id}`, data),
 
   remove: (id: number) => http.delete(`/chapters/${id}`),

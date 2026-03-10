@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ChapterStatus } from "./chapter.constants";
 import { CHAPTERS_QUERY_KEYS } from "./chapter.query";
+import { UpsertChapterInput } from "./chapter.schema";
 import { chaptersService } from "./chapter.service";
 
 /**
@@ -12,20 +13,18 @@ export const useCreateChapterMutation = () => {
   return useMutation({
     mutationFn: chaptersService.create,
 
-    onSuccess: (data) => {
-      const resultData = data.payload;
+    onSuccess: (_, variables) => {
+      const { storyId } = variables;
 
-      // Invalidate chapters list to refetch
+      // invalidate list
       queryClient.invalidateQueries({
         queryKey: CHAPTERS_QUERY_KEYS.lists(),
       });
 
-      // Invalidate story chapters if we have a storyId
-      if (resultData.storyId) {
-        queryClient.invalidateQueries({
-          queryKey: CHAPTERS_QUERY_KEYS.storyChapters(resultData.storyId),
-        });
-      }
+      // invalidate story chapters
+      queryClient.invalidateQueries({
+        queryKey: CHAPTERS_QUERY_KEYS.storyChapters(storyId),
+      });
     },
   });
 };
@@ -37,27 +36,29 @@ export const useUpdateChapterMutation = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: number; data: any }) =>
+    mutationFn: ({ id, data }: { id: number; data: UpsertChapterInput }) =>
       chaptersService.update(id, data),
 
-    onSuccess: (data) => {
-      const resultData = data.payload;
-      // Invalidate chapters list to refetch
+    onSuccess: (_, variables) => {
+      const {
+        id,
+        data: { storyId },
+      } = variables;
+
+      // invalidate list
       queryClient.invalidateQueries({
         queryKey: CHAPTERS_QUERY_KEYS.lists(),
       });
 
-      // Invalidate specific chapter detail
+      // invalidate chapter detail
       queryClient.invalidateQueries({
-        queryKey: CHAPTERS_QUERY_KEYS.detail(resultData.id),
+        queryKey: CHAPTERS_QUERY_KEYS.detail(id),
       });
 
-      // Invalidate story chapters if we have a storyId
-      if (resultData.storyId) {
-        queryClient.invalidateQueries({
-          queryKey: CHAPTERS_QUERY_KEYS.storyChapters(resultData.storyId),
-        });
-      }
+      // invalidate story chapters
+      queryClient.invalidateQueries({
+        queryKey: CHAPTERS_QUERY_KEYS.storyChapters(storyId),
+      });
     },
   });
 };
@@ -84,11 +85,9 @@ export const useUpdateChapterStatusMutation = () => {
       });
 
       // Invalidate story chapters if we have a storyId
-      if (data.payload.storyId) {
-        queryClient.invalidateQueries({
-          queryKey: CHAPTERS_QUERY_KEYS.storyChapters(data.payload.storyId),
-        });
-      }
+      queryClient.invalidateQueries({
+        queryKey: CHAPTERS_QUERY_KEYS.story(),
+      });
     },
   });
 };
@@ -100,10 +99,9 @@ export const useDeleteChapterMutation = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, storyId }: { id: number; storyId?: number }) =>
-      chaptersService.remove(id),
+    mutationFn: (id: number) => chaptersService.remove(id),
 
-    onSuccess: (_, { id, storyId }) => {
+    onSuccess: (_, id) => {
       // Invalidate chapters list to refetch
       queryClient.invalidateQueries({
         queryKey: CHAPTERS_QUERY_KEYS.lists(),
@@ -115,11 +113,9 @@ export const useDeleteChapterMutation = () => {
       });
 
       // Invalidate story chapters if we have a storyId
-      if (storyId) {
-        queryClient.invalidateQueries({
-          queryKey: CHAPTERS_QUERY_KEYS.storyChapters(storyId),
-        });
-      }
+      queryClient.invalidateQueries({
+        queryKey: CHAPTERS_QUERY_KEYS.story(),
+      });
     },
   });
 };
@@ -131,21 +127,18 @@ export const useDeleteManyChaptersMutation = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ ids, storyId }: { ids: number[]; storyId?: number }) =>
-      chaptersService.removeMany(ids),
+    mutationFn: (ids: number[]) => chaptersService.removeMany(ids),
 
-    onSuccess: (_, { storyId }) => {
+    onSuccess: (_, ids) => {
       // Invalidate chapters list to refetch
       queryClient.invalidateQueries({
         queryKey: CHAPTERS_QUERY_KEYS.lists(),
       });
 
       // Invalidate story chapters if we have a storyId
-      if (storyId) {
-        queryClient.invalidateQueries({
-          queryKey: CHAPTERS_QUERY_KEYS.storyChapters(storyId),
-        });
-      }
+      queryClient.invalidateQueries({
+        queryKey: CHAPTERS_QUERY_KEYS.story(),
+      });
     },
   });
 };

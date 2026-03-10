@@ -193,6 +193,34 @@ export class StoryService {
     }
   }
 
+  async removeMany(ids: number[]): Promise<void> {
+    // tìm tất cả stories theo ids
+    const stories = await this.storyRepository.find({
+      where: { id: In(ids) },
+    });
+
+    if (stories.length !== ids.length) {
+      const foundIds = stories.map((s) => s.id);
+      const missingIds = ids.filter((id) => !foundIds.includes(id));
+
+      throw new NotFoundException(
+        `Stories not found: ${missingIds.join(', ')}`,
+      );
+    }
+
+    // xóa cover images
+    const coverImages = stories
+      .map((s) => s.coverImage)
+      .filter((img): img is string => !!img);
+
+    await Promise.all(
+      coverImages.map((url) => this.mediaService.deleteByUrl(url)),
+    );
+
+    // xóa nhiều story
+    await this.storyRepository.delete(ids);
+  }
+
   private async validateAndGetTags(tagIds: number[]) {
     const uniqueTagIds = [...new Set(tagIds)];
 

@@ -7,7 +7,7 @@ export const STORY_QUERY_KEYS = {
   lists: () => [...STORY_QUERY_KEYS.all, "list"],
   list: (params: StoryQueryInput) => [...STORY_QUERY_KEYS.lists(), params],
   details: () => [...STORY_QUERY_KEYS.all, "detail"],
-  detail: (id: number) => [...STORY_QUERY_KEYS.details(), id],
+  detail: (id?: number) => [...STORY_QUERY_KEYS.details(), id],
 };
 
 /**
@@ -23,10 +23,10 @@ export const useStoriesQuery = (params?: StoryQueryInput) => {
 /**
  * Get a specific story by ID
  */
-export const useStoryQuery = (id: number) => {
+export const useStoryQuery = (id?: number) => {
   return useQuery({
     queryKey: STORY_QUERY_KEYS.detail(id),
-    queryFn: () => storiesService.findOne(id),
+    queryFn: () => storiesService.findOne(id!),
     enabled: !!id,
   });
 };

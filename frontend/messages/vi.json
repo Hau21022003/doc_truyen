@@ -16,7 +16,15 @@
       "actions": "Thao tác",
       "contentPlaceholder": "Nhập nội dung...",
       "upload": "Tải lên",
-      "uploading": "Đang tải lên..."
+      "uploading": "Đang tải lên...",
+      "reset": "Đặt lại",
+      "uploadFile": "Tải tệp lên",
+      "updateSuccess": "Cập nhật thành công"
+    },
+    "content": {
+      "text": "Văn bản",
+      "image": "Hình ảnh",
+      "link": "Đường dẫn"
     },
     "upload": {
       "title": "Tải tệp lên",
@@ -214,6 +222,8 @@
       "hiatus": "Tạm ngưng"
     }
   },
+
+  "chapter": { "title": "Truyện: {title}" },
 
   "AuthModal": {
     "Login": {

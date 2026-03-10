@@ -20,8 +20,6 @@ export const useChapterFilter = () => {
   const [startDate, setStartDate] = useState<string | null>(null);
   const [endDate, setEndDate] = useState<string | null>(null);
 
-  const [storyId, setStoryId] = useState<string | null>(null);
-
   const filterConfigs: AnyFilterConfig[] = useMemo(
     () => [
       {
@@ -45,17 +43,6 @@ export const useChapterFilter = () => {
         })),
         onChange(value) {
           setStatus(value as ChapterStatus | null);
-        },
-      },
-      {
-        key: CHAPTER_FILTER_KEYS.STORY_ID,
-        label: t(`filters.${CHAPTER_FILTER_KEYS.STORY_ID}`),
-        type: FILTER_TYPE.TEXT,
-        defaultVisible: false,
-        popoverSize: "md",
-        placeholder: t("filters.storyIdPlaceholder"),
-        onChange(value) {
-          setStoryId(value);
         },
       },
       {
@@ -88,11 +75,10 @@ export const useChapterFilter = () => {
     () => ({
       search: debouncedSearch,
       status,
-      storyId: storyId ? Number(storyId) : undefined,
       startDate,
       endDate,
     }),
-    [debouncedSearch, status, storyId, startDate, endDate],
+    [debouncedSearch, status, startDate, endDate],
   );
 
   return {

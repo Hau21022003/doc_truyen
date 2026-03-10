@@ -40,9 +40,7 @@ export const CHAPTER_CONTENT_TYPE_VALUES = Object.values(
 
 // Sortable columns
 export const CHAPTER_SORTABLE_COLUMNS = {
-  TITLE: "title",
   CHAPTER_NUMBER: "chapterNumber",
-  STATUS: "status",
   PUBLISHED_AT: "publishedAt",
   CREATED_AT: "createdAt",
   UPDATED_AT: "updatedAt",
@@ -63,6 +61,5 @@ export const isChapterSortableColumn = (column: ChapterColumn) =>
 export const CHAPTER_FILTER_KEYS = {
   SEARCH: "search",
   STATUS: "status",
-  STORY_ID: "storyId",
   UPDATED_AT: "updatedAt",
 } as const;

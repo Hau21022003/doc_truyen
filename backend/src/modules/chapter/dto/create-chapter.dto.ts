@@ -1,9 +1,10 @@
-import { IsExist, StringTrim } from '@/common';
+import { IsExist, IsSlug, StringTrim } from '@/common';
 import { Story } from '@/modules/story/entities/story.entity';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
   IsArray,
+  IsEnum,
   IsInt,
   IsNotEmpty,
   IsOptional,
@@ -11,6 +12,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { ContentType } from '../entities/chapter-content';
+import { ChapterStatus } from '../entities/chapter.entity';
 import { CreateChapterContentDto } from './create-chapter-content.dto';
 
 export class CreateChapterDto {
@@ -28,9 +30,8 @@ export class CreateChapterDto {
     example: 'science-fiction',
     type: String,
   })
-  @IsString()
+  @IsSlug()
   @StringTrim()
-  @IsNotEmpty()
   slug: string;
 
   @ApiPropertyOptional({
@@ -63,6 +64,15 @@ export class CreateChapterDto {
   @ValidateNested({ each: true })
   @Type(() => CreateChapterContentDto)
   contents?: CreateChapterContentDto[];
+
+  @ApiPropertyOptional({
+    description: 'Trạng thái của chương',
+    enum: ChapterStatus,
+    default: ChapterStatus.DRAFT,
+  })
+  @IsOptional()
+  @IsEnum(ChapterStatus)
+  status?: ChapterStatus;
 
   @ApiProperty({
     description: 'ID của truyện mà chương này thuộc về',

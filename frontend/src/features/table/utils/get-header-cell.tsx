@@ -23,5 +23,5 @@ export const getHeaderCell = <TColumn extends TableColumnKey, TRow>({
   }
 
   // Hiển thị label mặc định
-  return columnConfig.label;
+  return <p className="truncate line-clamp-1">{columnConfig.label}</p>;
 };

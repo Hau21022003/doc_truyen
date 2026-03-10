@@ -157,13 +157,15 @@ export function DataTable<TColumn extends TableColumnKey, TRow>({
                   }}
                   align={column.align}
                 >
-                  <div className="flex items-center gap-1">
+                  <div
+                    className="flex items-center gap-1"
+                    onClick={() =>
+                      column.sortable && tableState.sort.toggleSort(column.key)
+                    }
+                  >
                     {getHeaderCell({ columnConfig: column })}
                     {column.sortable && (
-                      <div
-                        onClick={() => tableState.sort.toggleSort(column.key)}
-                        className="[&_svg:not([class*='size-'])]:size-5 cursor-pointer text-muted-foreground hover:text-primary"
-                      >
+                      <div className="shrink-0 [&_svg:not([class*='size-'])]:size-5 cursor-pointer text-muted-foreground hover:text-primary">
                         {tableState.sort.column !== column.key && (
                           <IconChevronSort color="custom" />
                         )}

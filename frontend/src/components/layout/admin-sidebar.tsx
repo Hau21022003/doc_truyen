@@ -135,6 +135,16 @@ const SidebarItem = forwardRef<
   );
 });
 
+type SidebarMatch = "exact" | "prefix";
+
+type SidebarLink = {
+  title: string;
+  href: string;
+  icon: React.ComponentType<any>;
+  iconActive: React.ComponentType<any>;
+  match?: SidebarMatch;
+};
+
 export function AdminSidebar() {
   const t = useTranslations("layout.AdminLayout");
   const router = useRouter();
@@ -150,35 +160,52 @@ export function AdminSidebar() {
     router.push("/");
   };
 
-  const sidebarLinks = useMemo(
-    () => [
-      {
-        title: t("Dashboard"),
-        href: "/admin",
-        icon: IconLayoutOutline,
-        iconActive: IconLayoutFill,
-      },
-      {
-        title: t("Tags"),
-        href: "/admin/tags",
-        icon: IconTagOutline,
-        iconActive: IconTagFill,
-      },
-      {
-        title: t("story"),
-        href: "/admin/stories",
-        icon: IconBookOutline,
-        iconActive: IconBookFill,
-      },
-      {
-        title: t("Users"),
-        href: "/admin/users",
-        icon: IconUserOutline,
-        iconActive: IconUserFill,
-      },
-    ],
+  const sidebarLinks: SidebarLink[] = useMemo(
+    () =>
+      [
+        {
+          title: t("Dashboard"),
+          href: "/admin",
+          icon: IconLayoutOutline,
+          iconActive: IconLayoutFill,
+          match: "exact",
+        },
+        {
+          title: t("Tags"),
+          href: "/admin/tags",
+          icon: IconTagOutline,
+          iconActive: IconTagFill,
+          match: "exact",
+        },
+        {
+          title: t("story"),
+          href: "/admin/story",
+          icon: IconBookOutline,
+          iconActive: IconBookFill,
+          match: "prefix",
+        },
+        {
+          title: t("Users"),
+          href: "/admin/users",
+          icon: IconUserOutline,
+          iconActive: IconUserFill,
+          match: "exact",
+        },
+      ] as SidebarLink[],
     [t],
   );
+
+  const isActivePath = (
+    pathname: string,
+    href: string,
+    match: SidebarMatch = "exact",
+  ) => {
+    if (match === "exact") {
+      return pathname === href;
+    }
+
+    return pathname === href || pathname.startsWith(`${href}/`);
+  };
 
   const handleLogout = async () => {
     const confirmed = await confirm({
@@ -267,7 +294,8 @@ export function AdminSidebar() {
             icon={link.icon}
             iconActive={link.iconActive}
             title={link.title}
-            isActive={pathname === link.href}
+            // isActive={pathname === link.href}
+            isActive={isActivePath(pathname, link.href, link.match)}
             isExpanded={isExpanded}
           />
         ))}

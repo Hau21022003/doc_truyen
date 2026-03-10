@@ -24,8 +24,3 @@ export interface Chapter {
 export interface ChapterWithContent extends Chapter {
   contents: ChapterContent[];
 }
-
-export interface ChapterWithStoryInfo extends Chapter {
-  storyTitle: string;
-  storySlug: string;
-}

@@ -1,6 +1,7 @@
 "use client";
 
 import TextEditor from "@/components/text-editor";
+import TextContentBlock from "@/features/chapter/components/upsert-chapter/text-content-block";
 import { FilterBar } from "@/features/filter/components/filter-bar";
 import { FILTER_TYPE } from "@/features/filter/filter.constants";
 import { AnyFilterConfig } from "@/features/filter/filter.types";
@@ -71,9 +72,10 @@ const filterConfigs: AnyFilterConfig[] = [
 
 // const filterConfigs = [dateRangeFilterConfig];
 export default function DashboardPage() {
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState("Hahaaha");
   return (
     <div className="p-10">
+      <TextContentBlock value={search} onChange={setSearch} />
       <FilterBar configs={filterConfigs} />
       <TextEditor setValue={setSearch} className="" value={search} />
     </div>

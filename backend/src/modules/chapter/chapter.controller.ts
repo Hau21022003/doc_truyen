@@ -1,3 +1,4 @@
+import { ParseIdsPipe } from '@/common/pipes/parse-ids.pipe';
 import { Public } from '@/modules/auth/decorators/public.decorator';
 import {
   Body,
@@ -20,6 +21,7 @@ import {
   UpdateChapterDto,
   UpdateChapterStatusDto,
 } from './dto';
+import { FindChaptersByStoryDto } from './dto/find-chapters-by-story.dto';
 
 @Controller('chapters')
 export class ChapterController {
@@ -40,8 +42,17 @@ export class ChapterController {
     return { message: 'This endpoint returns all chapters with pagination' };
   }
 
+  @Get('story/:storyId')
   @Public()
+  async findByStoryId(
+    @Param('storyId', ParseIntPipe) storyId: number,
+    @Query() query: FindChaptersByStoryDto,
+  ) {
+    return this.chapterService.findByStoryId(storyId, query);
+  }
+
   @Get(':id')
+  @Public()
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.chapterService.findOne(id);
   }
@@ -62,6 +73,13 @@ export class ChapterController {
     @Body() updateChapterDto: UpdateChapterDto,
   ) {
     return this.chapterService.update(id, updateChapterDto);
+  }
+
+  @Delete('bulk')
+  @Roles(UserRole.SYSTEM_ADMIN)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async removeMany(@Query('ids', ParseIdsPipe) ids: number[]) {
+    return this.chapterService.removeMany(ids);
   }
 
   @Delete(':id')

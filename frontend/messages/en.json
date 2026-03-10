@@ -16,8 +16,17 @@
       "actions": "Actions",
       "contentPlaceholder": "Write your content...",
       "upload": "Upload",
-      "uploading": "Uploading..."
+      "uploading": "Uploading...",
+      "reset": "Reset",
+      "uploadFile": "Upload file",
+      "updateSuccess": "Update success"
     },
+    "content": {
+      "text": "Text",
+      "image": "Image",
+      "link": "Link"
+    },
+
     "upload": {
       "title": "Upload file",
       "supportedFormats": "Supported formats: {formats}",
