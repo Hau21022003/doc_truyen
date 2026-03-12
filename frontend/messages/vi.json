@@ -19,7 +19,9 @@
       "uploading": "Đang tải lên...",
       "reset": "Đặt lại",
       "uploadFile": "Tải tệp lên",
-      "updateSuccess": "Cập nhật thành công"
+      "updateSuccess": "Cập nhật thành công",
+      "addAnImage": "Thêm hình ảnh",
+      "pasteImageUrl": "Dán URL hình ảnh..."
     },
     "content": {
       "text": "Văn bản",
@@ -46,6 +48,12 @@
       "multipleConfirm": "Bạn có chắc muốn xóa {count} mục đã chọn không?",
       "multipleSuccess": "Đã xóa thành công {count} mục.",
       "multipleFailed": "Xóa các mục đã chọn thất bại."
+    },
+    "table": {
+      "empty": {
+        "title": "Không có dữ liệu",
+        "description": "Hiện tại chưa có dữ liệu để hiển thị trong bảng này."
+      }
     },
     "dialog": {
       "confirmDescription": "Bạn có chắc không?"
@@ -178,6 +186,11 @@
   },
 
   "story": {
+    "title": "Truyện",
+    "createStory": "Tạo truyện",
+    "creatingStory": "Đang tạo truyện",
+    "updateStory": "Cập nhật truyện",
+    "updatingStory": "Đang cập nhật truyện",
     "upsertModal": {
       "createTitle": "Tạo truyện",
       "editTitle": "Chỉnh sửa truyện",
@@ -208,7 +221,8 @@
         "progress": {
           "label": "Tiến độ",
           "placeholder": "Chọn tiến độ"
-        }
+        },
+        "tags": { "label": "Thẻ", "placeholder": "Chọn thẻ" }
       }
     },
     "statusConstants": {
@@ -220,10 +234,81 @@
       "ongoing": "Đang tiến hành",
       "completed": "Hoàn thành",
       "hiatus": "Tạm ngưng"
+    },
+    "columns": {
+      "title": "Tiêu đề",
+      "slug": "Slug",
+      "description": "Mô tả",
+      "authorName": "Tác giả",
+      "status": "Trạng thái",
+      "progress": "Tiến độ",
+      "viewCount": "Lượt xem",
+      "lastAddedChapterDate": "Chương mới nhất",
+      "createdAt": "Ngày tạo",
+      "updatedAt": "Ngày cập nhật"
+    },
+    "filters": {
+      "search": "Tìm kiếm",
+      "progress": "Tiến độ",
+      "status": "Trạng thái",
+      "tags": "Thể loại",
+      "updatedAt": "Ngày cập nhật"
+    },
+    "actions": {
+      "rating": "Đang gửi đánh giá...",
+      "rateSuccess": "Đánh giá thành công.",
+      "rateFailed": "Đánh giá thất bại."
     }
   },
 
-  "chapter": { "title": "Truyện: {title}" },
+  "chapter": {
+    "title": "Chương",
+    "createChapter": "Tạo chương",
+    "updateChapter": "Cập nhật chương",
+    "creatingChapter": "Đang tạo chương",
+    "updatingChapter": "Đang cập nhật chương",
+    "filters": {
+      "search": "Tìm kiếm",
+      "status": "Trạng thái",
+      "updatedAt": "Ngày cập nhật"
+    },
+    "statusConstants": {
+      "draft": "Bản nháp",
+      "published": "Đã xuất bản",
+      "archived": "Đã lưu trữ"
+    },
+    "columns": {
+      "chapterNumber": "Chương",
+      "slug": "Slug",
+      "status": "Trạng thái",
+      "publishedAt": "Ngày xuất bản",
+      "createdAt": "Ngày tạo",
+      "updatedAt": "Ngày cập nhật"
+    },
+    "upsert": {
+      "fields": {
+        "title": {
+          "label": "Tiêu đề",
+          "placeholder": "Nhập tiêu đề chương"
+        },
+        "slug": {
+          "label": "Slug",
+          "placeholder": "Nhập slug chương"
+        },
+        "chapterNumber": {
+          "label": "Số chương",
+          "placeholder": "Nhập số chương"
+        },
+        "status": {
+          "label": "Trạng thái",
+          "placeholder": "Chọn trạng thái"
+        },
+        "contents": {
+          "label": "Nội dung"
+        }
+      }
+    }
+  },
 
   "AuthModal": {
     "Login": {

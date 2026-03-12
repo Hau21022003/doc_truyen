@@ -32,7 +32,7 @@ import { useRowSelection, useTimeZone, useUpsertModal } from "@/hooks";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 
 export default function StoryPage() {
   const tStory = useTranslations("story");
@@ -103,6 +103,10 @@ export default function StoryPage() {
     ],
   );
 
+  useEffect(() => {
+    tableState.pagination.setPage(1);
+  }, [filterParams, tableState.sort.column, tableState.sort.direction]);
+
   const {
     data: storiesData,
     error: storiesQueryError,
@@ -159,10 +163,13 @@ export default function StoryPage() {
           <Button
             variant={"outline"}
             size="icon"
-            onClick={() => openEditModal(story)}
+            // onClick={() => openEditModal(story)}
+            asChild
             className="[&_svg:not([class*='size-'])]:size-5"
           >
-            <IconPen color="custom" />
+            <Link href={`/admin/story/upsert?storyId=${story.id}`}>
+              <IconPen color="custom" />
+            </Link>
           </Button>
           <Button
             size="icon"
@@ -180,12 +187,14 @@ export default function StoryPage() {
   return (
     <div className="p-4 md:p-6 space-y-2">
       <div className="flex justify-between items-center gap-2">
-        <h3>{tStory("title")}</h3>
+        <h3 className="font-medium">{tStory("title")}</h3>
         <div className="flex items-center gap-2">
           <HideColumnSelect tableState={tableState} />
-          <CustomButton onClick={openCreateModal} color="orange">
-            <IconPlus color="custom" />
-            <p>{tStory("createStory")}</p>
+          <CustomButton asChild onClick={openCreateModal} color="orange">
+            <Link href={`/admin/story/upsert`}>
+              <IconPlus color="custom" />
+              <p>{tStory("createStory")}</p>
+            </Link>
           </CustomButton>
         </div>
       </div>

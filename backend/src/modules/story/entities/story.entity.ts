@@ -1,6 +1,14 @@
 import { IntegerIdBaseEntity } from '@/common';
+import { StoryRating } from '@/modules/story-interactions/story-rating/entities/story-rating.entity';
 import { Tag } from '@/modules/tags/entities/tag.entity';
-import { Column, Entity, JoinTable, ManyToMany, OneToMany } from 'typeorm';
+import {
+  Column,
+  Entity,
+  Index,
+  JoinTable,
+  ManyToMany,
+  OneToMany,
+} from 'typeorm';
 import { Chapter } from '../../chapter/entities/chapter.entity';
 
 export enum StoryStatus {
@@ -20,6 +28,7 @@ export class Story extends IntegerIdBaseEntity {
   @Column()
   title: string;
 
+  @Index()
   @Column({ unique: true })
   slug: string;
 
@@ -53,10 +62,20 @@ export class Story extends IntegerIdBaseEntity {
   @Column({ default: 0 })
   viewCount: number;
 
+  // ⭐ rating cache
+  @Column({ type: 'float', default: 0 })
+  averageRating: number;
+
+  @Column({ type: 'int', default: 0 })
+  ratingCount: number;
+
   @ManyToMany(() => Tag, (tag) => tag.stories, { cascade: false })
   @JoinTable()
   tags: Tag[];
 
   @OneToMany(() => Chapter, (chapter) => chapter.story)
   chapters: Chapter[];
+
+  @OneToMany(() => StoryRating, (rating) => rating.story)
+  ratings: StoryRating[];
 }

@@ -12,6 +12,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
+import { ChapterStatus } from '../chapter/entities/chapter.entity';
 import { MediaUsage } from '../media/constants/media.constants';
 import { MediaService } from '../media/media.service';
 import { TagsService } from '../tags/tags.service';
@@ -20,9 +21,10 @@ import {
   STORY_SORTABLE_COLUMNS,
 } from './constants/story.constants';
 import { CreateStoryDto } from './dto/create-story.dto';
+import { HomeStoryQueryDto } from './dto/home-story-query.dto';
 import { QueryStoryDto } from './dto/query-story.dto';
 import { UpdateStoryDto } from './dto/update-story.dto';
-import { Story } from './entities/story.entity';
+import { Story, StoryStatus } from './entities/story.entity';
 
 @Injectable()
 export class StoryService {
@@ -127,6 +129,55 @@ export class StoryService {
 
     if (tagIds?.length) {
       queryBuilder.andWhere(`tags.id IN (:...tagIds)`, { tagIds });
+    }
+
+    const [data, total] = await queryBuilder.getManyAndCount();
+
+    return {
+      data,
+      page,
+      limit,
+      total,
+      totalPages: Math.ceil(total / limit),
+    };
+  }
+
+  async findHomepage(
+    query: HomeStoryQueryDto,
+  ): Promise<PaginatedResponseDto<Story>> {
+    const { search, page, limit, tags } = query;
+
+    let queryBuilder = this.storyRepository
+      .createQueryBuilder(this.ENTITY_ALIAS)
+      .leftJoinAndSelect(`${this.ENTITY_ALIAS}.tags`, 'tags')
+      .leftJoinAndSelect(
+        'story.chapters',
+        'chapter',
+        'chapter.status = :status',
+        { status: ChapterStatus.PUBLISHED },
+      )
+      .where('story.status = :storyStatus', {
+        storyStatus: StoryStatus.PUBLISHED,
+      })
+      .andWhere('story.lastAddedChapterDate IS NOT NULL')
+      .orderBy(`${this.ENTITY_ALIAS}.lastAddedChapterDate`, 'DESC')
+      .addOrderBy('chapter.chapterNumber', 'DESC');
+
+    queryBuilder = QueryBuilderHelper.applyPagination(
+      queryBuilder,
+      page,
+      limit,
+    );
+
+    queryBuilder = QueryBuilderHelper.applySearch(
+      queryBuilder,
+      this.ENTITY_ALIAS,
+      search,
+      STORY_SEARCHABLE_COLUMNS,
+    );
+
+    if (tags?.length) {
+      queryBuilder.andWhere(`tags.slug IN (:...tags)`, { tags });
     }
 
     const [data, total] = await queryBuilder.getManyAndCount();

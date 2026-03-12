@@ -23,7 +23,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
-import { type JwtPayload } from '../auth/types/jwt-payload';
+import { type JwtPayload } from '../auth/types/jwt-payload.type';
 import {
   CreateUserDto,
   QueryUserDto,

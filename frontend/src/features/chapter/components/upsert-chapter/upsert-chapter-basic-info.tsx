@@ -99,7 +99,11 @@ export function UpsertChapterBasicInfo({
               <FieldLabel htmlFor="form-rhf-status">
                 {tChapter("upsert.fields.status.label")}
               </FieldLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <Select
+                key={field.value || "status-empty"}
+                value={field.value}
+                onValueChange={field.onChange}
+              >
                 <SelectTrigger id="form-rhf-status">
                   <SelectValue
                     placeholder={tChapter("upsert.fields.status.placeholder")}

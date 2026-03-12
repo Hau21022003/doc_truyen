@@ -2,15 +2,25 @@ import http from "@/lib/http";
 import { QUERY_SEPARATORS } from "@/shared/constants";
 import { PaginationResponse } from "@/shared/types/paginated-response.type";
 import { StoryQueryInput, UpsertStoryInput } from "./story.schema";
-import { Story } from "./story.types";
+import {
+  HomepageStory,
+  HomeStoryQuery,
+  RateStoryResponse,
+  Story,
+} from "./story.types";
 
-export const storiesService = {
+export const storyService = {
   create: (data: UpsertStoryInput) => http.post<Story>("/story", data),
 
   findOne: (id: number) => http.get<Story>(`/story/${id}`),
 
   findAll: (params?: StoryQueryInput) =>
     http.get<PaginationResponse<Story>>("/story", { params }),
+
+  findHomepage: (params?: HomeStoryQuery) =>
+    http.get<PaginationResponse<HomepageStory>>("/story/home", {
+      params,
+    }),
 
   update: (id: number, data: UpsertStoryInput) =>
     http.patch<Story>(`/story/${id}`, data),
@@ -21,4 +31,7 @@ export const storiesService = {
     http.delete(`/story/bulk`, {
       params: { ids: ids.join(QUERY_SEPARATORS.LIST) },
     }),
+
+  rate: (data: { storyId: number; rating: number }) =>
+    http.post<RateStoryResponse>("/story-rating/rate", data),
 };

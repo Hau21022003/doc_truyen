@@ -122,7 +122,11 @@ export default function UsersHeader() {
           </Sheet>
 
           <Link href="/" aria-label="Home">
-            <IconLogo size="2xl" color="btn-primary" />
+            <IconLogo
+              size="2xl"
+              color="custom"
+              className="text-primary-orange"
+            />
           </Link>
           <nav
             className="hidden md:flex items-center gap-4"
@@ -142,27 +146,27 @@ export default function UsersHeader() {
 
         <div className="flex items-center gap-2 sm:gap-4">
           {/* Hiển thị icon bookmark và thông báo */}
-          {isInitialized && isAuthenticated && (
-            <Fragment>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <IconNotifcations size={"lg"} />
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>{t("Notifications")}</p>
-                </TooltipContent>
-              </Tooltip>
+          {/* {isInitialized && isAuthenticated && ( */}
+          <Fragment>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <IconNotifcations size={"lg"} />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{t("Notifications")}</p>
+              </TooltipContent>
+            </Tooltip>
 
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <IconBookmark size={"lg"} />
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>{t("Bookmark")}</p>
-                </TooltipContent>
-              </Tooltip>
-            </Fragment>
-          )}
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <IconBookmark size={"lg"} />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{t("Bookmark")}</p>
+              </TooltipContent>
+            </Tooltip>
+          </Fragment>
+          {/* )} */}
 
           {/* Chưa đăng nhập: hiển thị nút cài đặt chung */}
           {/* Đăng nhập: hiển thị avatar */}
@@ -283,13 +287,13 @@ export default function UsersHeader() {
               >
                 {t("Login")}
               </Button>
-              <Button
+              {/* <Button
                 onClick={openRegisterModal}
                 className="rounded-2xl hidden md:block cursor-pointer"
                 variant={"outline"}
               >
                 {t("Register")}
-              </Button>
+              </Button> */}
             </Fragment>
           )}
         </div>

@@ -28,7 +28,7 @@ import { ArrowLeft } from "lucide-react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 
 export default function ChaptersPage() {
   const tChapter = useTranslations("chapter");
@@ -102,6 +102,10 @@ export default function ChaptersPage() {
 
   const data = chaptersData?.payload.data ?? [];
 
+  useEffect(() => {
+    tableState.pagination.setPage(1);
+  }, [filterParams, tableState.sort.column, tableState.sort.direction]);
+
   const extraColumns: ExtraColumnConfig<Chapter>[] = [
     {
       key: "checkbox",
@@ -171,12 +175,11 @@ export default function ChaptersPage() {
             asChild
           >
             <Link href={"/admin/story"}>
-              {/* <IconArrowUp color="custom" /> */}
               <ArrowLeft />
             </Link>
           </Button>
           <h3 className="flex-1 max-w-xl font-medium truncate">
-            {tChapter("title", { title: storyData?.payload.title || "" })}
+            {storyData?.payload.title || ""}
           </h3>
         </div>
         <div className="shrink-0 flex items-center gap-2">

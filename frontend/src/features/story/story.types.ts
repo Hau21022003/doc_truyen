@@ -11,6 +11,8 @@ export interface Story {
   progress: StoryProgress;
   lastAddedChapterDate?: string;
   viewCount: number;
+  averageRating: number;
+  ratingCount: number;
   createdAt: string;
   updatedAt: string;
   tags?: StoryTag[];
@@ -29,4 +31,22 @@ export interface StoryChapter {
   slug: string;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface HomepageStory extends Omit<Story, "tags" | "chapters"> {
+  tags: StoryTag[];
+  chapters: StoryChapter[];
+}
+
+export type HomeStoryQuery = {
+  page?: number;
+  search?: string;
+  tags?: string[];
+};
+
+export interface RateStoryResponse {
+  storyId: number;
+  userRating: number;
+  averageRating: number;
+  ratingCount: number;
 }

@@ -9,6 +9,8 @@ import { MediaService } from '@/modules/media/media.service';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, In, Repository } from 'typeorm';
+import { Story } from '../story/entities/story.entity';
+import { StoryService } from '../story/story.service';
 import {
   CHAPTER_SEARCHABLE_COLUMNS,
   CHAPTER_SORTABLE_COLUMNS,
@@ -31,6 +33,7 @@ export class ChapterService {
     @InjectRepository(Chapter)
     private chapterRepository: Repository<Chapter>,
     private readonly mediaService: MediaService,
+    private readonly storyService: StoryService,
   ) {}
 
   async create(createChapterDto: CreateChapterDto): Promise<Chapter> {
@@ -59,7 +62,15 @@ export class ChapterService {
         chapter.contents = [];
       }
 
-      return await manager.save(chapter);
+      // return await manager.save(chapter);
+      const savedChapter = await manager.save(chapter);
+
+      // ✅ Cập nhật lastAddedChapterDate của story
+      await manager.update(Story, storyId, {
+        lastAddedChapterDate: new Date(),
+      });
+
+      return savedChapter;
     });
   }
 

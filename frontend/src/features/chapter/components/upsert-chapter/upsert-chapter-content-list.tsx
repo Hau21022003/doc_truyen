@@ -146,7 +146,7 @@ export function UpsertChapterContentList({
                       className="cursor-pointer w-full justify-start text-muted-foreground"
                     >
                       <IconImage size="default" color="custom" />
-                      <p className="text-sm">{tCommon("content.addAnImage")}</p>
+                      <p className="text-sm">{tCommon("actions.addAnImage")}</p>
                     </Button>
                   ))}
               </div>
@@ -318,7 +318,7 @@ export function UpsertChapterContentList({
                               >
                                 <IconImage size="default" color="custom" />
                                 <p className="text-sm">
-                                  {tCommon("content.addAnImage")}
+                                  {tCommon("actions.addAnImage")}
                                 </p>
                               </Button>
                             }

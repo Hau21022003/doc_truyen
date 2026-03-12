@@ -49,11 +49,6 @@ export const useLogoutMutation = () => {
   return useMutation({
     mutationFn: authService.logout,
 
-    // Optimistic update - xóa user ngay lập tức
-    // onMutate: async () => {
-    //   setUser(null);
-    // },
-
     onSuccess: async () => {
       // Clear toàn bộ auth cache
       await queryClient.removeQueries({

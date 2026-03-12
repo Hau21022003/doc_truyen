@@ -20,6 +20,7 @@ export const upsertStorySchema = z.object({
     .max(2000, "Description must be less than 2000 characters")
     .optional(),
   coverImageTempId: z.string().nullable().optional(),
+  coverImage: z.string().nullable().optional(), // Hỗ trợ hiển thị
   authorName: z
     .string()
     .max(100, "Author name must be less than 100 characters"),

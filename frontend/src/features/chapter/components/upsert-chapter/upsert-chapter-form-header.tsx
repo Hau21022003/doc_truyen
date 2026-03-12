@@ -7,10 +7,17 @@ import {
   IconReset,
   IconRoundArrow,
 } from "@/components/icons";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { stringUtils } from "@/shared/utils";
 import { useTranslations } from "next-intl";
-import Link from "next/link";
 import { useMemo } from "react";
 
 function getSubmitConfig(
@@ -58,6 +65,7 @@ export function UpsertChapterFormHeader({
   isSubmitting,
   mode,
 }: UpsertChapterFormHeaderProps) {
+  const t = useTranslations("");
   const tChapter = useTranslations("chapter");
   const tCommon = useTranslations("common");
 
@@ -68,23 +76,28 @@ export function UpsertChapterFormHeader({
 
   return (
     <div className="sticky z-20 top-0 bg-background">
-      <div className="flex items-center gap-2 py-2">
-        <div className="flex items-center gap-2 flex-1 min-w-0">
-          <Button
-            type="button"
-            size="icon"
-            variant={"outline"}
-            className="rounded-full"
-            asChild
-          >
-            <Link href={`/admin/story/${storyId}/chapters`}>
-              <ArrowLeft />
-            </Link>
-          </Button>
-          <h3 className="flex-1 max-w-xl font-medium truncate">
-            {tChapter("title", { title: storyTitle || "" })}
-          </h3>
-        </div>
+      <div className="flex items-center justify-between gap-2 py-2">
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/admin/story">
+                {t("story.title")}
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbLink href={`/admin/story/${storyId}/chapters`}>
+                {stringUtils.truncate(storyTitle || "")}
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>{submitConfig.title}</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+
+        {/* Right */}
         <div className="shrink-0 flex items-center gap-2">
           <Button
             type="button"

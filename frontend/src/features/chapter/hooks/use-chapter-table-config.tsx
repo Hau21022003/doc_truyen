@@ -10,11 +10,12 @@ import {
   isChapterSortableColumn,
 } from "../chapter.constants";
 import { Chapter } from "../chapter.types";
+import ChapterStatusBadge from "../components/chapter-status-badge";
 
 export const useChapterTableConfig = () => {
   const tChapter = useTranslations("chapter");
   const tChapterColumns = useTranslations("chapter.columns");
-  const tChapterStatus = useTranslations("chapter.status");
+  const tChapterStatus = useTranslations("chapter.statusConstants");
   const locale = useLocale() as (typeof SUPPORTED_LOCALES)[number];
   const timezone = useTimeZone();
 
@@ -43,9 +44,7 @@ export const useChapterTableConfig = () => {
         resizable: true,
         width: 120,
         sortable: isChapterSortableColumn(CHAPTER_COLUMNS.STATUS),
-        render: (chapter) => {
-          return chapter.status;
-        },
+        render: (chapter) => <ChapterStatusBadge status={chapter.status} />,
       },
       publishedAt: {
         label: tChapterColumns(CHAPTER_COLUMNS.PUBLISHED_AT),

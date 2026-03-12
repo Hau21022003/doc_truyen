@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { STORY_QUERY_KEYS } from "./story.query";
-import { storiesService } from "./story.service";
+import { storyService } from "./story.service";
 
 /**
  * CREATE STORY
@@ -9,7 +9,7 @@ export const useCreateStoryMutation = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: storiesService.create,
+    mutationFn: storyService.create,
 
     onSuccess: () => {
       // Invalidate stories list to refetch
@@ -28,7 +28,7 @@ export const useUpdateStoryMutation = () => {
 
   return useMutation({
     mutationFn: ({ id, data }: { id: number; data: any }) =>
-      storiesService.update(id, data),
+      storyService.update(id, data),
 
     onSuccess: (_, { id }) => {
       // Invalidate both lists and the specific story
@@ -49,7 +49,7 @@ export const useDeleteStoryMutation = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: storiesService.remove,
+    mutationFn: storyService.remove,
 
     onSuccess: (_, id) => {
       queryClient.invalidateQueries({
@@ -66,9 +66,32 @@ export const useDeleteManyStoryMutation = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: storiesService.removeMany,
+    mutationFn: storyService.removeMany,
 
     onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: STORY_QUERY_KEYS.lists(),
+      });
+    },
+  });
+};
+
+/**
+ * RATE STORY
+ */
+export const useRateStoryMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: storyService.rate,
+
+    onSuccess: (_, { storyId }) => {
+      // Invalidate story detail để cập nhật averageRating, ratingCount
+      queryClient.invalidateQueries({
+        queryKey: STORY_QUERY_KEYS.detail(storyId),
+      });
+
+      // Invalidate story lists để cập nhật rating trong grid/list
       queryClient.invalidateQueries({
         queryKey: STORY_QUERY_KEYS.lists(),
       });

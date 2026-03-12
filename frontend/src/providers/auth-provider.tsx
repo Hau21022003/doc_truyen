@@ -1,3 +1,5 @@
+"use client";
+
 import { useProfileQuery } from "@/features/auth/auth.query";
 import { useAuthModal } from "@/features/auth/hooks/use-auth-modal.hook";
 import { AUTH_EVENTS } from "@/shared/events/auth.events";

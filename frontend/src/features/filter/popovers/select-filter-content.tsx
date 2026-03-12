@@ -35,7 +35,7 @@ export function SelectFilterContent({
               variant={"ghost"}
               onClick={() => handleOptionSelect(option.value)}
               className={cn(
-                "font-normal pr-6 w-full cursor-pointer",
+                "font-normal pr-8 w-full cursor-pointer",
                 isSelected &&
                   "bg-primary-purple/20 dark:bg-primary-purple/20 hover:bg-primary-purple/20 dark:hover:bg-primary-purple/20",
               )}

@@ -282,50 +282,6 @@ export default function UpsertStoryModal({
               />
             </div>
 
-            {/* <Controller
-              name="slug"
-              control={form.control}
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="form-rhf-slug">
-                    {tModal("fields.slug.label")}
-                  </FieldLabel>
-                  <Input
-                    {...field}
-                    id="form-rhf-slug"
-                    aria-invalid={fieldState.invalid}
-                    placeholder={tModal("fields.slug.placeholder")}
-                    autoComplete="off"
-                  />
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
-
-            <Controller
-              name="authorName"
-              control={form.control}
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="form-rhf-author-name">
-                    {tModal("fields.authorName.label")}
-                  </FieldLabel>
-                  <Input
-                    {...field}
-                    id="form-rhf-author-name"
-                    aria-invalid={fieldState.invalid}
-                    placeholder={tModal("fields.authorName.placeholder")}
-                    autoComplete="off"
-                  />
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            /> */}
-
             <Controller
               name="description"
               control={form.control}

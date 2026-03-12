@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { StoryCommentModule } from './story-comment/story-comment.module';
-import { StoryLikeModule } from './story-like/story-like.module';
+import { StoryRatingModule } from './story-rating/story-rating.module';
 
 @Module({
-  imports: [StoryCommentModule, StoryLikeModule],
-  exports: [StoryCommentModule, StoryLikeModule],
+  imports: [StoryCommentModule, StoryRatingModule],
+  exports: [StoryCommentModule, StoryRatingModule],
 })
 export class StoryInteractionsModule {}

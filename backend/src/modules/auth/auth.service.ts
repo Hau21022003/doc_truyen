@@ -1,6 +1,10 @@
 import { comparePassword } from '@/common';
 import { AppConfigService } from '@/config/app-config.service';
-import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { StringValue } from 'ms';
 import { UserResponseDto } from '../users/dto';
@@ -8,7 +12,7 @@ import { AuthProvider } from '../users/entities/user.entity';
 import { UsersService } from '../users/users.service';
 import { LoginDto } from './dto';
 import { RegisterDto } from './dto/register.dto';
-import { JwtPayload } from './types/jwt-payload';
+import { JwtPayload } from './types/jwt-payload.type';
 
 @Injectable()
 export class AuthService {
@@ -45,17 +49,26 @@ export class AuthService {
   async login(authDto: LoginDto, deviceInfo?: { deviceName?: string }) {
     const user = await this.usersService.findByEmail(authDto.email);
     if (!user) throw new UnauthorizedException();
-    const passwordMatches = await comparePassword(authDto.password, user.password);
+    const passwordMatches = await comparePassword(
+      authDto.password,
+      user.password,
+    );
     if (!passwordMatches) throw new UnauthorizedException();
     if (!user.isActive) {
-      throw new BadRequestException('Your account is locked. Please contact support for assistance.');
+      throw new BadRequestException(
+        'Your account is locked. Please contact support for assistance.',
+      );
     }
 
     const tokens = await this.getTokens(user);
 
     await Promise.all([
       // this.usersService.updateRefreshToken(user.id, tokens.refreshToken),
-      this.usersService.addRefreshToken(user.id, tokens.refreshToken, deviceInfo),
+      this.usersService.addRefreshToken(
+        user.id,
+        tokens.refreshToken,
+        deviceInfo,
+      ),
       this.usersService.updateLastLogin(user.id),
     ]);
 
@@ -113,7 +126,9 @@ export class AuthService {
       user = await this.usersService.create(createUserDto);
     } else {
       if (!user.isActive) {
-        throw new BadRequestException('Your account is locked. Please contact support for assistance.');
+        throw new BadRequestException(
+          'Your account is locked. Please contact support for assistance.',
+        );
       }
     }
 
@@ -121,7 +136,11 @@ export class AuthService {
     const tokens = await this.getTokens(user);
 
     await Promise.all([
-      this.usersService.addRefreshToken(user.id, tokens.refreshToken, deviceInfo),
+      this.usersService.addRefreshToken(
+        user.id,
+        tokens.refreshToken,
+        deviceInfo,
+      ),
       this.usersService.updateLastLogin(user.id),
     ]);
 
@@ -154,7 +173,9 @@ export class AuthService {
       user = await this.usersService.create(createUserDto);
     } else {
       if (!user.isActive) {
-        throw new BadRequestException('Your account is locked. Please contact support for assistance.');
+        throw new BadRequestException(
+          'Your account is locked. Please contact support for assistance.',
+        );
       }
     }
 
@@ -162,7 +183,11 @@ export class AuthService {
     const tokens = await this.getTokens(user);
 
     await Promise.all([
-      this.usersService.addRefreshToken(user.id, tokens.refreshToken, deviceInfo),
+      this.usersService.addRefreshToken(
+        user.id,
+        tokens.refreshToken,
+        deviceInfo,
+      ),
       this.usersService.updateLastLogin(user.id),
     ]);
 
@@ -174,7 +199,10 @@ export class AuthService {
 
   async refreshTokens(userId: string, refreshToken: string) {
     // Kiểm tra refresh token có hợp lệ không
-    const isValid = await this.usersService.validateRefreshToken(userId, refreshToken);
+    const isValid = await this.usersService.validateRefreshToken(
+      userId,
+      refreshToken,
+    );
     if (!isValid) {
       throw new UnauthorizedException('Invalid refresh token');
     }

@@ -7,9 +7,9 @@ export default function UsersLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-col items-center px-3">
+    <div className="flex flex-col items-center px-3 dark:bg-[#262626] min-h-screen">
       <UsersHeader />
-      <div className="flex-1 overflow-hidden">{children}</div>
+      <div className="flex-1 overflow-hidden w-full">{children}</div>
     </div>
   );
 }

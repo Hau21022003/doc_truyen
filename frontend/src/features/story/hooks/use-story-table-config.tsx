@@ -8,9 +8,12 @@ import { useTimeZone } from "@/hooks";
 import { SUPPORTED_LOCALES } from "@/i18n/routing";
 import { dateUtils, stringUtils } from "@/shared/utils";
 import { imageUtils } from "@/shared/utils/image.utils";
+import { numberUtils } from "@/shared/utils/number.utils";
 import { useLocale, useTranslations } from "next-intl";
 import Link from "next/link";
 import { useMemo } from "react";
+import StoryProgressBadge from "../components/story-progress-badge";
+import StoryStatusBadge from "../components/story-status-badge";
 import {
   isStorySortableColumn,
   STORY_COLUMNS,
@@ -93,18 +96,21 @@ export const useStoryTableConfig = () => {
         defaultVisible: true,
         resizable: true,
         sortable: isStorySortableColumn(STORY_COLUMNS.STATUS),
+        render: (row) => <StoryStatusBadge status={row.status} />,
       },
       progress: {
         label: tStoryColumns(STORY_COLUMNS.PROGRESS),
         defaultVisible: true,
         resizable: true,
         sortable: isStorySortableColumn(STORY_COLUMNS.PROGRESS),
+        render: (row) => <StoryProgressBadge progress={row.progress} />,
       },
       viewCount: {
         label: tStoryColumns(STORY_COLUMNS.VIEW_COUNT),
         defaultVisible: true,
         resizable: true,
         sortable: isStorySortableColumn(STORY_COLUMNS.VIEW_COUNT),
+        format: numberUtils.formatCompactNumber,
       },
       lastAddedChapterDate: {
         label: tStoryColumns(STORY_COLUMNS.LAST_ADDED_CHAPTER_DATE),

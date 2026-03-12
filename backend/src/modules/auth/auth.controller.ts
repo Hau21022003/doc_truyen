@@ -1,5 +1,13 @@
 import { AppConfigService } from '@/config/app-config.service';
-import { Body, Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiBody, ApiCookieAuth, ApiTags } from '@nestjs/swagger';
 import { CookieOptions, type Request, type Response } from 'express';
 import { User, UserRole } from '../users/entities/user.entity';
@@ -8,8 +16,12 @@ import { AuthService } from './auth.service';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { Public } from './decorators/public.decorator';
 import { LoginDto, RegisterDto } from './dto';
-import { FacebookAuthGuard, GoogleOauthGuard, RefreshTokenGuard } from './guards';
-import { type JwtPayload } from './types/jwt-payload';
+import {
+  FacebookAuthGuard,
+  GoogleOauthGuard,
+  RefreshTokenGuard,
+} from './guards';
+import { type JwtPayload } from './types/jwt-payload.type';
 
 @ApiTags('Authentication')
 @Controller('auth')
@@ -56,7 +68,10 @@ export class AuthController {
   @Public()
   @Post('login')
   @ApiBody({ type: LoginDto })
-  async login(@Body() authDto: LoginDto, @Res({ passthrough: true }) response: Response) {
+  async login(
+    @Body() authDto: LoginDto,
+    @Res({ passthrough: true }) response: Response,
+  ) {
     const result = await this.authService.login(authDto);
     this.setCookies(response, result);
     return result.account;
@@ -65,7 +80,10 @@ export class AuthController {
   @Public()
   @Post('register')
   @ApiBody({ type: RegisterDto })
-  async register(@Body() authDto: RegisterDto, @Res({ passthrough: true }) response: Response) {
+  async register(
+    @Body() authDto: RegisterDto,
+    @Res({ passthrough: true }) response: Response,
+  ) {
     const result = await this.authService.register(authDto);
     this.setCookies(response, result);
     return result.account;
@@ -95,7 +113,11 @@ export class AuthController {
 
   @Get('logout')
   @ApiCookieAuth('access_token')
-  async logout(@Req() req: Request, @Res({ passthrough: true }) response: Response, @CurrentUser() user: JwtPayload) {
+  async logout(
+    @Req() req: Request,
+    @Res({ passthrough: true }) response: Response,
+    @CurrentUser() user: JwtPayload,
+  ) {
     const refreshToken = req.cookies?.refresh_token;
 
     console.log('log out', refreshToken);
@@ -106,7 +128,10 @@ export class AuthController {
 
   @Get('logout-all')
   @ApiCookieAuth('access_token')
-  async logoutAll(@Res({ passthrough: true }) response: Response, @CurrentUser() user: JwtPayload) {
+  async logoutAll(
+    @Res({ passthrough: true }) response: Response,
+    @CurrentUser() user: JwtPayload,
+  ) {
     await this.authService.logout(user.sub);
     this.clearCookies(response);
     return { message: 'Logged out from all devices' };
@@ -129,7 +154,10 @@ export class AuthController {
   @Public()
   @Get('google/redirect')
   @UseGuards(GoogleOauthGuard)
-  async googleAuthRedirect(@Req() req: Request, @Res({ passthrough: true }) response: Response) {
+  async googleAuthRedirect(
+    @Req() req: Request,
+    @Res({ passthrough: true }) response: Response,
+  ) {
     const result = await this.authService.googleLogin(req);
     this.setCookies(response, result);
     // return response.redirect(this.configService.clientUrl);
@@ -144,7 +172,10 @@ export class AuthController {
   @Public()
   @Get('facebook/callback')
   @UseGuards(FacebookAuthGuard)
-  async facebookCallback(@Req() req, @Res({ passthrough: true }) response: Response) {
+  async facebookCallback(
+    @Req() req,
+    @Res({ passthrough: true }) response: Response,
+  ) {
     const user = req.user;
     const result = await this.authService.facebookLogin(user);
     this.setCookies(response, result);
@@ -157,7 +188,10 @@ export class AuthController {
    */
   private getRedirectUrl(user: User): string {
     // Nếu là admin, chuyển đến trang admin
-    if (user.role === UserRole.SYSTEM_ADMIN || user.role === UserRole.CONTENT_ADMIN) {
+    if (
+      user.role === UserRole.SYSTEM_ADMIN ||
+      user.role === UserRole.CONTENT_ADMIN
+    ) {
       return this.configService.adminUrl;
     }
 

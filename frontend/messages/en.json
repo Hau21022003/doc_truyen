@@ -19,7 +19,9 @@
       "uploading": "Uploading...",
       "reset": "Reset",
       "uploadFile": "Upload file",
-      "updateSuccess": "Update success"
+      "updateSuccess": "Update success",
+      "addAnImage": "Add an image",
+      "pasteImageUrl": "Paste image URL..."
     },
     "content": {
       "text": "Text",
@@ -47,6 +49,12 @@
       "multipleConfirm": "Are you sure you want to delete {count} selected items?",
       "multipleSuccess": "Successfully deleted {count} items.",
       "multipleFailed": "Failed to delete selected items."
+    },
+    "table": {
+      "empty": {
+        "title": "No data available",
+        "description": "There is currently no data to display in this table."
+      }
     },
     "dialog": {
       "confirmDescription": "Are you sure?"
@@ -179,6 +187,11 @@
   },
 
   "story": {
+    "title": "Story",
+    "createStory": "Create story",
+    "creatingStory": "Creating story",
+    "updateStory": "Update story",
+    "updatingStory": "Updating story",
     "upsertModal": {
       "createTitle": "Create story",
       "editTitle": "Edit story",
@@ -209,7 +222,8 @@
         "progress": {
           "label": "Progress",
           "placeholder": "Select progress"
-        }
+        },
+        "tags": { "label": "Tags", "placeholder": "Select tags" }
       }
     },
     "statusConstants": {
@@ -221,6 +235,79 @@
       "ongoing": "Ongoing",
       "completed": "Completed",
       "hiatus": "Hiatus"
+    },
+    "columns": {
+      "title": "Title",
+      "slug": "Slug",
+      "description": "Description",
+      "authorName": "Author",
+      "status": "Status",
+      "progress": "Progress",
+      "viewCount": "Views",
+      "lastAddedChapterDate": "Last Chapter Added",
+      "createdAt": "Created At",
+      "updatedAt": "Updated At"
+    },
+    "filters": {
+      "search": "Search",
+      "progress": "Progress",
+      "status": "Status",
+      "tags": "Tags",
+      "updatedAt": "Updated date"
+    },
+    "actions": {
+      "rating": "Submitting rating...",
+      "rateSuccess": "Rating submitted successfully.",
+      "rateFailed": "Failed to submit rating."
+    }
+  },
+
+  "chapter": {
+    "title": "Chapter",
+    "createChapter": "Create chapter",
+    "updateChapter": "Update chapter",
+    "creatingChapter": "Creating chapter",
+    "updatingChapter": "Updating chapter",
+    "filters": {
+      "search": "Search",
+      "status": "Status",
+      "updatedAt": "Updated date"
+    },
+    "statusConstants": {
+      "draft": "Draft",
+      "published": "Published",
+      "archived": "Archived"
+    },
+    "columns": {
+      "chapterNumber": "Chapter",
+      "slug": "Slug",
+      "status": "Status",
+      "publishedAt": "Published at",
+      "createdAt": "Created at",
+      "updatedAt": "Updated at"
+    },
+    "upsert": {
+      "fields": {
+        "title": {
+          "label": "Title",
+          "placeholder": "Enter chapter title"
+        },
+        "slug": {
+          "label": "Slug",
+          "placeholder": "Enter chapter slug"
+        },
+        "chapterNumber": {
+          "label": "Chapter number",
+          "placeholder": "Enter chapter number"
+        },
+        "status": {
+          "label": "Status",
+          "placeholder": "Select status"
+        },
+        "contents": {
+          "label": "Contents"
+        }
+      }
     }
   },
 

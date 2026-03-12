@@ -7,6 +7,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 
 type ImagePickerPopoverProps = {
@@ -22,17 +23,18 @@ export function ImagePickerPopover({
   onLinkSubmit,
   trigger,
 }: ImagePickerPopoverProps) {
+  const t = useTranslations("common");
   const [url, setUrl] = useState("");
 
   return (
     <Popover>
       <PopoverTrigger asChild>{trigger}</PopoverTrigger>
 
-      <PopoverContent className="p-3 w-64">
+      <PopoverContent className="p-3 w-80">
         <Tabs defaultValue="upload" className="w-full">
           <TabsList variant="line">
-            <TabsTrigger value="upload">Upload</TabsTrigger>
-            <TabsTrigger value="link">Link</TabsTrigger>
+            <TabsTrigger value="upload">{t("actions.upload")}</TabsTrigger>
+            <TabsTrigger value="link">{t("content.link")}</TabsTrigger>
           </TabsList>
 
           {/* Upload */}
@@ -43,7 +45,7 @@ export function ImagePickerPopover({
               onClick={() => onUploadClick(index)}
             >
               <IconUpload />
-              <p>Upload file</p>
+              <p>{t("actions.uploadFile")}</p>
             </Button>
           </TabsContent>
 
@@ -51,7 +53,7 @@ export function ImagePickerPopover({
           <TabsContent value="link">
             <div className="flex gap-2">
               <Input
-                placeholder="Paste image url..."
+                placeholder={t("actions.pasteImageUrl")}
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
               />

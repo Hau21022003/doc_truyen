@@ -9,6 +9,7 @@ import { SORT_DIRECTIONS } from "@/shared/constants";
 import { useMemo } from "react";
 import { TableColumnKey, TableState } from "../table.types";
 import { getHeaderCell, getTableCell } from "../utils";
+import { EmptyTable } from "./empty-table";
 import { ErrorTable } from "./error-table";
 import { ResizeHandle } from "./resize-handle";
 import { Table } from "./table";
@@ -115,6 +116,11 @@ export function DataTable<TColumn extends TableColumnKey, TRow>({
       <ErrorTable error={error} onRetry={onErrorRetry} className={className} />
     );
   }
+
+  if (data.length === 0) {
+    return <EmptyTable />;
+  }
+
   return (
     <div
       className={cn(
