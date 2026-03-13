@@ -1,3 +1,4 @@
+import { Chapter } from "../chapter/chapter.types";
 import { StoryProgress, StoryStatus } from "./story.constants";
 
 export interface Story {
@@ -16,7 +17,7 @@ export interface Story {
   createdAt: string;
   updatedAt: string;
   tags?: StoryTag[];
-  chapters?: StoryChapter[];
+  chapters?: Chapter[];
 }
 
 export interface StoryTag {
@@ -25,17 +26,17 @@ export interface StoryTag {
   slug: string;
 }
 
-export interface StoryChapter {
-  id: number;
-  title: string;
-  slug: string;
-  createdAt: string;
-  updatedAt: string;
-}
+// export interface StoryChapter {
+//   id: number;
+//   title: string;
+//   slug: string;
+//   createdAt: string;
+//   updatedAt: string;
+// }
 
 export interface HomepageStory extends Omit<Story, "tags" | "chapters"> {
   tags: StoryTag[];
-  chapters: StoryChapter[];
+  chapters: Chapter[];
 }
 
 export type HomeStoryQuery = {

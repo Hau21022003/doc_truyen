@@ -97,7 +97,7 @@ export default function UsersHeader() {
         <div className="flex items-center gap-4">
           {/* Menu hambuger cho mobile */}
           <Sheet>
-            <SheetTrigger>
+            <SheetTrigger asChild>
               <IconHamburger
                 variant={"default"}
                 className="text-primary md:hidden"

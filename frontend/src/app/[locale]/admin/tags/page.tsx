@@ -10,6 +10,7 @@ import {
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/input-group";
+import { Switch } from "@/components/ui/switch";
 import { useTableState } from "@/features/table";
 import {
   DataTable,
@@ -53,7 +54,7 @@ export default function TagsPage() {
     isSelected,
   } = useRowSelection<Tag>();
 
-  const { removeOne, removeMany } = useTagActions();
+  const { removeOne, removeMany, toggleFeatured } = useTagActions();
 
   const handleDelete = async (tag: Tag) => {
     const success = await removeOne(tag);
@@ -131,6 +132,23 @@ export default function TagsPage() {
       },
       width: 30,
       sticky: "left",
+    },
+    {
+      key: "isFeatured",
+      render: (tag) => {
+        return (
+          <div className="flex items-center justify-center h-full">
+            <Switch
+              key={`featured_tag_${tag.id}`}
+              checked={tag.isFeatured}
+              onCheckedChange={() => toggleFeatured(tag)}
+            />
+          </div>
+        );
+      },
+      label: tTag("columns.isFeatured"),
+      align: "center",
+      width: 60,
     },
     {
       key: "actions",

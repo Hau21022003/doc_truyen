@@ -14,8 +14,10 @@ import cloudinaryConfig from './config/cloudinary.config';
 import oauthConfig from './config/oauth.config';
 import { AuthModule } from './modules/auth/auth.module';
 import { JwtAuthGuard, RolesGuard } from './modules/auth/guards';
+import { BookmarkModule } from './modules/bookmark/bookmark.module';
 import { ChapterModule } from './modules/chapter/chapter.module';
 import { MediaModule } from './modules/media/media.module';
+import { ReadingHistoryModule } from './modules/reading-history/reading-history.module';
 import { StoryInteractionsModule } from './modules/story-interactions/story-interactions.module';
 import { StoryModule } from './modules/story/story.module';
 import { TagsModule } from './modules/tags/tags.module';
@@ -60,6 +62,8 @@ import { UsersModule } from './modules/users/users.module';
     StoryModule,
     ChapterModule,
     StoryInteractionsModule,
+    BookmarkModule,
+    ReadingHistoryModule,
   ],
   controllers: [AppController],
   providers: [

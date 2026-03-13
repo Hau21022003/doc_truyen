@@ -9,6 +9,7 @@ export * from "./icon-book-open-outline";
 export * from "./icon-book-outline";
 export * from "./icon-bookmark";
 export * from "./icon-camera";
+export * from "./icon-category-outline";
 export * from "./icon-check";
 export * from "./icon-check-circle-outline";
 export * from "./icon-chevron-sort";

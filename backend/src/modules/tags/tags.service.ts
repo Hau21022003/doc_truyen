@@ -119,6 +119,20 @@ export class TagsService {
     return this.tagRepository.find({ where });
   }
 
+  async setFeatured(tagId: number, isFeatured: boolean): Promise<Tag> {
+    const tag = await this.tagRepository.findOne({
+      where: { id: tagId },
+    });
+
+    if (!tag) {
+      throw new NotFoundException('Tag not found');
+    }
+
+    tag.isFeatured = isFeatured;
+
+    return await this.tagRepository.save(tag);
+  }
+
   private async checkUniqueFields(
     data: { name?: string; slug?: string },
     ignoreId?: number,

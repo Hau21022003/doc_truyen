@@ -20,6 +20,7 @@
       "reset": "Đặt lại",
       "uploadFile": "Tải tệp lên",
       "updateSuccess": "Cập nhật thành công",
+      "updateFailed": "Cập nhật thất bại",
       "addAnImage": "Thêm hình ảnh",
       "pasteImageUrl": "Dán URL hình ảnh..."
     },
@@ -181,7 +182,8 @@
       "slug": "Slug",
       "storyCount": "Số truyện",
       "createdAt": "Ngày tạo",
-      "updatedAt": "Ngày cập nhật"
+      "updatedAt": "Ngày cập nhật",
+      "isFeatured": "Nổi bật"
     }
   },
 
@@ -245,7 +247,10 @@
       "viewCount": "Lượt xem",
       "lastAddedChapterDate": "Chương mới nhất",
       "createdAt": "Ngày tạo",
-      "updatedAt": "Ngày cập nhật"
+      "updatedAt": "Ngày cập nhật",
+      "tags": "Thể loại",
+      "rating": "Đánh giá",
+      "ratingValue": "Trung bình {averageRating}, {ratingCount} lượt"
     },
     "filters": {
       "search": "Tìm kiếm",
@@ -309,6 +314,8 @@
       }
     }
   },
+
+  "homepage": { "hotTags": "Các thẻ hot" },
 
   "AuthModal": {
     "Login": {

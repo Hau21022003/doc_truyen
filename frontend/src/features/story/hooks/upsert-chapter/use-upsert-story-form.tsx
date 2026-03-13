@@ -15,12 +15,14 @@ export function useUpsertStoryForm(storyId?: number) {
   // Reset form khi data load
   useEffect(() => {
     if (storyId && storyData) {
-      form.reset({ ...storyData.payload });
+      const tags = storyData.payload?.tags || [];
+      const tagIds = tags.map((tag) => tag.id);
+      form.reset({ ...storyData.payload, tagIds });
     } else {
       form.reset({
         slug: "",
         title: "",
-        tagIds: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+        tagIds: [],
         description: "",
         authorName: "",
       });
@@ -39,13 +41,6 @@ export function useUpsertStoryForm(storyId?: number) {
       });
     }
   }, [titleValue, storyId, form]);
-
-  // Kiểm lỗi
-  // useEffect(() => {
-  //   if (Object.keys(form.formState.errors).length > 0) {
-  //     console.log("Form errors:", form.formState.errors);
-  //   }
-  // }, [form.formState.errors]);
 
   return {
     form,

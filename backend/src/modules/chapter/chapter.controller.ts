@@ -13,7 +13,10 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
+import { AuthOptional } from '../auth/decorators/auth-optional.decorator';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { Roles } from '../auth/decorators/roles.decorator';
+import { JwtPayload } from '../auth/types/jwt-payload.type';
 import { UserRole } from '../users/entities/user.entity';
 import { ChapterService } from './chapter.service';
 import {
@@ -55,6 +58,16 @@ export class ChapterController {
   @Public()
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.chapterService.findOne(id);
+  }
+
+  @Get(':id/read')
+  @AuthOptional()
+  getChapterDetailForUser(
+    @Param('id') id: string,
+    @CurrentUser() user: JwtPayload | null,
+  ) {
+    console.log('user', user);
+    return this.chapterService.getChapterDetailForUser(+id, user?.sub);
   }
 
   @Patch(':id/status')

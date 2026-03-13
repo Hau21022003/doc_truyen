@@ -1,4 +1,8 @@
-import StoryGrid from "@/features/story/components/story-grid";
+import {
+  HomepageStoryGrid,
+  HomepageStoryPagination,
+} from "@/features/homepage/components";
+import HomepageTagsFilter from "@/features/homepage/components/homepage-tags-section";
 import { storyService } from "@/features/story/story.service";
 import { getErrorMessage } from "@/lib/error";
 import { getTranslations } from "next-intl/server";
@@ -43,14 +47,19 @@ export default async function HomePage({ searchParams }: PageProps) {
     );
   }
 
-  console.log("storiesData", storiesData);
-
   return (
     <div className="flex flex-col items-center">
       <div className="w-full max-w-6xl">
-        <div className="grid grid-cols-1 lg:grid-cols-[3fr_1fr]">
-          <StoryGrid stories={storiesData.data} />
+        <div className="grid grid-cols-1 lg:grid-cols-[3fr_1fr] items-start">
+          <div>
+            <HomepageStoryGrid stories={storiesData.data} />
+            <HomepageStoryPagination
+              currentPage={storiesData.page}
+              totalPages={storiesData.totalPages}
+            />
+          </div>
           {/* <TagFilter className="" /> */}
+          <HomepageTagsFilter activeTags={tags} />
         </div>
       </div>
     </div>

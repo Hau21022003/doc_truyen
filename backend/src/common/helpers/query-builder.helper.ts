@@ -49,10 +49,10 @@ export class QueryBuilderHelper {
     allowedSortFields: string[] = ['createdAt', 'updatedAt', 'id'],
   ): SelectQueryBuilder<any> {
     if (!sortBy) {
-      return queryBuilder.orderBy(`${alias}.createdAt`, 'DESC');
+      return queryBuilder.orderBy(`${alias}.updatedAt`, 'DESC');
     }
 
-    const field = allowedSortFields.includes(sortBy) ? sortBy : 'createdAt';
+    const field = allowedSortFields.includes(sortBy) ? sortBy : 'updatedAt';
     return queryBuilder.orderBy(`${alias}.${field}`, sortOrder);
   }
 

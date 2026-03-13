@@ -9,8 +9,9 @@ import { MediaService } from '@/modules/media/media.service';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, In, Repository } from 'typeorm';
+import { BookmarkService } from '../bookmark/bookmark.service';
+import { ReadingHistoryService } from '../reading-history/reading-history.service';
 import { Story } from '../story/entities/story.entity';
-import { StoryService } from '../story/story.service';
 import {
   CHAPTER_SEARCHABLE_COLUMNS,
   CHAPTER_SORTABLE_COLUMNS,
@@ -33,7 +34,8 @@ export class ChapterService {
     @InjectRepository(Chapter)
     private chapterRepository: Repository<Chapter>,
     private readonly mediaService: MediaService,
-    private readonly storyService: StoryService,
+    private readonly bookmarkService: BookmarkService,
+    private readonly readingHistoryService: ReadingHistoryService,
   ) {}
 
   async create(createChapterDto: CreateChapterDto): Promise<Chapter> {
@@ -219,30 +221,6 @@ export class ChapterService {
     };
   }
 
-  // async remove(id: number) {
-  //   return await this.chapterRepository.manager.transaction(async (manager) => {
-  //     const chapter = await manager.findOne(Chapter, {
-  //       where: { id },
-  //       relations: ['contents'],
-  //     });
-
-  //     if (!chapter) {
-  //       throw new NotFoundException('Chapter not found');
-  //     }
-
-  //     // Lấy danh sách ảnh cần xóa
-  //     const imageUrls = chapter.contents
-  //       .map((content) => content.imageUrl)
-  //       .filter((url): url is string => !!url);
-
-  //     // Xóa chapter (cascade sẽ xóa contents)
-  //     await manager.remove(chapter);
-
-  //     // Xóa media (không throw lỗi để tránh rollback)
-  //     await this.safeDeleteMedia(imageUrls);
-  //   });
-  // }
-
   async remove(id: number) {
     return this.chapterRepository.manager.transaction(async (manager) => {
       await this.removeChapterLogic(manager, id);
@@ -290,6 +268,52 @@ export class ChapterService {
     }
 
     return this.chapterRepository.save(chapter);
+  }
+
+  /**
+   * Find chapter by ID for user reading
+   * Automatically updates bookmark's lastReadChapterId if user is authenticated
+   * @param id - Chapter ID
+   * @param userId - User ID (optional, from JWT payload)
+   * @returns Chapter with contents
+   */
+  async getChapterDetailForUser(id: number, userId?: string): Promise<Chapter> {
+    const chapter = await this.chapterRepository.findOne({
+      where: { id },
+      relations: ['contents', 'story'],
+      order: {
+        contents: {
+          position: 'ASC',
+        },
+      },
+    });
+
+    if (!chapter) {
+      throw new NotFoundException('Chapter not found');
+    }
+
+    // ✅ If user is logged in
+    if (userId) {
+      try {
+        // 1️⃣ Save reading history
+        await this.readingHistoryService.addHistory(
+          userId,
+          chapter.story.id,
+          id,
+        );
+
+        // 2️⃣ Update bookmark progress if bookmark exists
+        await this.bookmarkService.updateLastReadChapter(
+          userId,
+          chapter.story.id,
+          id,
+        );
+      } catch (error) {
+        console.error('Failed to update reading data:', error);
+      }
+    }
+
+    return chapter;
   }
 
   private async buildChapterContents(

@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import {
   useDeleteManyTagMutation,
   useDeleteTagMutation,
+  useSetFeaturedTagMutation,
 } from "../tags.mutation";
 import { Tag } from "../tags.types";
 
@@ -15,6 +16,7 @@ export const useTagActions = () => {
 
   const { mutateAsync: deleteTag } = useDeleteTagMutation();
   const { mutateAsync: deleteManyTags } = useDeleteManyTagMutation();
+  const { mutateAsync: setFeatured } = useSetFeaturedTagMutation();
 
   const removeOne = async (tag: Tag) => {
     const confirmed = await confirm({
@@ -56,5 +58,19 @@ export const useTagActions = () => {
     return true;
   };
 
-  return { removeOne, removeMany };
+  const toggleFeatured = async (tag: Tag) => {
+    await toast.promise(
+      setFeatured({
+        id: tag.id,
+        isFeatured: !tag.isFeatured,
+      }),
+      {
+        loading: tCommon("actions.updating"),
+        success: () => tCommon("actions.updateSuccess"),
+        error: (err) => getErrorMessage(err) || tCommon("actions.updateFailed"),
+      },
+    );
+  };
+
+  return { removeOne, removeMany, toggleFeatured };
 };

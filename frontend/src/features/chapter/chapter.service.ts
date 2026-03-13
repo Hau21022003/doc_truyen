@@ -15,6 +15,9 @@ export const chaptersService = {
       params: { includeContent: includeContent.toString() },
     }),
 
+  getChapterDetailForUser: (id: number) =>
+    http.get<ChapterWithContent>(`/chapters/${id}/read`),
+
   getByStoryId: (storyId: number, query: ChapterQueryInput) =>
     http.get<PaginationResponse<Chapter>>(`/chapters/story/${storyId}`, {
       params: query,

@@ -58,9 +58,13 @@ function formatDate(
  * Format a relative time (e.g., "2 days ago")
  */
 function formatRelativeTime(
-  date: Date | string | number,
+  date?: Date | string | number,
   locale: SupportedLocale = "vi",
 ): string {
+  if (date === null || date === undefined || date === "") {
+    return "-";
+  }
+
   const dateObj =
     typeof date === "string" || typeof date === "number"
       ? new Date(date)
@@ -100,10 +104,38 @@ function formatRelativeTime(
   return formatter.format(-interval, unit);
 }
 
+function formatSmartDate(
+  date?: Date | string | number,
+  locale: SupportedLocale = "vi",
+): string {
+  if (!date) return "-";
+
+  const dateObj =
+    typeof date === "string" || typeof date === "number"
+      ? new Date(date)
+      : date;
+
+  const now = new Date();
+  const diffInDays =
+    (now.getTime() - dateObj.getTime()) / (1000 * 60 * 60 * 24);
+
+  // Nếu <= 7 ngày → relative time
+  if (Math.abs(diffInDays) <= 7) {
+    return formatRelativeTime(dateObj, locale);
+  }
+
+  // Nếu > 7 ngày → format date
+  return formatDate(dateObj, {
+    locale,
+    format: "medium",
+  });
+}
+
 export const dateUtils = {
   formatDateToYMD: (date: Date | string) => {
     return format(new Date(date), "yyyy-MM-dd");
   },
   formatRelativeTime,
   formatDate,
+  formatSmartDate,
 };

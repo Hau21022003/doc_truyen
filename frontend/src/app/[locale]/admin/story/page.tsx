@@ -12,7 +12,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { FilterBar } from "@/features/filter/components/filter-bar";
-import UpsertStoryModal from "@/features/story/components/upsert-story-modal";
 import { useStoryActions } from "@/features/story/hooks/use-story-actions";
 import { useStoryFilter } from "@/features/story/hooks/use-story-filter";
 import { useStoryTableConfig } from "@/features/story/hooks/use-story-table-config";
@@ -28,7 +27,7 @@ import {
   ExtraColumnConfig,
 } from "@/features/table/components/data-table";
 import HideColumnSelect from "@/features/table/components/hide-column-select";
-import { useRowSelection, useTimeZone, useUpsertModal } from "@/hooks";
+import { useRowSelection, useTimeZone } from "@/hooks";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
@@ -52,14 +51,14 @@ export default function StoryPage() {
   } = useRowSelection<Story>();
 
   // Upsert modal state
-  const {
-    isOpen: isOpenUpsertModal,
-    close: closeUpsertModal,
-    data: dataUpsertModal,
-    mode: modeUpsertModal,
-    openCreate: openCreateModal,
-    openEdit: openEditModal,
-  } = useUpsertModal<Story>();
+  // const {
+  //   isOpen: isOpenUpsertModal,
+  //   close: closeUpsertModal,
+  //   data: dataUpsertModal,
+  //   mode: modeUpsertModal,
+  //   openCreate: openCreateModal,
+  //   openEdit: openEditModal,
+  // } = useUpsertModal<Story>();
 
   const { removeOne, removeMany } = useStoryActions();
 
@@ -163,7 +162,6 @@ export default function StoryPage() {
           <Button
             variant={"outline"}
             size="icon"
-            // onClick={() => openEditModal(story)}
             asChild
             className="[&_svg:not([class*='size-'])]:size-5"
           >
@@ -190,7 +188,7 @@ export default function StoryPage() {
         <h3 className="font-medium">{tStory("title")}</h3>
         <div className="flex items-center gap-2">
           <HideColumnSelect tableState={tableState} />
-          <CustomButton asChild onClick={openCreateModal} color="orange">
+          <CustomButton asChild color="orange">
             <Link href={`/admin/story/upsert`}>
               <IconPlus color="custom" />
               <p>{tStory("createStory")}</p>
@@ -216,12 +214,12 @@ export default function StoryPage() {
         onClear={clearSelection}
       />
 
-      <UpsertStoryModal
+      {/* <UpsertStoryModal
         mode={modeUpsertModal}
         onClose={closeUpsertModal}
         isOpen={isOpenUpsertModal}
         data={dataUpsertModal}
-      />
+      /> */}
     </div>
   );
 }

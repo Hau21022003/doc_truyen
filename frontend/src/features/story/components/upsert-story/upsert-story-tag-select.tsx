@@ -57,6 +57,11 @@ export function UpsertStoryTagSelect({ form }: UpsertStoryTagSelectProps) {
                 <ComboboxValue>
                   {(values) => (
                     <>
+                      {values.length === 0 && (
+                        <span className="text-sm text-muted-foreground">
+                          {tModal("fields.tags.placeholder")}
+                        </span>
+                      )}
                       {values.map((value: string) => {
                         const item = items.find((i) => i.value === value);
 

@@ -34,7 +34,11 @@ export function UpsertStoryStatusProgress({
               {tModal("fields.status.label")}
             </FieldLabel>
 
-            <Select onValueChange={field.onChange} value={field.value}>
+            <Select
+              onValueChange={field.onChange}
+              value={field.value}
+              key={field.value || "status-empty"}
+            >
               <SelectTrigger id="form-rhf-status">
                 <SelectValue
                   placeholder={tModal("fields.status.placeholder")}
@@ -63,7 +67,11 @@ export function UpsertStoryStatusProgress({
               {tModal("fields.progress.label")}
             </FieldLabel>
 
-            <Select onValueChange={field.onChange} value={field.value}>
+            <Select
+              onValueChange={field.onChange}
+              value={field.value}
+              key={field.value || "progress-empty"}
+            >
               <SelectTrigger id="form-rhf-progress">
                 <SelectValue
                   placeholder={tModal("fields.progress.placeholder")}

@@ -1,7 +1,7 @@
 "use client";
 import { IconCamera } from "@/components/icons";
 import { FieldLabel } from "@/components/ui/field";
-import { useFileUpload } from "@/hooks";
+import { useFileUpload, useIsMobile } from "@/hooks";
 import { getErrorMessage } from "@/lib/error";
 import { cn } from "@/lib/utils";
 import {
@@ -28,6 +28,8 @@ export function UpsertStoryCoverUpload({
   // i18n
   const tCommon = useTranslations("common");
   const tModal = useTranslations("story.upsertModal");
+
+  const isMobile = useIsMobile();
 
   // Image Upload
   const handleFileSelect = async (file: File) => {
@@ -72,7 +74,7 @@ export function UpsertStoryCoverUpload({
                 onClick={openFileDialog}
                 className="cursor-pointer w-full h-full rounded-md border border-border border-dashed flex justify-center items-center"
               >
-                <IconCamera color="muted" size={"xl"} />
+                <IconCamera color="muted" size={isMobile ? "xl" : "3xl"} />
               </button>
             )}
           </div>

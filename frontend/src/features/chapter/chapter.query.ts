@@ -11,6 +11,8 @@ export const CHAPTERS_QUERY_KEYS = {
   ],
   detail: (id?: number) => [...CHAPTERS_QUERY_KEYS.all, "detail", id],
 
+  read: (id?: number) => [...CHAPTERS_QUERY_KEYS.all, "read", id],
+
   story: () => [...CHAPTERS_QUERY_KEYS.all, "story"],
 
   storyChapters: (storyId?: number) => [
@@ -22,16 +24,6 @@ export const CHAPTERS_QUERY_KEYS = {
     ...CHAPTERS_QUERY_KEYS.storyChapters(storyId),
     params,
   ],
-
-  // storyChapters: (storyId?: number) => [
-  //   ...CHAPTERS_QUERY_KEYS.all,
-  //   "story",
-  //   storyId,
-  // ],
-  // storyChaptersList: (storyId?: number, params?: ChapterQueryInput) => [
-  //   ...CHAPTERS_QUERY_KEYS.storyChapters(storyId),
-  //   params,
-  // ],
 };
 
 /**
@@ -69,5 +61,16 @@ export const useStoryChaptersQuery = ({
     queryKey: [...CHAPTERS_QUERY_KEYS.storyChaptersList(storyId, params)],
     queryFn: () => chaptersService.getByStoryId(storyId!, params),
     enabled: !!storyId,
+  });
+};
+
+/**
+ * Get chapter detail for user
+ */
+export const useChapterDetailForUserQuery = (id?: number) => {
+  return useQuery({
+    queryKey: CHAPTERS_QUERY_KEYS.read(id),
+    queryFn: () => chaptersService.getChapterDetailForUser(id!),
+    enabled: !!id,
   });
 };

@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { BookmarkModule } from '../bookmark/bookmark.module';
 import { MediaModule } from '../media/media.module';
-import { StoryModule } from '../story/story.module';
+import { ReadingHistoryModule } from '../reading-history/reading-history.module';
 import { ChapterController } from './chapter.controller';
 import { ChapterService } from './chapter.service';
 import { ChapterContent } from './entities/chapter-content';
@@ -11,7 +12,8 @@ import { Chapter } from './entities/chapter.entity';
   imports: [
     TypeOrmModule.forFeature([Chapter, ChapterContent]),
     MediaModule,
-    StoryModule,
+    BookmarkModule,
+    ReadingHistoryModule,
   ],
   controllers: [ChapterController],
   providers: [ChapterService],

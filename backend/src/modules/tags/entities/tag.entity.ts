@@ -11,6 +11,9 @@ export class Tag extends IntegerIdBaseEntity {
   @Column({ unique: true })
   slug: string;
 
+  @Column({ default: false })
+  isFeatured: boolean;
+
   @ManyToMany(() => Story, (story) => story.tags)
   stories: Story[];
 

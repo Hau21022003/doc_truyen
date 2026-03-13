@@ -1,3 +1,4 @@
+import { Rating } from "@/components/rating";
 import {
   Tooltip,
   TooltipContent,
@@ -105,12 +106,40 @@ export const useStoryTableConfig = () => {
         sortable: isStorySortableColumn(STORY_COLUMNS.PROGRESS),
         render: (row) => <StoryProgressBadge progress={row.progress} />,
       },
+      rating: {
+        label: tStoryColumns(STORY_COLUMNS.RATING),
+        defaultVisible: true,
+        resizable: true,
+        sortable: isStorySortableColumn(STORY_COLUMNS.RATING),
+        render: (row) => (
+          <div className="space-y-1">
+            <Rating size="default" value={row.averageRating} />
+            <p className="text-sm text-muted-foreground">
+              {tStoryColumns("ratingValue", {
+                averageRating: row.averageRating,
+                ratingCount: row.ratingCount,
+              })}
+            </p>
+          </div>
+        ),
+      },
+
       viewCount: {
         label: tStoryColumns(STORY_COLUMNS.VIEW_COUNT),
         defaultVisible: true,
         resizable: true,
         sortable: isStorySortableColumn(STORY_COLUMNS.VIEW_COUNT),
         format: numberUtils.formatCompactNumber,
+      },
+      tags: {
+        label: tStoryColumns(STORY_COLUMNS.TAGS),
+        defaultVisible: true,
+        resizable: true,
+        sortable: isStorySortableColumn(STORY_COLUMNS.TAGS),
+        render: (row) => {
+          const tagsValue = (row.tags?.map((tag) => tag.name) || []).join(", ");
+          return <p>{stringUtils.truncate(tagsValue)}</p>;
+        },
       },
       lastAddedChapterDate: {
         label: tStoryColumns(STORY_COLUMNS.LAST_ADDED_CHAPTER_DATE),

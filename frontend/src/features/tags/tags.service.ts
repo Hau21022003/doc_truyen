@@ -15,6 +15,9 @@ export const tagsService = {
   update: (id: number, data: UpsertTagInput) =>
     http.patch<Tag>(`/tags/${id}`, data),
 
+  setFeatured: (id: number, isFeatured: boolean) =>
+    http.patch<Tag>(`/tags/${id}/featured`, { isFeatured }),
+
   remove: (id: number) => http.delete(`/tags/${id}`),
 
   removeMany: (ids: number[]) =>

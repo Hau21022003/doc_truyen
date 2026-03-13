@@ -83,3 +83,24 @@ export const useDeleteManyTagMutation = () => {
     },
   });
 };
+
+/**
+ * SET TAG FEATURED
+ */
+export const useSetFeaturedTagMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, isFeatured }: { id: number; isFeatured: boolean }) =>
+      tagsService.setFeatured(id, isFeatured),
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: TAGS_QUERY_KEYS.lists(),
+      });
+      queryClient.invalidateQueries({
+        queryKey: TAGS_QUERY_KEYS.allList(),
+      });
+    },
+  });
+};

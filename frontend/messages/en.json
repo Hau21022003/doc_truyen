@@ -20,6 +20,7 @@
       "reset": "Reset",
       "uploadFile": "Upload file",
       "updateSuccess": "Update success",
+      "updateFailed": "Update failed",
       "addAnImage": "Add an image",
       "pasteImageUrl": "Paste image URL..."
     },
@@ -182,7 +183,8 @@
       "slug": "Slug",
       "storyCount": "Stories",
       "createdAt": "Created At",
-      "updatedAt": "Updated At"
+      "updatedAt": "Updated At",
+      "isFeatured": "Featured"
     }
   },
 
@@ -246,7 +248,10 @@
       "viewCount": "Views",
       "lastAddedChapterDate": "Last Chapter Added",
       "createdAt": "Created At",
-      "updatedAt": "Updated At"
+      "updatedAt": "Updated At",
+      "tags": "Tags",
+      "rating": "Rating",
+      "ratingValue": "Average {averageRating}, {ratingCount} ratings"
     },
     "filters": {
       "search": "Search",
@@ -310,6 +315,8 @@
       }
     }
   },
+
+  "homepage": { "hotTags": "Hot tags" },
 
   "AuthModal": {
     "Login": {

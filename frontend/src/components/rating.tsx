@@ -1,3 +1,5 @@
+"use client";
+
 import {
   IconStarFill,
   IconStarHalf,
@@ -7,10 +9,10 @@ import { cn } from "@/lib/utils";
 import { useState } from "react";
 
 const valueSizeMap = {
-  sm: "text-base",
-  default: "text-lg",
-  lg: "text-xl",
-  xl: "text-2xl",
+  sm: "text-sm",
+  default: "text-base",
+  lg: "text-lg",
+  xl: "text-xl",
 } as const;
 
 type RatingProps = {
@@ -81,7 +83,10 @@ export function Rating({
 
       {showValue && (
         <span
-          className={cn("font-bold text-foreground ml-1", valueSizeMap[size])}
+          className={cn(
+            "font-semibold text-foreground ml-1",
+            valueSizeMap[size],
+          )}
         >
           {displayValue}
         </span>
