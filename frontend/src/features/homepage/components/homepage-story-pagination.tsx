@@ -2,9 +2,9 @@
 
 import { IconFirst, IconLast } from "@/components/icons";
 import { Button } from "@/components/ui/button";
-import { urlUtils } from "@/shared/utils/url.utils";
+import { getPaginationPages } from "@/shared/utils/pagination.utils";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useHomepageFilters } from "../hooks/use-homepage-filters";
 
 interface StoryPaginationProps {
   currentPage: number;
@@ -14,47 +14,9 @@ export function HomepageStoryPagination({
   currentPage,
   totalPages,
 }: StoryPaginationProps) {
-  const getVisiblePages = ({
-    currentPage,
-    totalPages,
-    maxVisible = 5,
-  }: {
-    currentPage: number;
-    totalPages: number;
-    maxVisible?: number;
-  }): number[] => {
-    const half = Math.floor(maxVisible / 2);
+  const pages = getPaginationPages(currentPage, totalPages);
 
-    let start = Math.max(1, currentPage - half);
-    let end = Math.min(totalPages, currentPage + half);
-
-    // Điều chỉnh khi gần đầu
-    if (currentPage <= half) {
-      end = Math.min(totalPages, maxVisible);
-    }
-
-    // Điều chỉnh khi gần cuối
-    if (currentPage + half > totalPages) {
-      start = Math.max(1, totalPages - maxVisible + 1);
-    }
-
-    const pages: number[] = [];
-    for (let i = start; i <= end; i++) {
-      pages.push(i);
-    }
-
-    return pages;
-  };
-
-  const visiblePages = getVisiblePages({
-    currentPage: currentPage,
-    totalPages,
-  });
-
-  const searchParams = useSearchParams();
-
-  const createPageUrl = (page: number) =>
-    `?${urlUtils.createQueryString(searchParams, "page", String(page))}`;
+  const { createPageUrl } = useHomepageFilters();
 
   return (
     <div className="flex items-center justify-center flex-wrap gap-2">
@@ -69,24 +31,29 @@ export function HomepageStoryPagination({
           <IconFirst size="sm" color="custom" />
         </Link>
       </Button>
-      {visiblePages.map((page, index) => (
-        <Link
-          key={index}
-          href={createPageUrl(page)}
-          className={`size-9 rounded-md flex items-center justify-center ${
-            page === currentPage
-              ? "bg-primary-orange text-primary-orange-foreground border-primary-orange"
-              : "hover:bg-muted hover:text-primary border border-muted rounded-md text-sm text-muted-foreground"
-          }`}
-        >
-          {page}
-        </Link>
-      ))}
+      {pages.map((page, index) =>
+        page === "..." ? (
+          <span key={index} className="text-muted-foreground">
+            ...
+          </span>
+        ) : (
+          <Link
+            key={index}
+            href={createPageUrl(page)}
+            className={`size-9 rounded-md flex items-center justify-center ${
+              page === currentPage
+                ? "bg-primary-orange text-primary-orange-foreground border-primary-orange"
+                : "hover:bg-muted hover:text-primary border border-muted rounded-md text-sm text-muted-foreground"
+            }`}
+          >
+            {page}
+          </Link>
+        ),
+      )}
       <Button
         size={"icon"}
         variant={"outline"}
         className="hover:bg-muted hover:text-primary border-muted border text-muted-foreground"
-        // onClick={() => .setPage(totalPages)}
         disabled={currentPage === totalPages}
         asChild
       >

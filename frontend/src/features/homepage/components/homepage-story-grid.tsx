@@ -15,7 +15,7 @@ interface StoryGridProps {
 export function HomepageStoryGrid({ stories }: StoryGridProps) {
   const locale = useLocale() as (typeof SUPPORTED_LOCALES)[number];
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       {stories.map((story) => (
         <div key={story.id} className="mb-7.5 flex items-start gap-2">
           <Link href={`/story/${story.slug}`}>

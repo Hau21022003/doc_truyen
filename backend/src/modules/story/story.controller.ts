@@ -17,6 +17,7 @@ import { Roles } from '../auth/decorators/roles.decorator';
 import { UserRole } from '../users/entities/user.entity';
 import { CreateStoryDto } from './dto/create-story.dto';
 import { HomeStoryQueryDto } from './dto/home-story-query.dto';
+import { HotStoryQueryDto } from './dto/hot-story-query.dto';
 import { QueryStoryDto } from './dto/query-story.dto';
 import { UpdateStoryDto } from './dto/update-story.dto';
 import { StoryService } from './story.service';
@@ -41,6 +42,12 @@ export class StoryController {
   @Public()
   findHomepage(@Query() queryDto: HomeStoryQueryDto) {
     return this.storyService.findHomepage(queryDto);
+  }
+
+  @Get('hot-stories')
+  @Public()
+  findHotStories(@Query() queryDto: HotStoryQueryDto) {
+    return this.storyService.findHotStories(queryDto);
   }
 
   @Get(':id')

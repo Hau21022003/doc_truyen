@@ -17,11 +17,13 @@ import { MediaUsage } from '../media/constants/media.constants';
 import { MediaService } from '../media/media.service';
 import { TagsService } from '../tags/tags.service';
 import {
+  HOT_STORY_CONFIG,
   STORY_SEARCHABLE_COLUMNS,
   STORY_SORTABLE_COLUMNS,
 } from './constants/story.constants';
 import { CreateStoryDto } from './dto/create-story.dto';
 import { HomeStoryQueryDto } from './dto/home-story-query.dto';
+import { HotStoryQueryDto } from './dto/hot-story-query.dto';
 import { QueryStoryDto } from './dto/query-story.dto';
 import { UpdateStoryDto } from './dto/update-story.dto';
 import { Story, StoryStatus } from './entities/story.entity';
@@ -185,6 +187,76 @@ export class StoryService {
     return {
       data,
       page,
+      limit,
+      total,
+      totalPages: Math.ceil(total / limit),
+    };
+  }
+
+  /**
+   * Lấy danh sách hot stories với time decay
+   * Tiêu chí:
+   * - Đã publish
+   * - Có chapter published
+   * - Hot score được tính theo công thức: (RatingScore + CommentScore) * TimeDecayFactor
+   * - Time decay sử dụng half-life (mặc định 7 ngày)
+   *
+   * @param query DTO chứa limit (mặc định 10)
+   * @returns PaginatedResponse với stories sắp xếp theo hot score
+   */
+  async findHotStories(
+    query: HotStoryQueryDto,
+  ): Promise<PaginatedResponseDto<Story>> {
+    const { limit = 10 } = query;
+    const {
+      HALF_LIFE_HOURS,
+      RATING_AVERAGE_WEIGHT,
+      RATING_COUNT_WEIGHT,
+      COMMENT_COUNT_WEIGHT,
+    } = HOT_STORY_CONFIG;
+
+    // Không còn giới hạn 7 ngày cứng - tính time decay cho tất cả
+    let queryBuilder = this.storyRepository
+      .createQueryBuilder(this.ENTITY_ALIAS)
+      .leftJoinAndSelect(`${this.ENTITY_ALIAS}.tags`, 'tags')
+      .where(`${this.ENTITY_ALIAS}.status = :storyStatus`, {
+        storyStatus: StoryStatus.PUBLISHED,
+      })
+      .andWhere(`${this.ENTITY_ALIAS}.lastAddedChapterDate IS NOT NULL`);
+
+    // Add calculated hot score as virtual column
+    // Hot Score Formula (in SQL):
+    // hot_score = (
+    //   (average_rating * 1) +
+    //   (ln(rating_count + 1) * 0.5) +
+    //   (comment_count * 0.03)
+    // ) * power(0.5, extract(epoch from (now() - last_added_chapter_date)) / 3600 / 168)
+    queryBuilder.addSelect(
+      `(
+        (${this.ENTITY_ALIAS}.averageRating * ${RATING_AVERAGE_WEIGHT}) +
+        (ln(${this.ENTITY_ALIAS}.ratingCount + 1) * ${RATING_COUNT_WEIGHT}) +
+        (ln(${this.ENTITY_ALIAS}.commentCount + 1) * ${COMMENT_COUNT_WEIGHT})
+      ) *
+      power(
+        0.5,
+        extract(epoch from (now() - ${this.ENTITY_ALIAS}.lastAddedChapterDate)) 
+        / 3600 
+        / ${HALF_LIFE_HOURS}
+      )`,
+      'hot_score',
+    );
+
+    // Sort by hot score DESC
+    queryBuilder.orderBy('hot_score', 'DESC');
+
+    // Apply pagination
+    queryBuilder = QueryBuilderHelper.applyPagination(queryBuilder, 1, limit);
+
+    const [data, total] = await queryBuilder.getManyAndCount();
+
+    return {
+      data,
+      page: 1,
       limit,
       total,
       totalPages: Math.ceil(total / limit),

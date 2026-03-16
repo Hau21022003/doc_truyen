@@ -14,6 +14,7 @@ export interface Story {
   viewCount: number;
   averageRating: number;
   ratingCount: number;
+  commentCount: number;
   createdAt: string;
   updatedAt: string;
   tags?: StoryTag[];

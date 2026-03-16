@@ -1,11 +1,13 @@
 "use client";
 
 import {
+  IconArrowLeft,
   IconBookmark,
-  IconHamburger,
+  IconHistory,
   IconLogo,
   IconLogout,
   IconNotifcations,
+  IconSearch,
   IconSetting,
   IconUserFill,
 } from "@/components/icons";
@@ -15,17 +17,25 @@ import { useAuthModal } from "@/features/auth/hooks/use-auth-modal.hook";
 import EditProfileModal from "@/features/users/components/edit-profile-modal";
 import { useEditProfileModalStore } from "@/features/users/stores/edit-profile-modal.store";
 import { useUpdateProfileMutation } from "@/features/users/use-update-profile.mutation";
+import { useClickOutside, useIsMobile } from "@/hooks";
+import { useRouter } from "@/i18n/navigation";
 import { handleErrorApi } from "@/lib/error";
 import { cn } from "@/lib/utils";
 import { useConfirm } from "@/providers/confirm-provider";
 import { useAuthStore } from "@/shared/stores";
 import { generateAvatarUrl } from "@/shared/utils";
-import { ChevronDownIcon } from "lucide-react";
+import { ChevronDownIcon, Search } from "lucide-react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
-import { Fragment, useMemo } from "react";
+import { useSearchParams } from "next/navigation";
+import { Fragment, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "../ui/input-group";
 import {
   Popover,
   PopoverContent,
@@ -34,40 +44,50 @@ import {
   PopoverTrigger,
 } from "../ui/popover";
 import { Separator } from "../ui/separator";
-import { Sheet, SheetContent, SheetTrigger } from "../ui/sheet";
 import { Switch } from "../ui/switch";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { LanguageSection } from "./language-section";
 import { ThemeSection } from "./theme-section";
 
 export default function UsersHeader() {
+  const isMobile = useIsMobile();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const searchRef = useClickOutside<HTMLDivElement>(() => {
+    if (isSearchOpen) setIsSearchOpen(false);
+  });
+
+  // Reset search query khi không còn param q
+  useEffect(() => {
+    const currentQ = searchParams.get("q");
+    if (!currentQ) {
+      setSearchQuery("");
+    }
+  }, [searchParams]);
+
   const { isAuthenticated, isInitialized, user } = useAuthStore();
-  const { openLoginModal, openRegisterModal, requireAuth } = useAuthModal();
+  const { openLoginModal, requireAuth } = useAuthModal();
   const { mutate: logout } = useLogoutMutation();
-  const t = useTranslations("layout.UserHeader");
+
+  const tHeader = useTranslations("layout.UserHeader");
+  const tCommon = useTranslations("common");
   const { openModal } = useEditProfileModalStore();
   const {
     mutateAsync: updateNotifications,
     isPending: isUpdatingNotifications,
   } = useUpdateProfileMutation();
 
-  const links = useMemo(
-    () => [
-      { href: "/?status=end", label: t("Completed") },
-      { href: "/?post_type=Manhwa", label: t("Manhwa") },
-      { href: "/?post_type=Novel", label: t("Novel") },
-      { href: "/?post_type=Manga", label: t("Manga") },
-    ],
-    [t],
-  );
-
   const { confirm } = useConfirm();
   const handleLogout = async () => {
     const confirmed = await confirm({
-      title: t("Log out"),
-      description: t("Are you sure you want to log out?"),
-      confirmText: t("Log out"),
-      cancelText: t("Cancel"),
+      title: tHeader("Log out"),
+      description: tHeader("Are you sure you want to log out?"),
+      confirmText: tHeader("Log out"),
+      cancelText: tHeader("Cancel"),
     });
 
     if (confirmed) {
@@ -81,46 +101,66 @@ export default function UsersHeader() {
         updateData: { enableStoryNotifications: enabled },
       }),
       {
-        loading: `${t("Updating notification settings")}...`,
-        success: () => t("Notification settings updated"),
+        loading: `${tHeader("Updating notification settings")}...`,
+        success: () => tHeader("Notification settings updated"),
         error: (error) => {
           handleErrorApi({ error });
-          return t("Failed to update notification settings");
+          return tHeader("Failed to update notification settings");
         },
       },
     );
   };
 
+  const handleSearch = () => {
+    if (!searchQuery.trim()) {
+      router.push(`/`);
+      return;
+    }
+
+    router.push(`/?q=${encodeURIComponent(searchQuery)}`);
+    if (isSearchOpen) setIsSearchOpen(false);
+  };
+
+  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleSearch();
+    }
+  };
+
   return (
     <Fragment>
-      <div className="h-18 w-full flex items-center justify-between max-w-6xl">
-        <div className="flex items-center gap-4">
-          {/* Menu hambuger cho mobile */}
-          <Sheet>
-            <SheetTrigger asChild>
-              <IconHamburger
-                variant={"default"}
-                className="text-primary md:hidden"
-              />
-            </SheetTrigger>
-            <SheetContent side="left">
-              <nav
-                className="flex flex-col gap-6 p-6 mt-8"
-                aria-label="Main navigation"
-              >
-                {links.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className="text-base hover:text-primary transition-colors uppercase font-medium"
-                  >
-                    {link.label}
-                  </Link>
-                ))}
-              </nav>
-            </SheetContent>
-          </Sheet>
+      {/* Mobile Search Overlay */}
+      {isMobile && isSearchOpen && (
+        <div
+          ref={searchRef}
+          className="fixed top-0 left-0 right-0 h-18 bg-background z-50 flex items-center px-4 gap-3 shadow-md"
+        >
+          <button onClick={() => setIsSearchOpen(false)} className="shrink-0">
+            <IconArrowLeft size={"lg"} />
+          </button>
 
+          <InputGroup className="flex-1 rounded-2xl">
+            <InputGroupInput
+              placeholder={tHeader("searchPlaceholder")}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={handleSearchKeyDown}
+            />
+            <InputGroupAddon>
+              <Search />
+            </InputGroupAddon>
+          </InputGroup>
+          <Button
+            onClick={handleSearch}
+            className="bg-primary-orange text-primary-orange-foreground hover:bg-primary-orange hover:text-primary-orange-foreground"
+          >
+            {tCommon("actions.search")}
+          </Button>
+        </div>
+      )}
+
+      <div className="h-18 w-full flex items-center justify-between max-w-6xl">
+        <div className="flex-1 flex items-center gap-4">
           <Link href="/" aria-label="Home">
             <IconLogo
               size="2xl"
@@ -128,45 +168,59 @@ export default function UsersHeader() {
               className="text-primary-orange"
             />
           </Link>
-          <nav
-            className="hidden md:flex items-center gap-4"
-            aria-label="Main navigation"
-          >
-            {links.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="text-base hover:text-primary transition-colors uppercase font-medium"
-              >
-                {link.label}
-              </Link>
-            ))}
-          </nav>
+          {!isMobile && (
+            <InputGroup className="max-w-xs w-full rounded-2xl">
+              <InputGroupInput
+                placeholder={tHeader("searchPlaceholder")}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={handleSearchKeyDown}
+              />
+              <InputGroupAddon>
+                <Search />
+              </InputGroupAddon>
+
+              <InputGroupAddon align="inline-end" className="pr-1">
+                <div
+                  onClick={handleSearch}
+                  className="cursor-pointer w-7 h-7 rounded-full bg-primary-orange text-primary-orange-foreground [&_svg:not([class*='size-'])]:size-4 flex items-center justify-center"
+                >
+                  <IconSearch color="custom" />
+                </div>
+              </InputGroupAddon>
+            </InputGroup>
+          )}
         </div>
 
-        <div className="flex items-center gap-2 sm:gap-4">
+        <div className="flex items-center gap-3 sm:gap-4">
           {/* Hiển thị icon bookmark và thông báo */}
-          {/* {isInitialized && isAuthenticated && ( */}
-          <Fragment>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <IconNotifcations size={"lg"} />
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>{t("Notifications")}</p>
-              </TooltipContent>
-            </Tooltip>
+          {isMobile && (
+            <>
+              <button onClick={() => setIsSearchOpen(true)}>
+                <IconSearch size={"lg"} />
+              </button>
 
-            <Tooltip>
-              <TooltipTrigger asChild>
+              <button>
+                <IconHistory size={"lg"} />
+              </button>
+
+              <button>
                 <IconBookmark size={"lg"} />
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>{t("Bookmark")}</p>
-              </TooltipContent>
-            </Tooltip>
-          </Fragment>
-          {/* )} */}
+              </button>
+            </>
+          )}
+          {!isMobile && (
+            <>
+              <button className="h-9 flex items-center gap-2 font-medium cursor-pointer">
+                <IconHistory size={"lg"} />
+                <p>{tHeader("history")}</p>
+              </button>
+              <button className="h-9 flex items-center gap-2 font-medium cursor-pointer">
+                <IconBookmark size={"lg"} />
+                <p>{tHeader("Bookmark")}</p>
+              </button>
+            </>
+          )}
 
           {/* Chưa đăng nhập: hiển thị nút cài đặt chung */}
           {/* Đăng nhập: hiển thị avatar */}
@@ -198,13 +252,13 @@ export default function UsersHeader() {
                 </PopoverTrigger>
               </TooltipTrigger>
               <TooltipContent>
-                <p>{t("Settings")}</p>
+                <p>{tHeader("Settings")}</p>
               </TooltipContent>
             </Tooltip>
 
             <PopoverContent align="end" className="p-0">
               <PopoverHeader className="px-4 py-3">
-                <PopoverTitle>{t("Settings")}</PopoverTitle>
+                <PopoverTitle>{tHeader("Settings")}</PopoverTitle>
               </PopoverHeader>
 
               {/* Edit Thông tin cá nhân  */}
@@ -221,7 +275,7 @@ export default function UsersHeader() {
                       )}
                     >
                       <IconUserFill />
-                      {t("Profile")}
+                      {tHeader("Profile")}
                     </button>
 
                     <div
@@ -231,7 +285,7 @@ export default function UsersHeader() {
                       )}
                     >
                       <IconNotifcations />
-                      {t("Story Notifications")}
+                      {tHeader("Story Notifications")}
                       <Switch
                         disabled={isUpdatingNotifications}
                         checked={user?.enableStoryNotifications ?? true}
@@ -240,7 +294,7 @@ export default function UsersHeader() {
                       />
                     </div>
                     <p className="text-xs text-muted-foreground ml-12 -mt-1 mb-2 mr-4">
-                      {t(
+                      {tHeader(
                         "Get notified when followed stories release new chapters",
                       )}
                     </p>
@@ -270,7 +324,7 @@ export default function UsersHeader() {
                       )}
                     >
                       <IconLogout />
-                      {t("Log out")}
+                      {tHeader("Log out")}
                     </button>
                   </div>
                 </Fragment>
@@ -285,15 +339,8 @@ export default function UsersHeader() {
                 onClick={openLoginModal}
                 className="rounded-2xl cursor-pointer"
               >
-                {t("Login")}
+                {tHeader("Login")}
               </Button>
-              {/* <Button
-                onClick={openRegisterModal}
-                className="rounded-2xl hidden md:block cursor-pointer"
-                variant={"outline"}
-              >
-                {t("Register")}
-              </Button> */}
             </Fragment>
           )}
         </div>

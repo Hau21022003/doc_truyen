@@ -59,7 +59,12 @@
     },
     "dialog": {
       "confirmDescription": "Are you sure?"
-    }
+    },
+    "empty": {
+      "title": "No data available",
+      "description": "There is currently no data to display"
+    },
+    "notification": { "fetchError": "Fetch error" }
   },
 
   "table": {
@@ -116,6 +121,8 @@
       "system": "system",
       "Language": "Language",
       "Profile": "Profile",
+      "history": "History",
+      "searchPlaceholder": "Search by story title, author name...",
       "Story Notifications": "Story Notifications",
       "Get notified when followed stories release new chapters": "Get notified when followed stories release new chapters",
       "Updating notification settings": "Updating notification settings",
@@ -316,7 +323,10 @@
     }
   },
 
-  "homepage": { "hotTags": "Hot tags" },
+  "homepage": {
+    "hotTags": "Hot tags",
+    "topStories": "Hot stories"
+  },
 
   "AuthModal": {
     "Login": {

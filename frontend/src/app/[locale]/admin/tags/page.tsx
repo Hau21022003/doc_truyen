@@ -152,12 +152,12 @@ export default function TagsPage() {
     },
     {
       key: "actions",
-      width: 80,
+      width: 40,
       align: "center",
       sticky: "right",
       label: tCommon("actions.actions"),
       render: (tag) => (
-        <div className="flex gap-2">
+        <div className="flex justify-center gap-2">
           <Button
             variant={"outline"}
             size="icon"

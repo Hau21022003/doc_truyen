@@ -22,6 +22,11 @@ export const storyService = {
       params,
     }),
 
+  findHotStories: (limit?: number) =>
+    http.get<PaginationResponse<HomepageStory>>("/story/hot-stories", {
+      params: { limit },
+    }),
+
   update: (id: number, data: UpsertStoryInput) =>
     http.patch<Story>(`/story/${id}`, data),
 

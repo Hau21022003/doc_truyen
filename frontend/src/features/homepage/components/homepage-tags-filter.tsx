@@ -3,58 +3,33 @@
 import { IconCategoryOutline } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useAllTagsQuery } from "@/features/tags/tags.query";
-import { useRouter } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 import { stringUtils } from "@/shared/utils";
 import { useTranslations } from "next-intl";
-import { usePathname, useSearchParams } from "next/navigation";
+import { useHomepageFilters } from "../hooks/use-homepage-filters";
 
-export default function HomepageTagsFilter({
-  className = "",
-  activeTags,
-}: {
+interface HomepageTagsFilterProps {
   className?: string;
-  activeTags: string[];
-}) {
+}
+export function HomepageTagsFilter({
+  className = "",
+}: HomepageTagsFilterProps) {
   const t = useTranslations("homepage");
 
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const pathname = usePathname();
-
-  const {
-    data: tagsData,
-    error: tagsError,
-    isLoading: isTagsLoading,
-  } = useAllTagsQuery();
+  const { data: tagsData, isLoading: isTagsLoading } = useAllTagsQuery();
 
   const tags = tagsData?.payload || [];
 
-  const toggleTag = (slug: string) => {
-    const params = new URLSearchParams(searchParams.toString());
-
-    const currentTags = params.getAll("tag");
-
-    if (currentTags.includes(slug)) {
-      // remove tag
-      const newTags = currentTags.filter((t) => t !== slug);
-      params.delete("tag");
-      newTags.forEach((t) => params.append("tag", t));
-    } else {
-      // add tag
-      params.append("tag", slug);
-    }
-
-    router.push(`?${params.toString()}`);
-  };
+  const { tags: activeTags, toggleTag } = useHomepageFilters();
 
   const displayTags = tags.filter((tag) => tag.isFeatured);
 
   return (
     <section
       className={cn(
-        "border border-border bg-muted rounded-lg px-4 py-4 w-full space-y-2",
+        "border border-border rounded-lg px-4 py-4 w-full space-y-2",
         className,
       )}
     >
@@ -70,6 +45,18 @@ export default function HomepageTagsFilter({
       <Separator />
 
       <div className="flex gap-2 flex-wrap items-center">
+        {isTagsLoading &&
+          Array.from({ length: 10 }).map((_, i) => {
+            const randomWidth = Math.floor(Math.random() * 60) + 60; // 60px -> 120px
+
+            return (
+              <Skeleton
+                key={i}
+                className="h-8"
+                style={{ width: `${randomWidth}px` }}
+              />
+            );
+          })}
         {displayTags.map((tag) => {
           const isActive = activeTags.includes(tag.slug);
           return (

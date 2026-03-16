@@ -1,8 +1,11 @@
+import { EmptyData } from "@/components/empty-data";
 import {
+  HomepageMobileTagsFilter,
   HomepageStoryGrid,
   HomepageStoryPagination,
+  HomepageTagsFilter,
 } from "@/features/homepage/components";
-import HomepageTagsFilter from "@/features/homepage/components/homepage-tags-section";
+import { HomepageTopStories } from "@/features/homepage/components/homepage-top-srories";
 import { storyService } from "@/features/story/story.service";
 import { getErrorMessage } from "@/lib/error";
 import { getTranslations } from "next-intl/server";
@@ -16,8 +19,7 @@ type PageProps = {
 };
 
 export default async function HomePage({ searchParams }: PageProps) {
-  const t = await getTranslations("homePage");
-  const tCommon = await getTranslations("homePage");
+  const t = await getTranslations();
 
   const params = await searchParams;
 
@@ -42,24 +44,36 @@ export default async function HomePage({ searchParams }: PageProps) {
   } catch (error) {
     return (
       <div className="p-4 text-center text-red-500">
-        {getErrorMessage(error) || t("fetchError")}
+        {getErrorMessage(error) || t("common.notification.fetchError")}
       </div>
     );
   }
 
+  const stories = storiesData.data;
+
+  const hotStories = await storyService
+    .findHotStories(10)
+    .then((res) => res.payload?.data ?? [])
+    .catch(() => []);
+
   return (
     <div className="flex flex-col items-center">
-      <div className="w-full max-w-6xl">
+      <div className="w-full max-w-6xl py-4">
+        <HomepageTopStories topStories={hotStories} />
+        <HomepageMobileTagsFilter className="lg:hidden mb-7" />
         <div className="grid grid-cols-1 lg:grid-cols-[3fr_1fr] items-start">
-          <div>
-            <HomepageStoryGrid stories={storiesData.data} />
-            <HomepageStoryPagination
-              currentPage={storiesData.page}
-              totalPages={storiesData.totalPages}
-            />
-          </div>
-          {/* <TagFilter className="" /> */}
-          <HomepageTagsFilter activeTags={tags} />
+          {stories.length === 0 ? (
+            <EmptyData size="md" />
+          ) : (
+            <div>
+              <HomepageStoryGrid stories={stories} />
+              <HomepageStoryPagination
+                currentPage={storiesData.page}
+                totalPages={storiesData.totalPages}
+              />
+            </div>
+          )}
+          <HomepageTagsFilter className="hidden lg:block" />
         </div>
       </div>
     </div>

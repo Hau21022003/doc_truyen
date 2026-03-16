@@ -8,6 +8,8 @@ export const STORY_QUERY_KEYS = {
   list: (params: StoryQueryInput) => [...STORY_QUERY_KEYS.lists(), params],
   details: () => [...STORY_QUERY_KEYS.all, "detail"],
   detail: (id?: number) => [...STORY_QUERY_KEYS.details(), id],
+  hot: () => [...STORY_QUERY_KEYS.all, "hot"],
+  hotList: (limit?: number) => [...STORY_QUERY_KEYS.hot(), limit ?? 10],
 };
 
 /**
@@ -28,5 +30,16 @@ export const useStoryQuery = (id?: number) => {
     queryKey: STORY_QUERY_KEYS.detail(id),
     queryFn: () => storyService.findOne(id!),
     enabled: !!id,
+  });
+};
+
+/**
+ * Get hot stories with time decay
+ */
+export const useHotStoriesQuery = (limit: number = 10) => {
+  return useQuery({
+    queryKey: STORY_QUERY_KEYS.hotList(limit),
+    queryFn: () => storyService.findHotStories(limit),
+    staleTime: 5 * 60 * 1000, // cache 5 phút
   });
 };

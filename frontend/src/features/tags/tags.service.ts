@@ -10,7 +10,9 @@ export const tagsService = {
   query: (params?: TagQueryInput) =>
     http.get<PaginationResponse<Tag>>("/tags", { params }),
 
-  findAll: () => http.get<Tag[]>("/tags/all"),
+  findAll: async () => {
+    return http.get<Tag[]>("/tags/all");
+  },
 
   update: (id: number, data: UpsertTagInput) =>
     http.patch<Tag>(`/tags/${id}`, data),

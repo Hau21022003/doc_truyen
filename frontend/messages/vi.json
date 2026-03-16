@@ -58,7 +58,12 @@
     },
     "dialog": {
       "confirmDescription": "Bạn có chắc không?"
-    }
+    },
+    "empty": {
+      "title": "Không có dữ liệu",
+      "description": "Hiện tại chưa có dữ liệu để hiển thị."
+    },
+    "notification": { "fetchError": "Tải dữ liệu bị lỗi" }
   },
 
   "table": {
@@ -115,7 +120,9 @@
       "Cancel": "Hủy",
       "Settings": "Cài đặt",
       "Notifications": "Thông báo",
+      "history": "Lịch sử",
       "Bookmark": "Dấu trang",
+      "searchPlaceholder": "Tìm theo tên truyện, tên tác giả...",
       "Appearance": "Giao diện",
       "light": "sáng",
       "dark": "tối",
@@ -315,7 +322,7 @@
     }
   },
 
-  "homepage": { "hotTags": "Các thẻ hot" },
+  "homepage": { "hotTags": "Các thẻ hot", "topStories": "Truyện hot" },
 
   "AuthModal": {
     "Login": {
