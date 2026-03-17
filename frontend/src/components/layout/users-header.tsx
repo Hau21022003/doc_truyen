@@ -12,11 +12,11 @@ import {
   IconUserFill,
 } from "@/components/icons";
 import { Button } from "@/components/ui/button";
-import { useLogoutMutation } from "@/features/auth/auth.mutation";
-import { useAuthModal } from "@/features/auth/hooks/use-auth-modal.hook";
-import EditProfileModal from "@/features/users/components/edit-profile-modal";
-import { useEditProfileModalStore } from "@/features/users/stores/edit-profile-modal.store";
-import { useUpdateProfileMutation } from "@/features/users/use-update-profile.mutation";
+import { useLogoutMutation } from "@/features/data/auth/auth.mutation";
+import { useAuthModal } from "@/features/data/auth/hooks/use-auth-modal.hook";
+import EditProfileModal from "@/features/data/users/components/edit-profile-modal";
+import { useEditProfileModalStore } from "@/features/data/users/stores/edit-profile-modal.store";
+import { useUpdateProfileMutation } from "@/features/data/users/use-update-profile.mutation";
 import { useClickOutside, useIsMobile } from "@/hooks";
 import { useRouter } from "@/i18n/navigation";
 import { handleErrorApi } from "@/lib/error";
@@ -211,11 +211,11 @@ export default function UsersHeader() {
           )}
           {!isMobile && (
             <>
-              <button className="h-9 flex items-center gap-2 font-medium cursor-pointer">
+              <button className="h-9 flex items-center gap-2 font-medium cursor-pointer text-sm">
                 <IconHistory size={"lg"} />
                 <p>{tHeader("history")}</p>
               </button>
-              <button className="h-9 flex items-center gap-2 font-medium cursor-pointer">
+              <button className="h-9 flex items-center gap-2 font-medium cursor-pointer text-sm">
                 <IconBookmark size={"lg"} />
                 <p>{tHeader("Bookmark")}</p>
               </button>

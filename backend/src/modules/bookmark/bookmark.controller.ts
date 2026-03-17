@@ -1,5 +1,13 @@
 import { PaginationDto } from '@/common';
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { type JwtPayload } from '../auth/types/jwt-payload.type';
 import { BookmarkService } from './bookmark.service';
@@ -23,5 +31,13 @@ export class BookmarkController {
     @Query() queryDto: PaginationDto,
   ) {
     return this.bookmarkService.findAllByUser(user.sub, queryDto);
+  }
+
+  @Delete(':storyId')
+  async remove(
+    @CurrentUser() user: JwtPayload,
+    @Param('storyId') storyId: string,
+  ) {
+    await this.bookmarkService.remove(user.sub, Number(storyId));
   }
 }

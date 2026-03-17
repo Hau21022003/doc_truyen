@@ -3,6 +3,7 @@
     "actions": {
       "create": "Create",
       "creating": "Creating...",
+      "createSuccess": "Create success",
       "update": "Update",
       "updating": "Updating...",
       "delete": "Delete",
@@ -64,7 +65,10 @@
       "title": "No data available",
       "description": "There is currently no data to display"
     },
-    "notification": { "fetchError": "Fetch error" }
+    "notification": {
+      "fetchError": "Fetch error"
+    },
+    "home": "Home"
   },
 
   "table": {
@@ -320,12 +324,48 @@
           "label": "Contents"
         }
       }
+    },
+    "invalidChapter": "Invalid chapter."
+  },
+
+  "comment": {
+    "create": "Post comment",
+    "creating": "Posting comment...",
+    "createSuccess": "Comment posted successfully",
+    "createFailed": "Failed to post comment",
+
+    "title": "Leave a Reply",
+
+    "fields": {
+      "content": {
+        "label": "Comment",
+        "placeholder": "Write your comment..."
+      },
+      "guestName": {
+        "label": "Your name",
+        "placeholder": "Enter your name"
+      }
     }
   },
 
   "homepage": {
     "hotTags": "Hot tags",
     "topStories": "Hot stories"
+  },
+
+  "storyDetails": {
+    "rating": "Rating",
+    "ratingSummary": "Average: {avg}/5, {count} ratings",
+    "genre": "Genres",
+    "status": "Status",
+    "summary": "Summary",
+    "tableOfContents": "Table of Contents",
+    "chapter": "Chap {number}",
+    "discussion": "Discussion",
+    "bookmarked": "{count} users bookmarked this",
+    "comments": "{count} comments",
+    "readFirst": "Start Reading",
+    "readLast": "Latest Chap"
   },
 
   "AuthModal": {

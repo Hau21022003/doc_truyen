@@ -54,21 +54,35 @@ export class ChapterController {
     return this.chapterService.findByStoryId(storyId, query);
   }
 
+  @Get('story/:storySlug/:chapterNumber')
+  @AuthOptional()
+  async findByStorySlugAndChapterNumber(
+    @Param('storySlug') storySlug: string,
+    @Param('chapterNumber', ParseIntPipe) chapterNumber: number,
+    @CurrentUser() user: JwtPayload | null,
+  ) {
+    return this.chapterService.findByStorySlugAndChapterNumber(
+      storySlug,
+      chapterNumber,
+      user?.sub,
+    );
+  }
+
   @Get(':id')
   @Public()
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.chapterService.findOne(id);
   }
 
-  @Get(':id/read')
-  @AuthOptional()
-  getChapterDetailForUser(
-    @Param('id') id: string,
-    @CurrentUser() user: JwtPayload | null,
-  ) {
-    console.log('user', user);
-    return this.chapterService.getChapterDetailForUser(+id, user?.sub);
-  }
+  // @Get(':id/read')
+  // @AuthOptional()
+  // getChapterDetailForUser(
+  //   @Param('id') id: string,
+  //   @CurrentUser() user: JwtPayload | null,
+  // ) {
+  //   console.log('user', user);
+  //   return this.chapterService.getChapterDetailForUser(+id, user?.sub);
+  // }
 
   @Patch(':id/status')
   @Roles(UserRole.SYSTEM_ADMIN)

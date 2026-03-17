@@ -7,11 +7,11 @@ import {
   UpsertStoryHeader,
   UpsertStoryStatusProgress,
   UpsertStoryTagSelect,
-} from "@/features/story/components/upsert-story";
+} from "@/features/data/story/components/upsert-story";
 import {
   useUpsertStoryForm,
   useUpsertStorySubmit,
-} from "@/features/story/hooks/upsert-chapter";
+} from "@/features/data/story/hooks/upsert-chapter";
 import { useSearchParams } from "next/navigation";
 
 export default function UpsertStoryPage() {

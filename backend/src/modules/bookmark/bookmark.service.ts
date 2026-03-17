@@ -3,9 +3,14 @@ import {
   PaginationDto,
   QueryBuilderHelper,
 } from '@/common';
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { Story } from '../story/entities/story.entity';
 import { CreateBookmarkDto } from './dto/create-bookmark.dto';
 import { Bookmark } from './entities/bookmark.entity';
 
@@ -18,31 +23,100 @@ export class BookmarkService {
     private readonly bookmarkRepository: Repository<Bookmark>,
   ) {}
 
+  // async create(
+  //   userId: string,
+  //   createBookmarkDto: CreateBookmarkDto,
+  // ): Promise<Bookmark> {
+  //   // Check if bookmark already exists
+  //   const existingBookmark = await this.bookmarkRepository.findOne({
+  //     where: {
+  //       userId,
+  //       storyId: createBookmarkDto.storyId,
+  //     },
+  //   });
+
+  //   if (existingBookmark) {
+  //     throw new ConflictException(
+  //       `Bookmark for story ${createBookmarkDto.storyId} already exists`,
+  //     );
+  //   }
+
+  //   const bookmark = this.bookmarkRepository.create({
+  //     userId,
+  //     storyId: createBookmarkDto.storyId,
+  //     lastReadChapterId: createBookmarkDto.lastReadChapterId,
+  //   });
+
+  //   return await this.bookmarkRepository.save(bookmark);
+  // }
   async create(
     userId: string,
     createBookmarkDto: CreateBookmarkDto,
   ): Promise<Bookmark> {
-    // Check if bookmark already exists
-    const existingBookmark = await this.bookmarkRepository.findOne({
-      where: {
-        userId,
-        storyId: createBookmarkDto.storyId,
+    return await this.bookmarkRepository.manager.transaction(
+      async (manager) => {
+        // Check if bookmark already exists
+        const existingBookmark = await manager.findOne(Bookmark, {
+          where: {
+            userId,
+            storyId: createBookmarkDto.storyId,
+          },
+        });
+
+        if (existingBookmark) {
+          throw new ConflictException(
+            `Bookmark for story ${createBookmarkDto.storyId} already exists`,
+          );
+        }
+
+        // Create bookmark
+        const bookmark = manager.create(Bookmark, {
+          userId,
+          storyId: createBookmarkDto.storyId,
+          lastReadChapterId: createBookmarkDto.lastReadChapterId,
+        });
+
+        const savedBookmark = await manager.save(bookmark);
+
+        // Increment story's bookmarkCount
+        await manager.increment(
+          Story,
+          { id: createBookmarkDto.storyId },
+          'bookmarkCount',
+          1,
+        );
+
+        return savedBookmark;
       },
-    });
+    );
+  }
 
-    if (existingBookmark) {
-      throw new ConflictException(
-        `Bookmark for story ${createBookmarkDto.storyId} already exists`,
-      );
-    }
+  async remove(userId: string, storyId: number) {
+    return await this.bookmarkRepository.manager.transaction(
+      async (transactionalEntityManager) => {
+        // Find bookmark to delete
+        const bookmark = await transactionalEntityManager.findOne(Bookmark, {
+          where: { userId, storyId },
+        });
 
-    const bookmark = this.bookmarkRepository.create({
-      userId,
-      storyId: createBookmarkDto.storyId,
-      lastReadChapterId: createBookmarkDto.lastReadChapterId,
-    });
+        if (!bookmark) {
+          throw new NotFoundException(
+            `Bookmark for story ${storyId} not found`,
+          );
+        }
 
-    return await this.bookmarkRepository.save(bookmark);
+        // Delete bookmark
+        await transactionalEntityManager.remove(bookmark);
+
+        // Decrement story's bookmarkCount
+        await transactionalEntityManager.decrement(
+          Story,
+          { id: storyId },
+          'bookmarkCount',
+          1,
+        );
+      },
+    );
   }
 
   async findAllByUser(

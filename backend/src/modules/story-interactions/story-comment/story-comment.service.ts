@@ -1,6 +1,7 @@
 import { PaginatedResponseDto } from '@/common';
 import { Chapter } from '@/modules/chapter/entities/chapter.entity';
 import { Story } from '@/modules/story/entities/story.entity';
+import { StoryService } from '@/modules/story/story.service';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -13,8 +14,7 @@ export class StoryCommentService {
   constructor(
     @InjectRepository(StoryComment)
     private readonly commentRepository: Repository<StoryComment>,
-    @InjectRepository(Chapter)
-    private readonly chapterRepository: Repository<Chapter>,
+    private readonly storyService: StoryService,
   ) {}
 
   async createComment(
@@ -63,37 +63,16 @@ export class StoryCommentService {
 
       return savedComment;
     });
-
-    // Validate chapter belongs to story
-    // if (chapterId) {
-    //   const chapter = await this.chapterRepository.findOne({
-    //     where: { id: chapterId, story: { id: storyId } },
-    //   });
-
-    //   if (!chapter) {
-    //     throw new BadRequestException(
-    //       'Chapter không tồn tại hoặc không thuộc story này',
-    //     );
-    //   }
-    // }
-
-    // const comment = this.commentRepository.create({
-    //   storyId,
-    //   chapterId: chapterId ?? null,
-    //   userId,
-    //   guestName,
-    //   content,
-    // });
-
-    // const savedComment = await this.commentRepository.save(comment);
-
-    // return savedComment;
   }
 
   async getCommentsByStory(
+    storyId: number,
     query: FindByStoryDto,
   ): Promise<PaginatedResponseDto<any>> {
-    const { limit, page, storyId, chapterId } = query;
+    // check story
+    await this.storyService.findOne(storyId);
+
+    const { limit, page, chapterId } = query;
 
     const qb = this.commentRepository
       .createQueryBuilder('comment')

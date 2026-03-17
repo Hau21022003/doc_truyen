@@ -3,6 +3,7 @@
     "actions": {
       "create": "Tạo",
       "creating": "Đang tạo...",
+      "createSuccess": "Tạo thành công",
       "update": "Cập nhật",
       "updating": "Đang cập nhật...",
       "delete": "Xóa",
@@ -63,7 +64,10 @@
       "title": "Không có dữ liệu",
       "description": "Hiện tại chưa có dữ liệu để hiển thị."
     },
-    "notification": { "fetchError": "Tải dữ liệu bị lỗi" }
+    "notification": {
+      "fetchError": "Tải dữ liệu bị lỗi"
+    },
+    "home": "Trang chủ"
   },
 
   "table": {
@@ -319,10 +323,49 @@
           "label": "Nội dung"
         }
       }
+    },
+    "invalidChapter": "Chương không hợp lệ."
+  },
+
+  "comment": {
+    "create": "Đăng comment",
+    "creating": "Đang đăng comment...",
+    "createSuccess": "Đăng comment thành công",
+    "createFailed": "Đăng comment thất bại",
+
+    "title": "Để lại bình luận",
+
+    "fields": {
+      "content": {
+        "label": "Bình luận",
+        "placeholder": "Viết bình luận của bạn..."
+      },
+      "guestName": {
+        "label": "Tên của bạn",
+        "placeholder": "Nhập tên của bạn"
+      }
     }
   },
 
-  "homepage": { "hotTags": "Các thẻ hot", "topStories": "Truyện hot" },
+  "homepage": {
+    "hotTags": "Các thẻ hot",
+    "topStories": "Truyện hot"
+  },
+
+  "storyDetails": {
+    "rating": "Đánh giá",
+    "ratingSummary": "Trung bình: {avg}/5, {count} lượt đánh giá",
+    "genre": "Thể loại",
+    "status": "Trạng thái",
+    "summary": "Tóm tắt nội dung",
+    "tableOfContents": "Mục lục",
+    "chapter": "Chap {number}",
+    "discussion": "Thảo luận",
+    "bookmarked": "{count} người đã lưu truyện",
+    "comments": "{count} bình luận",
+    "readFirst": "Đọc tập đầu",
+    "readLast": "Đọc tập cuối"
+  },
 
   "AuthModal": {
     "Login": {

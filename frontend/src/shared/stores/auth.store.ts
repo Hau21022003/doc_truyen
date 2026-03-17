@@ -1,4 +1,4 @@
-import { User } from "@/features/users/user.types";
+import { User } from "@/features/data/users/user.types";
 import { create } from "zustand";
 
 interface AuthStore {

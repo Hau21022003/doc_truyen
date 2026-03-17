@@ -1,7 +1,7 @@
 "use client";
 
-import { useProfileQuery } from "@/features/auth/auth.query";
-import { useAuthModal } from "@/features/auth/hooks/use-auth-modal.hook";
+import { useProfileQuery } from "@/features/data/auth/auth.query";
+import { useAuthModal } from "@/features/data/auth/hooks/use-auth-modal.hook";
 import { AUTH_EVENTS } from "@/shared/events/auth.events";
 import { useAuthStore } from "@/shared/stores";
 import { ReactNode, useEffect } from "react";

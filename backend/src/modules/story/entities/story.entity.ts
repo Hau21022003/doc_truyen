@@ -72,6 +72,9 @@ export class Story extends IntegerIdBaseEntity {
   @Column({ type: 'int', default: 0 })
   commentCount: number;
 
+  @Column({ type: 'int', default: 0 })
+  bookmarkCount: number;
+
   @ManyToMany(() => Tag, (tag) => tag.stories, { cascade: false })
   @JoinTable()
   tags: Tag[];

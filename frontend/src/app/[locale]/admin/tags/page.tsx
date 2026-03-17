@@ -11,17 +11,17 @@ import {
   InputGroupInput,
 } from "@/components/ui/input-group";
 import { Switch } from "@/components/ui/switch";
-import { useTableState } from "@/features/table";
+import UpsertTagModal from "@/features/data/tags/components/upsert-tag-modal";
+import { useTagActions } from "@/features/data/tags/hooks/use-tag-actions";
+import { useTagTableConfig } from "@/features/data/tags/hooks/use-tag-table-config";
+import { TAGS_QUERY_KEYS, useTagsQuery } from "@/features/data/tags/tags.query";
+import { Tag } from "@/features/data/tags/tags.types";
+import { useTableState } from "@/features/shared/table";
 import {
   DataTable,
   ExtraColumnConfig,
-} from "@/features/table/components/data-table";
-import HideColumnSelect from "@/features/table/components/hide-column-select";
-import UpsertTagModal from "@/features/tags/components/upsert-tag-modal";
-import { useTagActions } from "@/features/tags/hooks/use-tag-actions";
-import { useTagTableConfig } from "@/features/tags/hooks/use-tag-table-config";
-import { TAGS_QUERY_KEYS, useTagsQuery } from "@/features/tags/tags.query";
-import { Tag } from "@/features/tags/tags.types";
+} from "@/features/shared/table/components/data-table";
+import HideColumnSelect from "@/features/shared/table/components/hide-column-select";
 import { useIsMobile, useUpsertModal } from "@/hooks";
 import { useDebounce } from "@/hooks/use-debounce";
 import { useRowSelection } from "@/hooks/use-row-selection";

@@ -15,6 +15,7 @@ import {
 import { Public } from '../auth/decorators/public.decorator';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { UserRole } from '../users/entities/user.entity';
+import { FindBySlugDto } from './dto';
 import { CreateStoryDto } from './dto/create-story.dto';
 import { HomeStoryQueryDto } from './dto/home-story-query.dto';
 import { HotStoryQueryDto } from './dto/hot-story-query.dto';
@@ -50,7 +51,14 @@ export class StoryController {
     return this.storyService.findHotStories(queryDto);
   }
 
+  @Get('slug/:slug')
+  @Public()
+  findBySlug(@Param('slug') slug: string, @Query() query: FindBySlugDto) {
+    return this.storyService.findBySlug(slug, query.chapterSort);
+  }
+
   @Get(':id')
+  @Public()
   findOne(@Param('id') id: string) {
     return this.storyService.findOne(+id);
   }

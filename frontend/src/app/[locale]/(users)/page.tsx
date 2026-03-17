@@ -1,16 +1,16 @@
 import { EmptyData } from "@/components/empty-data";
+import { storyService } from "@/features/data/story/story.service";
 import {
   HomepageMobileTagsFilter,
   HomepageStoryGrid,
   HomepageStoryPagination,
   HomepageTagsFilter,
-} from "@/features/homepage/components";
-import { HomepageTopStories } from "@/features/homepage/components/homepage-top-srories";
-import { storyService } from "@/features/story/story.service";
+} from "@/features/views/homepage/components";
+import { HomepageTopStories } from "@/features/views/homepage/components/homepage-top-srories";
 import { getErrorMessage } from "@/lib/error";
 import { getTranslations } from "next-intl/server";
 
-type PageProps = {
+type HomePageProps = {
   searchParams: Promise<{
     tag?: string | string[];
     q?: string;
@@ -18,7 +18,7 @@ type PageProps = {
   }>;
 };
 
-export default async function HomePage({ searchParams }: PageProps) {
+export default async function HomePage({ searchParams }: HomePageProps) {
   const t = await getTranslations();
 
   const params = await searchParams;

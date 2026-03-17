@@ -271,15 +271,25 @@ export class ChapterService {
   }
 
   /**
-   * Find chapter by ID for user reading
-   * Automatically updates bookmark's lastReadChapterId if user is authenticated
-   * @param id - Chapter ID
-   * @param userId - User ID (optional, from JWT payload)
-   * @returns Chapter with contents
+   * Find chapter by story slug and chapter number
+   * Useful for SEO-friendly URLs
+   * @param storySlug - Story slug (unique identifer)
+   * @param chapterNumber - Chapter number (e.g., 1, 2, 3)
+   * @param userId - Optional user ID for updating reading data
+   * @returns Chapter with contents and story
    */
-  async getChapterDetailForUser(id: number, userId?: string): Promise<Chapter> {
+  async findByStorySlugAndChapterNumber(
+    storySlug: string,
+    chapterNumber: number,
+    userId?: string,
+  ): Promise<Chapter> {
     const chapter = await this.chapterRepository.findOne({
-      where: { id },
+      where: {
+        chapterNumber,
+        story: {
+          slug: storySlug,
+        },
+      },
       relations: ['contents', 'story'],
       order: {
         contents: {
@@ -289,24 +299,26 @@ export class ChapterService {
     });
 
     if (!chapter) {
-      throw new NotFoundException('Chapter not found');
+      throw new NotFoundException(
+        `Chapter ${chapterNumber} not found for story: ${storySlug}`,
+      );
     }
 
-    // ✅ If user is logged in
+    // ✅ If user is logged in, update reading data
     if (userId) {
       try {
         // 1️⃣ Save reading history
         await this.readingHistoryService.addHistory(
           userId,
           chapter.story.id,
-          id,
+          chapter.id,
         );
 
         // 2️⃣ Update bookmark progress if bookmark exists
         await this.bookmarkService.updateLastReadChapter(
           userId,
           chapter.story.id,
-          id,
+          chapter.id,
         );
       } catch (error) {
         console.error('Failed to update reading data:', error);

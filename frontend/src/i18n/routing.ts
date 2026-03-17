@@ -1,6 +1,7 @@
 import { defineRouting } from "next-intl/routing";
 
 export const SUPPORTED_LOCALES = ["en", "vi"] as const;
+export type SupportedLocale = (typeof SUPPORTED_LOCALES)[number];
 
 export const routing = defineRouting({
   locales: SUPPORTED_LOCALES as readonly string[],

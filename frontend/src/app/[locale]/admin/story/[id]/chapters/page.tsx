@@ -9,20 +9,20 @@ import { Separator } from "@/components/ui/separator";
 import {
   CHAPTERS_QUERY_KEYS,
   useStoryChaptersQuery,
-} from "@/features/chapter/chapter.query";
-import { ChapterQueryInput } from "@/features/chapter/chapter.schema";
-import { Chapter } from "@/features/chapter/chapter.types";
-import { useChapterActions } from "@/features/chapter/hooks/use-chapter-actions";
-import { useChapterFilter } from "@/features/chapter/hooks/use-chapter-filter";
-import { useChapterTableConfig } from "@/features/chapter/hooks/use-chapter-table-config";
-import { FilterBar } from "@/features/filter/components/filter-bar";
-import { useStoryQuery } from "@/features/story/story.query";
-import { useTableState } from "@/features/table";
+} from "@/features/data/chapter/chapter.query";
+import { ChapterQueryInput } from "@/features/data/chapter/chapter.schema";
+import { Chapter } from "@/features/data/chapter/chapter.types";
+import { useChapterActions } from "@/features/data/chapter/hooks/use-chapter-actions";
+import { useChapterFilter } from "@/features/data/chapter/hooks/use-chapter-filter";
+import { useChapterTableConfig } from "@/features/data/chapter/hooks/use-chapter-table-config";
+import { useStoryQuery } from "@/features/data/story/story.query";
+import { FilterBar } from "@/features/shared/filter/components/filter-bar";
+import { useTableState } from "@/features/shared/table";
 import {
   DataTable,
   ExtraColumnConfig,
-} from "@/features/table/components/data-table";
-import HideColumnSelect from "@/features/table/components/hide-column-select";
+} from "@/features/shared/table/components/data-table";
+import HideColumnSelect from "@/features/shared/table/components/hide-column-select";
 import { useRowSelection, useTimeZone } from "@/hooks";
 import { ArrowLeft } from "lucide-react";
 import { useTranslations } from "next-intl";

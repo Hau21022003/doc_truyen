@@ -5,13 +5,13 @@ import {
   UpsertChapterBasicInfo,
   UpsertChapterContentList,
   UpsertChapterFormHeader,
-} from "@/features/chapter/components/upsert-chapter";
+} from "@/features/data/chapter/components/upsert-chapter";
 import {
   useChapterContent,
   useChapterDrag,
   useUpsertChapterForm,
-} from "@/features/chapter/hooks/upsert-chapter";
-import { useUpsertChapterSubmit } from "@/features/chapter/hooks/upsert-chapter/use-upsert-chapter-submit";
+} from "@/features/data/chapter/hooks/upsert-chapter";
+import { useUpsertChapterSubmit } from "@/features/data/chapter/hooks/upsert-chapter/use-upsert-chapter-submit";
 import { useFileUpload } from "@/hooks";
 import { getErrorMessage } from "@/lib/error";
 import {

@@ -1,4 +1,4 @@
-import AuthModal from "@/features/auth/components/auth-modal";
+import AuthModal from "@/features/data/auth/components/auth-modal";
 import { routing } from "@/i18n/routing";
 import { AppProvider } from "@/providers/app-provider";
 import { Metadata } from "next";

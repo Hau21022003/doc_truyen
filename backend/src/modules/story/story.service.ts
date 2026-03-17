@@ -2,6 +2,7 @@ import {
   createDateRangeInUTC,
   PaginatedResponseDto,
   QueryBuilderHelper,
+  SortDirections,
   toSlug,
 } from '@/common';
 import {
@@ -268,6 +269,31 @@ export class StoryService {
       where: { id },
       relations: ['tags'],
     });
+
+    if (!story) {
+      throw new NotFoundException('Story not found');
+    }
+
+    return story;
+  }
+
+  async findBySlug(slug: string, direction: SortDirections): Promise<Story> {
+    const story = await this.storyRepository
+      .createQueryBuilder(this.ENTITY_ALIAS)
+      .leftJoinAndSelect(`${this.ENTITY_ALIAS}.tags`, 'tags')
+      .leftJoinAndSelect(
+        'story.chapters',
+        'chapter',
+        'chapter.status = :status',
+        { status: ChapterStatus.PUBLISHED },
+      )
+      .where(`${this.ENTITY_ALIAS}.status = :storyStatus`, {
+        storyStatus: StoryStatus.PUBLISHED,
+      })
+      .andWhere(`${this.ENTITY_ALIAS}.slug = :slug`, { slug })
+      .andWhere(`${this.ENTITY_ALIAS}.lastAddedChapterDate IS NOT NULL`)
+      .addOrderBy('chapter.chapterNumber', direction)
+      .getOne();
 
     if (!story) {
       throw new NotFoundException('Story not found');

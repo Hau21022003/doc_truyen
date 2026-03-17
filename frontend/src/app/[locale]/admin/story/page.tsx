@@ -11,22 +11,22 @@ import {
 } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { FilterBar } from "@/features/filter/components/filter-bar";
-import { useStoryActions } from "@/features/story/hooks/use-story-actions";
-import { useStoryFilter } from "@/features/story/hooks/use-story-filter";
-import { useStoryTableConfig } from "@/features/story/hooks/use-story-table-config";
+import { useStoryActions } from "@/features/data/story/hooks/use-story-actions";
+import { useStoryFilter } from "@/features/data/story/hooks/use-story-filter";
+import { useStoryTableConfig } from "@/features/data/story/hooks/use-story-table-config";
 import {
   STORY_QUERY_KEYS,
   useStoriesQuery,
-} from "@/features/story/story.query";
-import { StoryQueryInput } from "@/features/story/story.schema";
-import { Story } from "@/features/story/story.types";
-import { useTableState } from "@/features/table";
+} from "@/features/data/story/story.query";
+import { StoryQueryInput } from "@/features/data/story/story.schema";
+import { Story } from "@/features/data/story/story.types";
+import { FilterBar } from "@/features/shared/filter/components/filter-bar";
+import { useTableState } from "@/features/shared/table";
 import {
   DataTable,
   ExtraColumnConfig,
-} from "@/features/table/components/data-table";
-import HideColumnSelect from "@/features/table/components/hide-column-select";
+} from "@/features/shared/table/components/data-table";
+import HideColumnSelect from "@/features/shared/table/components/hide-column-select";
 import { useRowSelection, useTimeZone } from "@/hooks";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
@@ -49,16 +49,6 @@ export default function StoryPage() {
     clearSelection,
     isSelected,
   } = useRowSelection<Story>();
-
-  // Upsert modal state
-  // const {
-  //   isOpen: isOpenUpsertModal,
-  //   close: closeUpsertModal,
-  //   data: dataUpsertModal,
-  //   mode: modeUpsertModal,
-  //   openCreate: openCreateModal,
-  //   openEdit: openEditModal,
-  // } = useUpsertModal<Story>();
 
   const { removeOne, removeMany } = useStoryActions();
 

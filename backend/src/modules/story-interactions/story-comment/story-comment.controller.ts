@@ -1,7 +1,16 @@
+import { AuthOptional } from '@/modules/auth/decorators/auth-optional.decorator';
 import { CurrentUser } from '@/modules/auth/decorators/current-user.decorator';
 import { Public } from '@/modules/auth/decorators/public.decorator';
 import { JwtPayload } from '@/modules/auth/types/jwt-payload.type';
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { CreateStoryCommentDto } from './dto/create-story-comment.dto';
 import { FindByStoryDto } from './dto/find-by-story';
 import { StoryCommentService } from './story-comment.service';
@@ -11,12 +20,13 @@ export class StoryCommentController {
   constructor(private readonly storyCommentService: StoryCommentService) {}
 
   @Post()
-  @Public()
+  @AuthOptional()
   async create(
     @CurrentUser() user: JwtPayload | null,
     @Body() createStoryCommentDto: CreateStoryCommentDto,
   ) {
     const userId = user?.sub || null;
+
     return await this.storyCommentService.createComment(
       userId,
       createStoryCommentDto,
@@ -25,7 +35,10 @@ export class StoryCommentController {
 
   @Get('story/:storyId')
   @Public()
-  async getCommentsByStory(@Query() query: FindByStoryDto) {
-    return await this.storyCommentService.getCommentsByStory(query);
+  async getCommentsByStory(
+    @Param('storyId', ParseIntPipe) storyId: number,
+    @Query() query: FindByStoryDto,
+  ) {
+    return await this.storyCommentService.getCommentsByStory(storyId, query);
   }
 }
