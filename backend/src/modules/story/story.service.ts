@@ -22,12 +22,13 @@ import {
   STORY_SEARCHABLE_COLUMNS,
   STORY_SORTABLE_COLUMNS,
 } from './constants/story.constants';
+import { StoryStatsResponseDto } from './dto';
 import { CreateStoryDto } from './dto/create-story.dto';
 import { HomeStoryQueryDto } from './dto/home-story-query.dto';
 import { HotStoryQueryDto } from './dto/hot-story-query.dto';
 import { QueryStoryDto } from './dto/query-story.dto';
 import { UpdateStoryDto } from './dto/update-story.dto';
-import { Story, StoryStatus } from './entities/story.entity';
+import { Story, StoryProgress, StoryStatus } from './entities/story.entity';
 
 @Injectable()
 export class StoryService {
@@ -214,6 +215,7 @@ export class StoryService {
       RATING_AVERAGE_WEIGHT,
       RATING_COUNT_WEIGHT,
       COMMENT_COUNT_WEIGHT,
+      VIEW_COUNT_WEIGHT,
     } = HOT_STORY_CONFIG;
 
     // Không còn giới hạn 7 ngày cứng - tính time decay cho tất cả
@@ -226,17 +228,12 @@ export class StoryService {
       .andWhere(`${this.ENTITY_ALIAS}.lastAddedChapterDate IS NOT NULL`);
 
     // Add calculated hot score as virtual column
-    // Hot Score Formula (in SQL):
-    // hot_score = (
-    //   (average_rating * 1) +
-    //   (ln(rating_count + 1) * 0.5) +
-    //   (comment_count * 0.03)
-    // ) * power(0.5, extract(epoch from (now() - last_added_chapter_date)) / 3600 / 168)
     queryBuilder.addSelect(
       `(
         (${this.ENTITY_ALIAS}.averageRating * ${RATING_AVERAGE_WEIGHT}) +
         (ln(${this.ENTITY_ALIAS}.ratingCount + 1) * ${RATING_COUNT_WEIGHT}) +
-        (ln(${this.ENTITY_ALIAS}.commentCount + 1) * ${COMMENT_COUNT_WEIGHT})
+        (ln(${this.ENTITY_ALIAS}.commentCount + 1) * ${COMMENT_COUNT_WEIGHT}) +
+        (ln(${this.ENTITY_ALIAS}.viewCount + 1) * ${VIEW_COUNT_WEIGHT})
       ) *
       power(
         0.5,
@@ -262,6 +259,43 @@ export class StoryService {
       total,
       totalPages: Math.ceil(total / limit),
     };
+  }
+
+  /**
+   * Lấy thống kê số lượng truyện theo progress
+   * @returns StoryStatsResponseDto với total, ongoing, completed, hiatus
+   */
+  async getStats(): Promise<StoryStatsResponseDto> {
+    const stats = await this.storyRepository
+      .createQueryBuilder(this.ENTITY_ALIAS)
+      .select([
+        'COUNT(*) as total',
+        'SUM(CASE WHEN progress = :ongoing THEN 1 ELSE 0 END) as ongoing',
+        'SUM(CASE WHEN progress = :completed THEN 1 ELSE 0 END) as completed',
+        'SUM(CASE WHEN progress = :hiatus THEN 1 ELSE 0 END) as hiatus',
+      ])
+      .setParameters({
+        ongoing: StoryProgress.ONGOING,
+        completed: StoryProgress.COMPLETED,
+        hiatus: StoryProgress.HIATUS,
+      })
+      .getRawOne();
+
+    return {
+      total: parseInt(stats.total, 10),
+      ongoing: parseInt(stats.ongoing || '0', 10),
+      completed: parseInt(stats.completed || '0', 10),
+      hiatus: parseInt(stats.hiatus || '0', 10),
+    };
+  }
+
+  /**
+   * Tăng viewCount của story
+   * @param storyId - ID của story cần tăng view
+   * @returns Promise<void>
+   */
+  async incrementViewCount(storyId: number): Promise<void> {
+    await this.storyRepository.increment({ id: storyId }, 'viewCount', 1);
   }
 
   async findOne(id: number): Promise<Story> {

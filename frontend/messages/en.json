@@ -23,7 +23,10 @@
       "updateSuccess": "Update success",
       "updateFailed": "Update failed",
       "addAnImage": "Add an image",
-      "pasteImageUrl": "Paste image URL..."
+      "pasteImageUrl": "Paste image URL...",
+      "view": "View",
+      "retry": "Retry",
+      "loadMore": "Load More"
     },
     "content": {
       "text": "Text",
@@ -351,6 +354,24 @@
   "homepage": {
     "hotTags": "Hot tags",
     "topStories": "Hot stories"
+  },
+
+  "dashboard": {
+    "title": "Dashboard",
+    "topStories": "Hot stories",
+    "total": "Total",
+    "ongoing": "Ongoing",
+    "completed": "Completed",
+    "hiatus": "Hiatus",
+
+    "total_desc": "Total stories",
+    "ongoing_desc": "Ongoing stories",
+    "completed_desc": "Completed stories",
+    "hiatus_desc": "Hiatus stories",
+
+    "dailyViewsTitle": "Daily Views",
+    "totalViews": "Total Views",
+    "noData": "No data available"
   },
 
   "storyDetails": {

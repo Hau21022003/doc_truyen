@@ -39,8 +39,8 @@ export function ChapterReadingNavigator({
         onValueChange={(value) => navigateToChapter(Number(value))}
         value={currentChapterNumber.toString()}
       >
-        <SelectTrigger className="w-full max-w-48">
-          <SelectValue placeholder="Chọn chap" />
+        <SelectTrigger className="w-full max-w-36">
+          <SelectValue placeholder="Select chap" />
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>

@@ -11,7 +11,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, In, Repository } from 'typeorm';
 import { BookmarkService } from '../bookmark/bookmark.service';
 import { ReadingHistoryService } from '../reading-history/reading-history.service';
+import { StoryViewDailyService } from '../story-view-daily/story-view-daily.service';
 import { Story } from '../story/entities/story.entity';
+import { StoryService } from '../story/story.service';
 import {
   CHAPTER_SEARCHABLE_COLUMNS,
   CHAPTER_SORTABLE_COLUMNS,
@@ -36,6 +38,8 @@ export class ChapterService {
     private readonly mediaService: MediaService,
     private readonly bookmarkService: BookmarkService,
     private readonly readingHistoryService: ReadingHistoryService,
+    private readonly storyService: StoryService,
+    private readonly storyViewDailyService: StoryViewDailyService,
   ) {}
 
   async create(createChapterDto: CreateChapterDto): Promise<Chapter> {
@@ -303,6 +307,13 @@ export class ChapterService {
         `Chapter ${chapterNumber} not found for story: ${storySlug}`,
       );
     }
+
+    // ✅ Tăng viewCount cho story (đồng bộ)
+    this.storyService.incrementViewCount(chapter.story.id).catch((error) => {
+      console.error('Failed to increment view count:', error);
+    });
+
+    this.storyViewDailyService.recordView(chapter.story.id);
 
     // ✅ If user is logged in, update reading data
     if (userId) {

@@ -25,7 +25,7 @@ type QueryValue =
   | string[]
   | number[];
 
-type CustomOptions = Omit<RequestInit, "method"> & {
+export type CustomOptions = Omit<RequestInit, "method"> & {
   baseUrl?: string | undefined;
   params?: Record<string, QueryValue>;
   timeout?: number; // ms

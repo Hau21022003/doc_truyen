@@ -23,32 +23,6 @@ export class BookmarkService {
     private readonly bookmarkRepository: Repository<Bookmark>,
   ) {}
 
-  // async create(
-  //   userId: string,
-  //   createBookmarkDto: CreateBookmarkDto,
-  // ): Promise<Bookmark> {
-  //   // Check if bookmark already exists
-  //   const existingBookmark = await this.bookmarkRepository.findOne({
-  //     where: {
-  //       userId,
-  //       storyId: createBookmarkDto.storyId,
-  //     },
-  //   });
-
-  //   if (existingBookmark) {
-  //     throw new ConflictException(
-  //       `Bookmark for story ${createBookmarkDto.storyId} already exists`,
-  //     );
-  //   }
-
-  //   const bookmark = this.bookmarkRepository.create({
-  //     userId,
-  //     storyId: createBookmarkDto.storyId,
-  //     lastReadChapterId: createBookmarkDto.lastReadChapterId,
-  //   });
-
-  //   return await this.bookmarkRepository.save(bookmark);
-  // }
   async create(
     userId: string,
     createBookmarkDto: CreateBookmarkDto,
@@ -132,7 +106,8 @@ export class BookmarkService {
         `${this.ENTITY_ALIAS}.lastReadChapter`,
         'lastReadChapter',
       )
-      .where(`${this.ENTITY_ALIAS}.userId = :userId`, { userId });
+      .where(`${this.ENTITY_ALIAS}.userId = :userId`, { userId })
+      .orderBy(`${this.ENTITY_ALIAS}.updatedAt`, 'DESC');
 
     // Apply pagination using helper
     queryBuilder = QueryBuilderHelper.applyPagination(

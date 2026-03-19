@@ -17,7 +17,9 @@ export function AuthGuard({ children }: { children: ReactNode }) {
 
   // Nếu đã có thông tin nhưng chưa đăng nhập hoặc không phải admin
   if (!isAuthenticated) {
-    return <div>Unauthorized access</div>;
+    return (
+      <div className="p-4 text-center text-red-500">Unauthorized access</div>
+    );
   }
 
   // Đã đăng nhập và là admin

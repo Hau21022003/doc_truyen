@@ -45,6 +45,12 @@ export class StoryController {
     return this.storyService.findHomepage(queryDto);
   }
 
+  @Get('stats')
+  @Public()
+  getStats() {
+    return this.storyService.getStats();
+  }
+
   @Get('hot-stories')
   @Public()
   findHotStories(@Query() queryDto: HotStoryQueryDto) {

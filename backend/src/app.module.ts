@@ -19,6 +19,7 @@ import { ChapterModule } from './modules/chapter/chapter.module';
 import { MediaModule } from './modules/media/media.module';
 import { ReadingHistoryModule } from './modules/reading-history/reading-history.module';
 import { StoryInteractionsModule } from './modules/story-interactions/story-interactions.module';
+import { StoryViewDailyModule } from './modules/story-view-daily/story-view-daily.module';
 import { StoryModule } from './modules/story/story.module';
 import { TagsModule } from './modules/tags/tags.module';
 import { UsersModule } from './modules/users/users.module';
@@ -64,6 +65,7 @@ import { UsersModule } from './modules/users/users.module';
     StoryInteractionsModule,
     BookmarkModule,
     ReadingHistoryModule,
+    StoryViewDailyModule,
   ],
   controllers: [AppController],
   providers: [

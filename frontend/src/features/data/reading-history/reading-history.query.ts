@@ -19,5 +19,6 @@ export const useReadingHistoryQuery = (params: PaginationInput = {}) => {
   return useQuery({
     queryKey: READING_HISTORY_QUERY_KEYS.list(params),
     queryFn: () => readingHistoryService.getMyHistory(params),
+    staleTime: 0, // 👈 luôn stale
   });
 };

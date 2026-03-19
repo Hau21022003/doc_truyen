@@ -127,6 +127,18 @@ export default function UsersHeader() {
     }
   };
 
+  const navigateToReadingHistory = () => {
+    requireAuth(() => {
+      router.push("/history");
+    });
+  };
+
+  const navigateToBookmark = () => {
+    requireAuth(() => {
+      router.push("/bookmark");
+    });
+  };
+
   return (
     <Fragment>
       {/* Mobile Search Overlay */}
@@ -200,22 +212,28 @@ export default function UsersHeader() {
                 <IconSearch size={"lg"} />
               </button>
 
-              <button>
+              <button onClick={navigateToReadingHistory}>
                 <IconHistory size={"lg"} />
               </button>
 
-              <button>
+              <button onClick={navigateToBookmark}>
                 <IconBookmark size={"lg"} />
               </button>
             </>
           )}
           {!isMobile && (
             <>
-              <button className="h-9 flex items-center gap-2 font-medium cursor-pointer text-sm">
+              <button
+                onClick={navigateToReadingHistory}
+                className="h-9 flex items-center gap-2 font-medium cursor-pointer text-sm"
+              >
                 <IconHistory size={"lg"} />
                 <p>{tHeader("history")}</p>
               </button>
-              <button className="h-9 flex items-center gap-2 font-medium cursor-pointer text-sm">
+              <button
+                onClick={navigateToBookmark}
+                className="h-9 flex items-center gap-2 font-medium cursor-pointer text-sm"
+              >
                 <IconBookmark size={"lg"} />
                 <p>{tHeader("Bookmark")}</p>
               </button>

@@ -22,5 +22,6 @@ export const useBookmarksQuery = (params: BookmarkQueryInput = {}) => {
       limit: params.limit,
     }),
     queryFn: () => bookmarkService.getByUser(params),
+    staleTime: 0,
   });
 };

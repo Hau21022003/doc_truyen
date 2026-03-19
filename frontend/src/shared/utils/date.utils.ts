@@ -131,6 +131,46 @@ function formatSmartDate(
   });
 }
 
+/**
+ * Format time from a date (e.g., "14:30" or "2:30 PM")
+ */
+function formatTime(
+  date: Date | string | number,
+  options: {
+    locale?: SupportedLocale;
+    format?: "24h" | "12h";
+    showSeconds?: boolean;
+    timeZone?: TimezoneValue | string;
+  } = {},
+): string {
+  if (date === null || date === undefined || date === "") {
+    return "-";
+  }
+
+  const {
+    locale = "vi",
+    format = "24h",
+    showSeconds = false,
+    timeZone,
+  } = options;
+
+  const dateObj =
+    typeof date === "string" || typeof date === "number"
+      ? new Date(date)
+      : date;
+
+  const formatOptions: Intl.DateTimeFormatOptions = {
+    hour: "2-digit",
+    minute: "2-digit",
+    ...(showSeconds && { second: "2-digit" }),
+    ...(format === "12h" && { hour12: true }),
+    ...(format === "24h" && { hour12: false }),
+    timeZone,
+  };
+
+  return new Intl.DateTimeFormat(locale, formatOptions).format(dateObj);
+}
+
 export const dateUtils = {
   formatDateToYMD: (date: Date | string) => {
     return format(new Date(date), "yyyy-MM-dd");
@@ -138,4 +178,5 @@ export const dateUtils = {
   formatRelativeTime,
   formatDate,
   formatSmartDate,
+  formatTime,
 };

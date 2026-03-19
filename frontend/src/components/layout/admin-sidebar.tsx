@@ -22,8 +22,6 @@ import {
   IconSetting,
   IconTagFill,
   IconTagOutline,
-  IconUserFill,
-  IconUserOutline,
 } from "../icons";
 import {
   Dialog,
@@ -184,13 +182,13 @@ export function AdminSidebar() {
           iconActive: IconBookFill,
           match: "prefix",
         },
-        {
-          title: t("Users"),
-          href: "/admin/users",
-          icon: IconUserOutline,
-          iconActive: IconUserFill,
-          match: "exact",
-        },
+        // {
+        //   title: t("Users"),
+        //   href: "/admin/users",
+        //   icon: IconUserOutline,
+        //   iconActive: IconUserFill,
+        //   match: "exact",
+        // },
       ] as SidebarLink[],
     [t],
   );

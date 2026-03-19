@@ -1,4 +1,4 @@
-import http from "@/lib/http";
+import http, { CustomOptions } from "@/lib/http";
 import { PaginationResponse } from "@/shared/types/paginated-response.type";
 import { ChapterStatus } from "./chapter.constants";
 import { ChapterQueryInput, UpsertChapterInput } from "./chapter.schema";
@@ -17,9 +17,14 @@ export const chaptersService = {
 
   // getChapterDetailForUser: (id: number) =>
   //   http.get<ChapterWithContent>(`/chapters/${id}/read`),
-  getByStorySlugAndNumber: (storySlug: string, chapterNumber: number) =>
+  getByStorySlugAndNumber: (
+    storySlug: string,
+    chapterNumber: number,
+    options?: Omit<CustomOptions, "body">,
+  ) =>
     http.get<ChapterWithContent>(
       `/chapters/story/${storySlug}/${chapterNumber}`,
+      options,
     ),
 
   getByStoryId: (storyId: number, query: ChapterQueryInput) =>

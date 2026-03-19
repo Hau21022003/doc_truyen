@@ -29,7 +29,7 @@ export function ChapterReadingHeader({ chapter }: { chapter: Chapter }) {
           <BreadcrumbLink href={`/story/${chapter.story?.slug}`}>
             {stringUtils.truncate(
               chapter.story?.title || "",
-              isMobile ? 30 : 60,
+              isMobile ? 20 : 60,
             )}
           </BreadcrumbLink>
         </BreadcrumbItem>

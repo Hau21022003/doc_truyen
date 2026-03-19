@@ -28,14 +28,6 @@ export interface StoryTag {
   slug: string;
 }
 
-// export interface StoryChapter {
-//   id: number;
-//   title: string;
-//   slug: string;
-//   createdAt: string;
-//   updatedAt: string;
-// }
-
 export interface HomepageStory extends Omit<Story, "tags" | "chapters"> {
   tags: StoryTag[];
   chapters: Chapter[];

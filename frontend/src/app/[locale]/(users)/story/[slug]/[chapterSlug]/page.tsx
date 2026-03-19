@@ -8,6 +8,7 @@ import {
 } from "@/features/views/chapter-reading/components";
 import { getErrorMessage } from "@/lib/error";
 import { getTranslations } from "next-intl/server";
+import { cookies } from "next/headers";
 
 type ChapterPageProps = {
   params: Promise<{
@@ -17,6 +18,8 @@ type ChapterPageProps = {
 };
 
 export default async function ChapterPage({ params }: ChapterPageProps) {
+  const cookieStore = await cookies();
+  const cookieHeader = cookieStore.toString();
   // Params
   const { chapterSlug, slug: storySlug } = await params;
 
@@ -38,7 +41,11 @@ export default async function ChapterPage({ params }: ChapterPageProps) {
 
   let fetchError;
   const chapter = await chaptersService
-    .getByStorySlugAndNumber(storySlug, chapterNumber)
+    .getByStorySlugAndNumber(storySlug, chapterNumber, {
+      headers: {
+        Cookie: cookieHeader,
+      },
+    })
     .then((res) => res.payload)
     .catch((e) => {
       fetchError = e;

@@ -7,10 +7,25 @@ import StoryRating from "@/features/data/story/components/story-rating";
 import { Story } from "@/features/data/story/story.types";
 import { numberUtils } from "@/shared/utils/number.utils";
 import { useTranslations } from "next-intl";
+import Link from "next/link";
+import { useMemo } from "react";
+import { useStoryDetailsActions } from "../hooks/use-story-details-actions";
 
 export function StoryDetailsInfo({ story }: { story: Story }) {
-  // const t = useTranslations();
   const tStoryDetails = useTranslations("storyDetails");
+  const { addBookmark } = useStoryDetailsActions();
+
+  // Sắp xếp chapters theo chapterNumber để tìm first và last
+  const sortedChapters = useMemo(() => {
+    if (!story.chapters?.length) return [];
+    return [...story.chapters].sort(
+      (a, b) => (a.chapterNumber || 0) - (b.chapterNumber || 0),
+    );
+  }, [story.chapters]);
+
+  const firstChapter = sortedChapters[0];
+  const lastChapter = sortedChapters[sortedChapters.length - 1];
+  const hasChapters = sortedChapters.length > 0;
 
   return (
     <div className="w-full flex flex-col">
@@ -31,11 +46,13 @@ export function StoryDetailsInfo({ story }: { story: Story }) {
         {/* Comment count - bookmark count */}
         <div className="flex items-stretch mt-4">
           <div className="flex-1 flex flex-col items-center gap-1">
-            <IconBookmark
-              color="custom"
-              className="text-primary-orange"
-              size={"xl"}
-            />
+            <button onClick={() => addBookmark(story.id)}>
+              <IconBookmark
+                color="custom"
+                className="text-primary-orange"
+                size={"xl"}
+              />
+            </button>
             <p className="text-muted-foreground text-center max-w-32">
               {tStoryDetails("bookmarked", {
                 count: numberUtils.formatCompactNumber(story.bookmarkCount),
@@ -59,11 +76,33 @@ export function StoryDetailsInfo({ story }: { story: Story }) {
 
         {/* buttons */}
         <div className="mt-3 flex gap-4 items-start">
-          <Button className="bg-primary-orange text-primary-orange-foreground hover:text-primary-orange-foreground hover:bg-primary-orange flex-1">
-            {tStoryDetails("readFirst")}
+          <Button
+            asChild
+            className="bg-primary-orange text-primary-orange-foreground hover:text-primary-orange-foreground hover:bg-primary-orange flex-1"
+          >
+            <Link
+              href={
+                hasChapters && firstChapter
+                  ? `/story/${story.slug}/chapter-${firstChapter.chapterNumber}`
+                  : "#"
+              }
+            >
+              {tStoryDetails("readFirst")}
+            </Link>
           </Button>
-          <Button className="bg-primary-orange text-primary-orange-foreground hover:text-primary-orange-foreground hover:bg-primary-orange flex-1">
-            {tStoryDetails("readLast")}
+          <Button
+            asChild
+            className="bg-primary-orange text-primary-orange-foreground hover:text-primary-orange-foreground hover:bg-primary-orange flex-1"
+          >
+            <Link
+              href={
+                hasChapters && lastChapter
+                  ? `/story/${story.slug}/chapter-${lastChapter.chapterNumber}`
+                  : "#"
+              }
+            >
+              {tStoryDetails("readLast")}
+            </Link>
           </Button>
         </div>
       </div>

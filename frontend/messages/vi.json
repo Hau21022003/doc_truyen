@@ -23,7 +23,10 @@
       "updateSuccess": "Cập nhật thành công",
       "updateFailed": "Cập nhật thất bại",
       "addAnImage": "Thêm hình ảnh",
-      "pasteImageUrl": "Dán URL hình ảnh..."
+      "pasteImageUrl": "Dán URL hình ảnh...",
+      "view": "Xem",
+      "retry": "Thử lại",
+      "loadMore": "Hiện thêm"
     },
     "content": {
       "text": "Văn bản",
@@ -125,7 +128,7 @@
       "Settings": "Cài đặt",
       "Notifications": "Thông báo",
       "history": "Lịch sử",
-      "Bookmark": "Dấu trang",
+      "Bookmark": "Đã  lưu",
       "searchPlaceholder": "Tìm theo tên truyện, tên tác giả...",
       "Appearance": "Giao diện",
       "light": "sáng",
@@ -350,6 +353,24 @@
   "homepage": {
     "hotTags": "Các thẻ hot",
     "topStories": "Truyện hot"
+  },
+
+  "dashboard": {
+    "title": "Bảng điều khiển",
+    "topStories": "Truyện hot",
+    "total": "Tất cả",
+    "ongoing": "Đang ra",
+    "completed": "Đã hoàn",
+    "hiatus": "Tạm ngưng",
+
+    "total_desc": "Tổng số truyện",
+    "ongoing_desc": "Truyện đang ra",
+    "completed_desc": "Truyện đã hoàn",
+    "hiatus_desc": "Truyện tạm ngưng",
+
+    "dailyViewsTitle": "Lượt xem hằng ngày",
+    "totalViews": "Tổng lượt xem",
+    "noData": "Không có dữ liệu"
   },
 
   "storyDetails": {

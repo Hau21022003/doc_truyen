@@ -8,8 +8,9 @@ export const readingHistoryService = {
    * Get current user's reading history with pagination
    * Requires authentication
    */
-  getMyHistory: (params: PaginationInput) =>
-    http.get<PaginationResponse<ReadingHistory>>("/reading-history", {
+  getMyHistory: (params: PaginationInput) => {
+    return http.get<PaginationResponse<ReadingHistory>>("/reading-history", {
       params,
-    }),
+    });
+  },
 };

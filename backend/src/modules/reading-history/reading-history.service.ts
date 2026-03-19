@@ -15,15 +15,26 @@ export class ReadingHistoryService {
   ) {}
 
   async addHistory(userId: string, storyId: number, chapterId: number) {
-    const history = this.historyRepository.create({
-      userId,
-      storyId,
-      chapterId,
+    const existing = await this.historyRepository.findOne({
+      where: { userId, storyId, chapterId },
     });
 
-    const savedHistory = await this.historyRepository.save(history);
+    let savedHistory;
 
-    // 2. Async cleanup (non-blocking, fire and forget)
+    if (existing) {
+      // chỉ cần save lại là updatedAt tự update
+      await this.historyRepository.update(existing.id, {});
+    } else {
+      const history = this.historyRepository.create({
+        userId,
+        storyId,
+        chapterId,
+      });
+
+      savedHistory = await this.historyRepository.save(history);
+    }
+
+    // cleanup async
     this.cleanupOldHistories(userId).catch((error) => {
       this.logger.error(`Async cleanup failed for user ${userId}:`, error);
     });
@@ -43,7 +54,7 @@ export class ReadingHistoryService {
       .leftJoinAndSelect('history.chapter', 'chapter')
       .where('history.userId = :userId', { userId });
 
-    qb.orderBy('history.createdAt', 'DESC');
+    qb.orderBy('history.updatedAt', 'DESC');
 
     qb.skip((page - 1) * limit).take(limit);
 
@@ -65,7 +76,7 @@ export class ReadingHistoryService {
       WHERE id IN (
         SELECT id FROM (
           SELECT id,
-          ROW_NUMBER() OVER (PARTITION BY "userId" ORDER BY "createdAt" DESC) as rn
+          ROW_NUMBER() OVER (PARTITION BY "userId" ORDER BY "updatedAt" DESC) as rn
           FROM reading_history
           WHERE "userId" = $1
         ) t

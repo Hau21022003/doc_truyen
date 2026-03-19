@@ -3,6 +3,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { BookmarkModule } from '../bookmark/bookmark.module';
 import { MediaModule } from '../media/media.module';
 import { ReadingHistoryModule } from '../reading-history/reading-history.module';
+import { StoryViewDailyModule } from '../story-view-daily/story-view-daily.module';
+import { StoryModule } from '../story/story.module';
 import { ChapterController } from './chapter.controller';
 import { ChapterService } from './chapter.service';
 import { ChapterContent } from './entities/chapter-content';
@@ -14,6 +16,8 @@ import { Chapter } from './entities/chapter.entity';
     MediaModule,
     BookmarkModule,
     ReadingHistoryModule,
+    StoryModule,
+    StoryViewDailyModule,
   ],
   controllers: [ChapterController],
   providers: [ChapterService],

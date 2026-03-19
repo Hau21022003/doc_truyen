@@ -41,4 +41,9 @@ export const HOT_STORY_CONFIG = {
    * Trọng số cho số lượng bình luận
    */
   COMMENT_COUNT_WEIGHT: 0.3,
+
+  /**
+   * Trọng số cho số lượng lượt xem
+   */
+  VIEW_COUNT_WEIGHT: 0.1,
 } as const;
