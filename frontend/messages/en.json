@@ -149,7 +149,8 @@
       "Logout failed": "Logout failed",
       "Users": "Users",
       "Settings": "Settings",
-      "story": "Story"
+      "story": "Story",
+      "comment": "Comment"
     },
     "AppLayout": {
       "Language": "Language",
@@ -161,6 +162,7 @@
   },
 
   "users": {
+    "title": "Users",
     "EditProfileModal": {
       "Edit Profile": "Edit Profile",
       "Update": "Update",
@@ -172,6 +174,28 @@
       "Select your timezone": "Select your timezone",
       "Updating": "Updating",
       "Update profile successful!": "Update profile successful!"
+    },
+    "roleConstants": {
+      "reader": "Reader",
+      "content_admin": "Content Admin",
+      "system_admin": "System Admin"
+    },
+    "statusConstants": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "columns": {
+      "name": "Name",
+      "email": "Email",
+      "role": "Role",
+      "isActive": "Status",
+      "lastLoginAt": "Last Login",
+      "createdAt": "Created At",
+      "updatedAt": "Updated At"
+    },
+    "filters": {
+      "search": "Search",
+      "role": "Role"
     }
   },
 

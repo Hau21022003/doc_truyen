@@ -1,8 +1,13 @@
+import { QueryBuilderHelper } from '@/common';
 import { comparePassword, hashPassword } from '@/common/utils/crypto.util';
 import { AppConfigService } from '@/config/app-config.service';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Like, Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { MediaService } from '../media/media.service';
 import {
   CreateUserDto,
@@ -15,6 +20,8 @@ import { RefreshTokenInfo, User } from './entities/user.entity';
 
 @Injectable()
 export class UsersService {
+  private readonly ENTITY_ALIAS = 'users';
+
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
@@ -38,37 +45,65 @@ export class UsersService {
   }
 
   async findAll(query: QueryUserDto): Promise<UserListResponseDto> {
-    const { page = 1, limit = 10, search, isActive, role } = query;
-    const skip = (page - 1) * limit;
+    const {
+      page = 1,
+      limit = 10,
+      search,
+      isActive,
+      role,
+      sortBy,
+      sortOrder,
+    } = query;
 
-    const where: any = {};
+    let queryBuilder = this.userRepository.createQueryBuilder(
+      this.ENTITY_ALIAS,
+    );
 
+    // Search
+    queryBuilder = QueryBuilderHelper.applySearch(
+      queryBuilder,
+      this.ENTITY_ALIAS,
+      search,
+      ['name', 'email'],
+    );
+
+    // Filter
     if (isActive !== undefined) {
-      where.isActive = isActive;
+      queryBuilder.andWhere(`${this.ENTITY_ALIAS}.isActive = :isActive`, {
+        isActive,
+      });
     }
 
     if (role) {
-      where.role = role;
+      queryBuilder.andWhere(`${this.ENTITY_ALIAS}.role = :role`, {
+        role,
+      });
     }
 
-    if (search) {
-      where.email = Like(`%${search}%`);
-    }
+    // Sorting
+    queryBuilder = QueryBuilderHelper.applySorting(
+      queryBuilder,
+      this.ENTITY_ALIAS,
+      sortBy,
+      sortOrder,
+      ['name', 'createdAt', 'updatedAt'],
+    );
 
-    const [data, total] = await this.userRepository.findAndCount({
-      where,
-      skip,
-      take: limit,
-    });
+    // Apply pagination using helper
+    queryBuilder = QueryBuilderHelper.applyPagination(
+      queryBuilder,
+      page,
+      limit,
+    );
 
-    const totalPages = Math.ceil(total / limit);
+    const [data, total] = await queryBuilder.getManyAndCount();
 
     return {
       data,
       page,
       limit,
       total,
-      totalPages,
+      totalPages: Math.ceil(total / limit),
     };
   }
 
@@ -156,6 +191,38 @@ export class UsersService {
     const removedUser = { ...user };
     await this.userRepository.remove(user);
     return removedUser;
+  }
+
+  async removeMany(ids: string[]): Promise<User[]> {
+    if (!ids || ids.length === 0) {
+      throw new BadRequestException('Ids must not be empty');
+    }
+
+    const users = await this.userRepository.find({
+      where: { id: In(ids) },
+    });
+
+    // ✅ Check thiếu user
+    if (users.length !== ids.length) {
+      const foundIds = users.map((u) => u.id);
+      const missingIds = ids.filter((id) => !foundIds.includes(id));
+
+      throw new NotFoundException({
+        message: 'Some users not found',
+        missingIds,
+      });
+    }
+
+    // Xoá avatar nếu có
+    for (const user of users) {
+      if (user.avatar) {
+        await this.mediaService.deleteByUrl(user.avatar);
+      }
+    }
+
+    await this.userRepository.remove(users);
+
+    return users;
   }
 
   async updateLastLogin(id: string): Promise<User> {

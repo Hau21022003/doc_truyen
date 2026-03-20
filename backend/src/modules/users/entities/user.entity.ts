@@ -36,10 +36,6 @@ export class User extends UuidBaseEntity {
   @Column({ nullable: true })
   avatar?: string;
 
-  // @Column({ nullable: true })
-  // @Exclude()
-  // avatarPublicId?: string; // dành cho xóa file trên cloudinary
-
   @Column({ default: true })
   isActive: boolean;
 

@@ -1,4 +1,4 @@
-import { PaginatedResponseDto, QueryBaseDto } from '@/common/dto';
+import { QueryBaseDto } from '@/common/dto';
 import {
   Body,
   Controller,
@@ -13,7 +13,6 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Public } from '../auth/decorators/public.decorator';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { UserRole } from '../users/entities/user.entity';
 import { CreateTagDto } from './dto/create-genre.dto';
@@ -35,15 +34,9 @@ export class TagsController {
   }
 
   @Get()
-  @ApiResponse({ status: 200, type: PaginatedResponseDto<Tag> })
+  @Roles(UserRole.SYSTEM_ADMIN)
   async query(@Query() query: QueryBaseDto) {
     return await this.tagsService.query(query);
-  }
-
-  @Public()
-  @Get('all')
-  findAll() {
-    return this.tagsService.findAll();
   }
 
   @Get(':id')

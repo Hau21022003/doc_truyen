@@ -1,10 +1,13 @@
 import { createMulterOptions, FILE_SIZES_MB } from '@/common';
+import { ParseUUIDsPipe } from '@/common/pipes/parse-uuids.pipe';
 import {
   Body,
   ConflictException,
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   NotFoundException,
   Param,
   ParseUUIDPipe,
@@ -23,6 +26,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { Roles } from '../auth/decorators/roles.decorator';
 import { type JwtPayload } from '../auth/types/jwt-payload.type';
 import {
   CreateUserDto,
@@ -32,6 +36,7 @@ import {
   UserListResponseDto,
   UserResponseDto,
 } from './dto';
+import { UserRole } from './entities/user.entity';
 import { UsersService } from './users.service';
 
 @ApiTags('users')
@@ -125,6 +130,13 @@ export class UsersController {
       }
       throw new NotFoundException(`Không tìm thấy user với ID ${id}`);
     }
+  }
+
+  @Delete('bulk')
+  @Roles(UserRole.SYSTEM_ADMIN)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async removeMany(@Query('ids', ParseUUIDsPipe) ids: string[]) {
+    return this.usersService.removeMany(ids);
   }
 
   @Delete(':id')

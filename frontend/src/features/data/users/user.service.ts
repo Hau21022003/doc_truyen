@@ -1,7 +1,12 @@
 import http from "@/lib/http";
-import { UpdateProfileInput } from "./update-profile.schema";
+import { PaginationResponse } from "@/shared/types";
+import { QueryUsersInput, UpdateProfileInput } from "./update-profile.schema";
+import { User } from "./user.types";
 
 export const userService = {
+  findAll: (params?: QueryUsersInput) =>
+    http.get<PaginationResponse<User>>("/users", { params }),
+
   updateProfile: async (data: UpdateProfileInput, avatarFile?: File) => {
     const formData = new FormData();
 
@@ -17,4 +22,11 @@ export const userService = {
 
     return http.patch(`/users/profile`, formData);
   },
+
+  remove: (id: string) => http.delete<User>(`/users/${id}`),
+
+  removeMany: (ids: string[]) =>
+    http.delete(`/users/bulk`, {
+      params: { ids },
+    }),
 };

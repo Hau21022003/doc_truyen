@@ -1,4 +1,5 @@
 export * from "./icon-adjustments-horizontal";
+export * from "./icon-admin-outline";
 export * from "./icon-archive";
 export * from "./icon-archive-outline";
 export * from "./icon-arrow-down";

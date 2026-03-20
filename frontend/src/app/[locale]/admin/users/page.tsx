@@ -1,25 +1,21 @@
 "use client";
 
 import { BulkActionBar } from "@/components/bulk-action-bar";
-import CustomButton from "@/components/custom-button";
 import CustomCheckbox from "@/components/custom-checkbox";
-import {
-  IconArchive,
-  IconBookOpenOutline,
-  IconPen,
-  IconPlus,
-} from "@/components/icons";
+import { IconArchive } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { useStoryActions } from "@/features/data/story/hooks/use-story-actions";
-import { useStoryFilter } from "@/features/data/story/hooks/use-story-filter";
-import { useStoryTableConfig } from "@/features/data/story/hooks/use-story-table-config";
 import {
-  STORY_QUERY_KEYS,
-  useStoriesQuery,
-} from "@/features/data/story/story.query";
-import { StoryQueryInput } from "@/features/data/story/story.schema";
-import { Story } from "@/features/data/story/story.types";
+  useUsersActions,
+  useUsersFilter,
+  useUserTableConfig,
+} from "@/features/data/users/hooks";
+import { QueryUsersInput } from "@/features/data/users/update-profile.schema";
+import { User } from "@/features/data/users/user.types";
+import {
+  USERS_QUERY_KEYS,
+  useUsersQuery,
+} from "@/features/data/users/users.query";
 import { FilterBar } from "@/features/shared/filter/components/filter-bar";
 import { useTableState } from "@/features/shared/table";
 import {
@@ -27,18 +23,15 @@ import {
   ExtraColumnConfig,
 } from "@/features/shared/table/components/data-table";
 import HideColumnSelect from "@/features/shared/table/components/hide-column-select";
-import { useRowSelection, useTimeZone } from "@/hooks";
+import { useRowSelection } from "@/hooks";
 import { useTranslations } from "next-intl";
-import Link from "next/link";
 import { useEffect, useMemo } from "react";
 
-export default function StoryPage() {
-  const tStory = useTranslations("story");
+export default function UsersPage() {
+  const tUsers = useTranslations("users");
   const tCommon = useTranslations("common");
-  const { filterConfigs, params: filterParams } = useStoryFilter();
-  const timezone = useTimeZone();
 
-  // Bulk bar state
+  // row selection
   const {
     selectedIds,
     isAllSelected,
@@ -46,16 +39,16 @@ export default function StoryPage() {
     toggleAll,
     clearSelection,
     isSelected,
-  } = useRowSelection<Story>();
+  } = useRowSelection<User>();
 
-  const { removeOne, removeMany } = useStoryActions();
+  const { removeOne, removeMany } = useUsersActions();
 
-  const handleDelete = async (tag: Story) => {
-    const success = await removeOne(tag);
+  const handleDelete = async (user: User) => {
+    const success = await removeOne(user);
 
     // Xóa ID khỏi danh sách chọn
-    if (success && isSelected(tag)) {
-      toggleRow(tag);
+    if (success && isSelected(user)) {
+      toggleRow(user);
     }
   };
 
@@ -64,20 +57,23 @@ export default function StoryPage() {
     if (success) clearSelection();
   };
 
-  const tableConfig = useStoryTableConfig();
+  // Filter
+  const { filterConfigs, params: filterParams } = useUsersFilter();
+
+  // Table state
+  const tableConfig = useUserTableConfig();
 
   const tableState = useTableState(tableConfig, {
-    persistKey: STORY_QUERY_KEYS.lists().join(","),
+    persistKey: USERS_QUERY_KEYS.lists().join(","),
     defaultPageSize: 10,
   });
 
-  const searchParams: StoryQueryInput = useMemo(
+  const searchParams: QueryUsersInput = useMemo(
     () => ({
       limit: tableState.pagination.pageSize,
       page: tableState.pagination.page,
       sortBy: tableState.sort.column as any,
       sortOrder: tableState.sort.direction,
-      timezone,
       ...filterParams,
     }),
     [
@@ -85,7 +81,6 @@ export default function StoryPage() {
       tableState.pagination.page,
       tableState.sort.column,
       tableState.sort.direction,
-      timezone,
       filterParams,
     ],
   );
@@ -95,23 +90,23 @@ export default function StoryPage() {
   }, [filterParams, tableState.sort.column, tableState.sort.direction]);
 
   const {
-    data: storiesData,
-    error: storiesQueryError,
-    isLoading: isStoriesQueryLoading,
-    refetch: refetchStories,
-  } = useStoriesQuery(searchParams);
+    data: usersData,
+    error: usersQueryError,
+    isLoading: isUsersQueryLoading,
+    refetch: refetchUsers,
+  } = useUsersQuery(searchParams);
 
-  const data = storiesData?.payload.data ?? [];
+  const data = usersData?.payload.data ?? [];
 
-  const extraColumns: ExtraColumnConfig<Story>[] = [
+  const extraColumns: ExtraColumnConfig<User>[] = [
     {
       key: "checkbox",
-      render: (story) => (
+      render: (user) => (
         <div className="flex items-center justify-center h-full">
           <CustomCheckbox
             color={"purple"}
-            checked={isSelected(story)}
-            onCheckedChange={() => toggleRow(story)}
+            checked={isSelected(user)}
+            onCheckedChange={() => toggleRow(user)}
           />
         </div>
       ),
@@ -131,36 +126,16 @@ export default function StoryPage() {
     },
     {
       key: "actions",
-      width: 80,
+      width: 40,
       align: "center",
       sticky: "right",
       label: tCommon("actions.actions"),
-      render: (story) => (
-        <div className="flex gap-2">
-          <Button
-            variant={"outline"}
-            size="icon"
-            className="[&_svg:not([class*='size-'])]:size-5"
-            asChild
-          >
-            <Link href={`/admin/story/${story.id}/chapters`}>
-              <IconBookOpenOutline color="custom" />
-            </Link>
-          </Button>
-          <Button
-            variant={"outline"}
-            size="icon"
-            asChild
-            className="[&_svg:not([class*='size-'])]:size-5"
-          >
-            <Link href={`/admin/story/upsert?storyId=${story.id}`}>
-              <IconPen color="custom" />
-            </Link>
-          </Button>
+      render: (user) => (
+        <div className="flex justify-center gap-2">
           <Button
             size="icon"
             variant={"outline"}
-            onClick={() => handleDelete(story)}
+            onClick={() => handleDelete(user)}
             className="[&_svg:not([class*='size-'])]:size-5"
           >
             <IconArchive color="custom" className="text-destructive" />
@@ -172,28 +147,25 @@ export default function StoryPage() {
 
   return (
     <div className="p-4 md:p-6 space-y-2">
+      {/* Header */}
       <div className="flex justify-between items-center gap-2">
-        <h3 className="font-medium">{tStory("title")}</h3>
+        <h3 className="font-medium">{tUsers("title")}</h3>
         <div className="flex items-center gap-2">
           <HideColumnSelect tableState={tableState} />
-          <CustomButton asChild color="orange">
-            <Link href={`/admin/story/upsert`}>
-              <IconPlus color="custom" />
-              <p>{tStory("createStory")}</p>
-            </Link>
-          </CustomButton>
         </div>
       </div>
+
       <Separator />
+
       <FilterBar configs={filterConfigs} />
       <DataTable
         data={data}
-        totalCount={storiesData?.payload.total || 0}
+        totalCount={usersData?.payload.total || 0}
         tableState={tableState}
         extraColumns={extraColumns}
-        isLoading={isStoriesQueryLoading}
-        error={storiesQueryError}
-        onErrorRetry={refetchStories}
+        isLoading={isUsersQueryLoading}
+        error={usersQueryError}
+        onErrorRetry={refetchUsers}
       />
 
       <BulkActionBar
@@ -201,13 +173,6 @@ export default function StoryPage() {
         onDelete={handleBulkDelete}
         onClear={clearSelection}
       />
-
-      {/* <UpsertStoryModal
-        mode={modeUpsertModal}
-        onClose={closeUpsertModal}
-        isOpen={isOpenUpsertModal}
-        data={dataUpsertModal}
-      /> */}
     </div>
   );
 }

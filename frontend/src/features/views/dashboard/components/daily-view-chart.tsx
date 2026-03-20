@@ -29,7 +29,6 @@ import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 const chartConfig = {
   totalViews: {
     label: "Views",
-    // color: "var(--chart-1)",
     color: "var(--color-primary-orange)",
   },
 } satisfies ChartConfig;
@@ -85,9 +84,6 @@ export function DailyViewChart() {
     defaultVisible: true,
     label: "",
     type: "date-range",
-    // onChange: (value) => {
-    //   setDateRange(value);
-    // },
   };
 
   return (
@@ -165,7 +161,7 @@ export function DailyViewChart() {
               {t("dashboard.totalViews")}
             </p>
           </div>
-          <ChartContainer config={chartConfig} className="mt-4">
+          <ChartContainer config={chartConfig} className="mt-5">
             <BarChart accessibilityLayer data={chartData}>
               <CartesianGrid vertical={false} />
               <XAxis

@@ -155,11 +155,13 @@
       "Logout failed": "Đăng xuất thất bại",
       "Users": "Người dùng",
       "Settings": "Cài đặt",
-      "story": "Truyện"
+      "story": "Truyện",
+      "comment": "Bình luận"
     }
   },
 
   "users": {
+    "title": "Người dùng",
     "EditProfileModal": {
       "Edit Profile": "Chỉnh sửa hồ sơ",
       "Update": "Cập nhật",
@@ -171,6 +173,28 @@
       "Select your timezone": "Chọn múi giờ của bạn",
       "Updating": "Đang cập nhật",
       "Update profile successful!": "Cập nhật hồ sơ thành công!"
+    },
+    "roleConstants": {
+      "reader": "Độc giả",
+      "content_admin": "Quản lý nội dung",
+      "system_admin": "Quản trị viên"
+    },
+    "statusConstants": {
+      "active": "Hoạt động",
+      "inactive": "Không hoạt động"
+    },
+    "columns": {
+      "name": "Tên",
+      "email": "Email",
+      "role": "Vai trò",
+      "isActive": "Trạng thái",
+      "lastLoginAt": "Lần đăng nhập cuối",
+      "createdAt": "Ngày tạo",
+      "updatedAt": "Ngày cập nhật"
+    },
+    "filters": {
+      "search": "Tìm kiếm",
+      "role": "Vai trò"
     }
   },
 
