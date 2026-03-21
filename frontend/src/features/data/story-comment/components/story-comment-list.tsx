@@ -9,6 +9,7 @@ import { getPaginationPages } from "@/shared/utils/pagination.utils";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { useStoryCommentsQuery } from "../story-comment.query";
+import { ReportCommentModal } from "./report-comment-modal";
 import StoryCommentItem from "./story-comment-item";
 
 export default function StoryCommentList({
@@ -20,6 +21,11 @@ export default function StoryCommentList({
 }) {
   const t = useTranslations();
   const [currentPage, setCurrentPage] = useState(1);
+  const [isOpenReportModal, setIsOpenReportModal] = useState(false);
+  const [selectedCommentId, setSelectedCommentId] = useState<number | null>(
+    null,
+  );
+
   const {
     data: commentsData,
     isLoading,
@@ -33,6 +39,16 @@ export default function StoryCommentList({
   const comments = commentsData?.payload.data || [];
   const totalPages = commentsData?.payload.totalPages || 1;
   const pages = getPaginationPages(currentPage, totalPages);
+
+  const handleOpenReportModal = (commentId: number) => {
+    setSelectedCommentId(commentId);
+    setIsOpenReportModal(true);
+  };
+
+  const handleCloseReportModal = () => {
+    setIsOpenReportModal(false);
+    setSelectedCommentId(null);
+  };
 
   if (error) {
     return (
@@ -68,7 +84,10 @@ export default function StoryCommentList({
           ))}
         {comments.map((comment) => (
           <li key={comment.id}>
-            <StoryCommentItem comment={comment} />
+            <StoryCommentItem
+              comment={comment}
+              onReport={() => handleOpenReportModal(comment.id)}
+            />
           </li>
         ))}
       </ul>
@@ -114,6 +133,12 @@ export default function StoryCommentList({
           </Button>
         </div>
       )}
+
+      <ReportCommentModal
+        isOpen={isOpenReportModal}
+        commentId={selectedCommentId}
+        onClose={handleCloseReportModal}
+      />
     </div>
   );
 }

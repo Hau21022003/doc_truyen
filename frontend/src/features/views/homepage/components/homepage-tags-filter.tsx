@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAllTagsQuery } from "@/features/data/tags/tags.query";
+import { getErrorMessage } from "@/lib/error";
 import { cn } from "@/lib/utils";
 import { stringUtils } from "@/shared/utils";
 import { useTranslations } from "next-intl";
@@ -18,7 +19,7 @@ export function HomepageTagsFilter({
 }: HomepageTagsFilterProps) {
   const t = useTranslations("homepage");
 
-  const { data: tagsData, isLoading: isTagsLoading } = useAllTagsQuery();
+  const { data: tagsData, isLoading: isTagsLoading, error } = useAllTagsQuery();
 
   const tags = tagsData?.payload || [];
 
@@ -73,6 +74,12 @@ export function HomepageTagsFilter({
             </Button>
           );
         })}
+
+        {error && (
+          <div className="p-4 text-center text-red-500">
+            {getErrorMessage(error)}
+          </div>
+        )}
       </div>
     </section>
   );

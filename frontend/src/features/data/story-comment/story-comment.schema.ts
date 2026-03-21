@@ -1,5 +1,7 @@
 import { paginationSchema } from "@/shared/schemas";
+import { queryBaseSchema } from "@/shared/schemas/query-base.schema";
 import z from "zod";
+import { COMMENT_REPORT_REASON_VALUES } from "./story-comment.constants";
 
 export const createStoryCommentSchema = z.object({
   storyId: z.number().int().min(1, "Story ID is required"),
@@ -16,3 +18,16 @@ export const queryStoryCommentsSchema = paginationSchema.extend({
 });
 
 export type QueryStoryCommentsInput = z.infer<typeof queryStoryCommentsSchema>;
+
+export const reportCommentSchema = z.object({
+  reason: z.enum(COMMENT_REPORT_REASON_VALUES),
+  description: z.string().min(10).max(500).optional(),
+});
+
+export type ReportCommentInput = z.infer<typeof reportCommentSchema>;
+
+export const queryCommentsSchema = queryBaseSchema.extend({
+  isFlagged: z.boolean().optional().nullable(),
+});
+
+export type QueryCommentsInput = z.infer<typeof queryCommentsSchema>;

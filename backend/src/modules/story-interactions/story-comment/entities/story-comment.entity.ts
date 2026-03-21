@@ -2,13 +2,20 @@ import { IntegerIdBaseEntity } from '@/common';
 import { Chapter } from '@/modules/chapter/entities/chapter.entity';
 import { Story } from '@/modules/story/entities/story.entity';
 import { User } from '@/modules/users/entities/user.entity';
-import { Column, Entity, Index, JoinColumn, ManyToOne } from 'typeorm';
+import {
+  Column,
+  Entity,
+  Index,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+} from 'typeorm';
+import { StoryCommentReport } from './story-comment-report.entity';
 
 @Entity('story_comment')
 @Index(['storyId'])
 @Index(['userId'])
 @Index(['chapterId'])
-// @Index(['parentCommentId'])
 export class StoryComment extends IntegerIdBaseEntity {
   @Column()
   storyId: number;
@@ -22,14 +29,15 @@ export class StoryComment extends IntegerIdBaseEntity {
   @Column({ type: 'text' })
   content: string;
 
-  // @Column({ nullable: true })
-  // parentCommentId: number | null;
-
-  // @Column({ type: 'text', nullable: true })
-  // chapterId: string | null;
-
   @Column({ type: 'number', nullable: true })
   chapterId: number | null;
+
+  // đánh dấu comment bị báo cáo
+  @Column({ default: false })
+  isFlagged: boolean;
+
+  @Column({ default: 0 })
+  flagCount: number;
 
   @ManyToOne(() => Story, {
     onDelete: 'CASCADE',
@@ -49,9 +57,6 @@ export class StoryComment extends IntegerIdBaseEntity {
   @JoinColumn({ name: 'chapterId' })
   chapter: Chapter | null;
 
-  // @ManyToOne(() => StoryComment, {
-  //   onDelete: 'CASCADE',
-  // })
-  // @JoinColumn({ name: 'parentCommentId' })
-  // parentComment: StoryComment | null;
+  @OneToMany(() => StoryCommentReport, (report) => report.comment)
+  reports: StoryCommentReport[];
 }

@@ -1,5 +1,7 @@
 {
   "common": {
+    "yes": "Có",
+    "no": "Không",
     "actions": {
       "create": "Tạo",
       "creating": "Đang tạo...",
@@ -362,6 +364,12 @@
 
     "title": "Để lại bình luận",
 
+    "actions": {
+      "like": "Thích",
+      "reply": "Trả lời",
+      "report": "Báo cáo"
+    },
+
     "fields": {
       "content": {
         "label": "Bình luận",
@@ -371,6 +379,68 @@
         "label": "Tên của bạn",
         "placeholder": "Nhập tên của bạn"
       }
+    },
+
+    "reports": "{count} báo cáo",
+
+    "report": {
+      "createReportComment": "Báo cáo bình luận",
+      "fields": {
+        "reason": {
+          "label": "Lý do báo cáo",
+          "placeholder": "Chọn lý do..."
+        },
+        "description": {
+          "label": "Mô tả chi tiết",
+          "placeholder": "Mô tả lý do báo cáo của bạn (tối thiểu 10 ký tự)..."
+        }
+      },
+      "submit": "Gửi báo cáo"
+    },
+
+    "reportReason": {
+      "spam": "Spam",
+      "offensive": "Nội dung xấu / lăng mạ",
+      "inappropriate": "Không phù hợp",
+      "harassment": "Quấy rối / đe dọa",
+      "misinformation": "Thông tin sai lệch",
+      "other": "Khác"
+    },
+
+    "adminTitle": "Bình luận",
+
+    "columns": {
+      "storyTitle": "Tên truyện",
+      "userName": "Người đăng",
+      "content": "Nội dung",
+      "isFlagged": "Trạng thái",
+      "flagCount": "Báo cáo",
+      "createdAt": "Ngày tạo",
+      "updatedAt": "Cập nhật"
+    },
+
+    "filters": {
+      "search": "Tìm kiếm",
+      "searchPlaceholder": "Tìm bình luận, truyện hoặc người dùng...",
+      "isFlagged": "Trạng thái báo cáo"
+    },
+
+    "delete": {
+      "singleSuccess": "Xóa bình luận thành công",
+      "singleFailed": "Xóa bình luận thất bại",
+      "multipleSuccess": "Xóa {count} bình luận thành công",
+      "multipleFailed": "Xóa bình luận thất bại"
+    },
+
+    "detailModal": {
+      "title": "Chi tiết bình luận",
+      "story": "Truyện",
+      "author": "Tác giả",
+      "content": "Nội dung",
+      "createdAt": "Ngày tạo",
+      "flagged": "Đã bị báo cáo",
+      "reports": "Báo cáo",
+      "reportedBy": "Báo cáo bởi"
     }
   },
 

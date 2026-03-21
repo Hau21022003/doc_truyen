@@ -1,5 +1,7 @@
 {
   "common": {
+    "yes": "Yes",
+    "no": "No",
     "actions": {
       "create": "Create",
       "creating": "Creating...",
@@ -363,6 +365,12 @@
 
     "title": "Leave a Reply",
 
+    "actions": {
+      "like": "Like",
+      "reply": "Reply",
+      "report": "Report"
+    },
+
     "fields": {
       "content": {
         "label": "Comment",
@@ -372,6 +380,68 @@
         "label": "Your name",
         "placeholder": "Enter your name"
       }
+    },
+
+    "reports": "{count} report",
+
+    "report": {
+      "createReportComment": "Report Comment",
+      "fields": {
+        "reason": {
+          "label": "Reason for report",
+          "placeholder": "Select a reason..."
+        },
+        "description": {
+          "label": "Description",
+          "placeholder": "Describe your report reason (minimum 10 characters)..."
+        }
+      },
+      "submit": "Submit Report"
+    },
+
+    "reportReason": {
+      "spam": "Spam",
+      "offensive": "Offensive content / Harassment",
+      "inappropriate": "Inappropriate",
+      "harassment": "Harassment / Threatening",
+      "misinformation": "Misinformation",
+      "other": "Other"
+    },
+
+    "adminTitle": "Comments",
+
+    "columns": {
+      "storyTitle": "Story Title",
+      "userName": "Posted By",
+      "content": "Content",
+      "isFlagged": "Status",
+      "flagCount": "Reports",
+      "createdAt": "Created At",
+      "updatedAt": "Updated At"
+    },
+
+    "filters": {
+      "search": "Search",
+      "searchPlaceholder": "Search comments, stories, or users...",
+      "isFlagged": "Report Status"
+    },
+
+    "delete": {
+      "singleSuccess": "Comment deleted successfully",
+      "singleFailed": "Failed to delete comment",
+      "multipleSuccess": "Deleted {count} comments successfully",
+      "multipleFailed": "Failed to delete comments"
+    },
+
+    "detailModal": {
+      "title": "Comment Details",
+      "story": "Story",
+      "author": "Author",
+      "content": "Content",
+      "createdAt": "Created At",
+      "flagged": "Reported",
+      "reports": "Reports",
+      "reportedBy": "Reported by"
     }
   },
 

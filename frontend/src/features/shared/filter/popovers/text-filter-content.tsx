@@ -5,8 +5,10 @@ import {
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/input-group";
+import { cn } from "@/lib/utils";
 import { Search } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { getWidthFromPopoverSize } from "../filter.utils";
 import { FilterContentProps } from "./filter-content.types";
 
 export function TextFilterContent({
@@ -15,9 +17,10 @@ export function TextFilterContent({
   onChange,
 }: FilterContentProps) {
   const t = useTranslations("filter");
+  const popoverWidth = getWidthFromPopoverSize(config.popoverSize);
   return (
-    <div className="p-2">
-      <InputGroup className="max-w-xs">
+    <div className={cn("p-2", popoverWidth, popoverWidth?.replace("max-", ""))}>
+      <InputGroup className="w-full">
         <InputGroupInput
           placeholder={config.placeholder || `${t("search")}...`}
           value={value || ""}

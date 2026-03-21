@@ -1,7 +1,8 @@
 "use client";
 
+import { IconReportOutline } from "@/components/icons";
 import { dateUtils, generateAvatarUrl, SupportedLocale } from "@/shared/utils";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { StoryComment } from "../story-comment.types";
 
 function formatCommentTime(
@@ -36,9 +37,12 @@ function formatCommentTime(
 
 export default function StoryCommentItem({
   comment,
+  onReport,
 }: {
   comment: StoryComment;
+  onReport?: () => void;
 }) {
+  const t = useTranslations();
   const locale = useLocale() as SupportedLocale;
   return (
     <div className="flex gap-4 items-start">
@@ -55,9 +59,20 @@ export default function StoryCommentItem({
           )}
         </div>
         <p className="">{comment.content}</p>
-        <p className="text-sm text-muted-foreground">
-          {formatCommentTime(comment.createdAt, locale)}
-        </p>
+        <div className="flex items-center gap-4">
+          <p className="text-sm text-muted-foreground">
+            {formatCommentTime(comment.createdAt, locale)}
+          </p>
+          {onReport && (
+            <button
+              onClick={onReport}
+              className="flex items-center gap-2 text-xs text-muted-foreground hover:text-destructive"
+            >
+              <IconReportOutline size={"xs"} color="custom" />
+              <p>{t("comment.actions.report")}</p>
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );

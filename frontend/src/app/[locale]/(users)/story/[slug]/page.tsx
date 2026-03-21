@@ -8,6 +8,38 @@ import { getErrorMessage } from "@/lib/error";
 import { SortDirection } from "@/shared/constants";
 import { getTranslations } from "next-intl/server";
 
+// export async function generateMetadata({
+//   params,
+// }: StoryDetailsPageProps): Promise<Metadata> {
+//   const { slug } = await params;
+
+//   try {
+//     const story = await storyService
+//       .findBySlug(slug)
+//       .then((res) => res.payload);
+
+//     if (!story) {
+//       return {
+//         title: "Story not found",
+//       };
+//     }
+
+//     return {
+//       title: story.title,
+//       description: story.description || story.title,
+//       openGraph: {
+//         title: story.title,
+//         description: story.description,
+//         images: [story.coverImage || ""],
+//       },
+//     };
+//   } catch {
+//     return {
+//       title: "Error",
+//     };
+//   }
+// }
+
 type StoryDetailsPageProps = {
   params: Promise<{
     slug: string;
