@@ -6,39 +6,40 @@ import {
 import { StoryDetailsInfo } from "@/features/views/story-details/components/story-details-info";
 import { getErrorMessage } from "@/lib/error";
 import { SortDirection } from "@/shared/constants";
+import { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
-// export async function generateMetadata({
-//   params,
-// }: StoryDetailsPageProps): Promise<Metadata> {
-//   const { slug } = await params;
+export async function generateMetadata({
+  params,
+}: StoryDetailsPageProps): Promise<Metadata> {
+  const { slug } = await params;
 
-//   try {
-//     const story = await storyService
-//       .findBySlug(slug)
-//       .then((res) => res.payload);
+  try {
+    const story = await storyService
+      .findBySlug(slug)
+      .then((res) => res.payload);
 
-//     if (!story) {
-//       return {
-//         title: "Story not found",
-//       };
-//     }
+    if (!story) {
+      return {
+        title: "Story not found",
+      };
+    }
 
-//     return {
-//       title: story.title,
-//       description: story.description || story.title,
-//       openGraph: {
-//         title: story.title,
-//         description: story.description,
-//         images: [story.coverImage || ""],
-//       },
-//     };
-//   } catch {
-//     return {
-//       title: "Error",
-//     };
-//   }
-// }
+    return {
+      title: story.title,
+      description: story.description || story.title,
+      openGraph: {
+        title: story.title,
+        description: story.description,
+        images: [story.coverImage || ""],
+      },
+    };
+  } catch {
+    return {
+      title: "Error",
+    };
+  }
+}
 
 type StoryDetailsPageProps = {
   params: Promise<{

@@ -1,3 +1,4 @@
+import envConfig from "@/config";
 import { chaptersService } from "@/features/data/chapter/chapter.service";
 import {
   ChapterReadingComments,
@@ -7,8 +8,49 @@ import {
   ChapterReadingStickyNavigator,
 } from "@/features/views/chapter-reading/components";
 import { getErrorMessage } from "@/lib/error";
+import { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { cookies } from "next/headers";
+
+export async function generateMetadata({
+  params,
+}: ChapterPageProps): Promise<Metadata> {
+  const { chapterSlug, slug } = await params;
+
+  const match = chapterSlug.match(/^chapter-(\d+)/);
+  const chapterNumber = match ? Number(match[1]) : null;
+
+  if (!chapterNumber) {
+    return {
+      title: "Invalid chapter",
+    };
+  }
+
+  try {
+    const chapter = await chaptersService
+      .getByStorySlugAndNumber(slug, chapterNumber)
+      .then((res) => res.payload);
+
+    if (!chapter) {
+      return { title: "Chapter not found" };
+    }
+
+    const title = `${chapter.story?.title} - Chapter ${chapterNumber}`;
+
+    return {
+      // metadataBase: new URL("https://yourdomain.com"),
+      metadataBase: new URL(envConfig.NEXT_PUBLIC_URL),
+
+      title,
+
+      alternates: {
+        canonical: `/story/${slug}/chapter-${chapter.chapterNumber}`,
+      },
+    };
+  } catch {
+    return { title: "Error" };
+  }
+}
 
 type ChapterPageProps = {
   params: Promise<{

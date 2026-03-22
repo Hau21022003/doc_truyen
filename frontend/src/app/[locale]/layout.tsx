@@ -1,7 +1,6 @@
 import AuthModal from "@/features/data/auth/components/auth-modal";
 import { routing } from "@/i18n/routing";
 import { AppProvider } from "@/providers/app-provider";
-import { Metadata } from "next";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getMessages, setRequestLocale } from "next-intl/server";
 import { Geist, Geist_Mono } from "next/font/google";
@@ -18,21 +17,21 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: {
-    default: "Đọc Truyện",
-    template: "%s | Đọc Truyện",
-  },
-  description: "Ứng dụng đọc truyện online",
-  icons: [
-    {
-      rel: "icon",
-      type: "image/png",
-      sizes: "32x32",
-      url: "/favicon.png",
-    },
-  ],
-};
+// export const metadata: Metadata = {
+//   title: {
+//     default: "Đọc Truyện",
+//     template: "%s | Đọc Truyện",
+//   },
+//   description: "Ứng dụng đọc truyện online",
+//   icons: [
+//     {
+//       rel: "icon",
+//       type: "image/png",
+//       sizes: "32x32",
+//       url: "/favicon.png",
+//     },
+//   ],
+// };
 
 export default async function LocaleLayout({
   children,
