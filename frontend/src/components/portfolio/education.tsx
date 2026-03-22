@@ -44,7 +44,7 @@ export default function Education() {
       {/* Cards */}
       <div className="flex flex-col gap-6">
         {EDUCATION_DATA.map((edu) => (
-          <div key={edu.degree} className="glass-card rounded-xl p-6">
+          <div key={edu.degree} className="glass-card rounded-xl p-6 relative">
             <div className="flex items-start gap-4">
               {/* Icon */}
               <div className="w-12 h-12 rounded-lg bg-cyan-500/20 flex items-center justify-center shrink-0">
@@ -57,6 +57,13 @@ export default function Education() {
                 </h3>
                 <p className="text-gray-300">{edu.school}</p>
                 <p className="text-gray-400 text-sm mt-1">{edu.period}</p>
+              </div>
+
+              {/* Score */}
+              <div
+                className={`rounded-lg absolute right-6 top-6 ${orbitron.className}`}
+              >
+                {edu.score}
               </div>
             </div>
           </div>

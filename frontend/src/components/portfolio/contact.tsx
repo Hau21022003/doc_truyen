@@ -91,7 +91,7 @@ export default function Contact() {
           <h2
             className={`text-3xl md:text-4xl font-bold gradient-text mb-4 ${orbitron.className}`}
           >
-            Open for Remote Opportunities
+            Open for Opportunities
           </h2>
           <p className="text-xl text-gray-300 mb-2">
             Full-Time · Contract · Freelance
