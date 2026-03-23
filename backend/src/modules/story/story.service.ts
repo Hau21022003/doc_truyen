@@ -184,6 +184,8 @@ export class StoryService {
       queryBuilder.andWhere(`tags.slug IN (:...tags)`, { tags });
     }
 
+    queryBuilder.distinct(true);
+
     const [data, total] = await queryBuilder.getManyAndCount();
 
     return {

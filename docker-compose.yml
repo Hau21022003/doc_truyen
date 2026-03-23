@@ -4,13 +4,13 @@ services:
     container_name: postgres
     restart: always
     environment:
-      POSTGRES_USER: ${DB_USER}
+      POSTGRES_USER: ${DB_USERNAME}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
-      - "5437:5432"
+      - "5433:5432"
     networks:
       - app-network
 
@@ -23,8 +23,8 @@ services:
 
   backend:
     build: ./backend
-    image: lephuchau/nestjs-backend:latest
-    container_name: nestjs-backend
+    image: lephuchau/doctruyen-backend:latest
+    container_name: doctruyen-backend
     restart: always
     env_file:
       - .env
@@ -40,8 +40,8 @@ services:
       args:
         NEXT_PUBLIC_API_ENDPOINT: https://lephuchau.io.vn/backend # Build
         NEXT_PUBLIC_URL: https://lephuchau.io.vn
-    image: lephuchau/nextjs-frontend:latest
-    container_name: nextjs-frontend
+    image: lephuchau/doctruyen-frontend:latest
+    container_name: doctruyen-frontend
     restart: always
     env_file:
       - .env
@@ -49,7 +49,7 @@ services:
       - backend
     networks:
       - app-network
-  
+
   nginx:
     image: nginx:alpine
     container_name: nginx
