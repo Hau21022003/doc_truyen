@@ -55,7 +55,9 @@ export function HomepageStoryGrid({ stories }: StoryGridProps) {
                     className="font-medium uppercase hover:bg-primary-orange dark:hover:bg-primary-orange hover:text-primary-orange-foreground"
                     asChild
                   >
-                    <Link href={`/story/${story.slug}/${chapter.id}`}>
+                    <Link
+                      href={`/story/${story.slug}/chapter-${chapter.chapterNumber}`}
+                    >
                       {`Chap ${chapter.chapterNumber}`}
                     </Link>
                   </Button>

@@ -45,15 +45,6 @@ export class ChapterController {
     return { message: 'This endpoint returns all chapters with pagination' };
   }
 
-  @Get('story/:storyId')
-  @Public()
-  async findByStoryId(
-    @Param('storyId', ParseIntPipe) storyId: number,
-    @Query() query: FindChaptersByStoryDto,
-  ) {
-    return this.chapterService.findByStoryId(storyId, query);
-  }
-
   @AuthOptional()
   @Get('story/:storySlug/:chapterNumber')
   async findByStorySlugAndChapterNumber(
@@ -66,6 +57,15 @@ export class ChapterController {
       chapterNumber,
       user?.sub,
     );
+  }
+
+  @Get('story/:storyId')
+  @Public()
+  async findByStoryId(
+    @Param('storyId', ParseIntPipe) storyId: number,
+    @Query() query: FindChaptersByStoryDto,
+  ) {
+    return this.chapterService.findByStoryId(storyId, query);
   }
 
   @Get(':id')

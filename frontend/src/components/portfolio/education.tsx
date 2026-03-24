@@ -52,19 +52,24 @@ export default function Education() {
               </div>
               {/* Info */}
               <div className="flex-1">
-                <h3 className="text-xl font-semibold text-cyan-400">
-                  {edu.degree}
-                </h3>
+                <div className="flex items-start gap-2 justify-between">
+                  <h3 className="text-xl font-semibold text-cyan-400">
+                    {edu.degree}
+                  </h3>
+                  <div className={`rounded-lg shrink-0 ${orbitron.className}`}>
+                    {edu.score}
+                  </div>
+                </div>
                 <p className="text-gray-300">{edu.school}</p>
                 <p className="text-gray-400 text-sm mt-1">{edu.period}</p>
               </div>
 
               {/* Score */}
-              <div
+              {/* <div
                 className={`rounded-lg absolute right-6 top-6 ${orbitron.className}`}
               >
                 {edu.score}
-              </div>
+              </div> */}
             </div>
           </div>
         ))}

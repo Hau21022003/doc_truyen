@@ -146,47 +146,99 @@ export class StoryService {
     };
   }
 
+  // async findHomepage(
+  //   query: HomeStoryQueryDto,
+  // ): Promise<PaginatedResponseDto<Story>> {
+  //   const { search, page, limit, tags } = query;
+
+  //   let queryBuilder = this.storyRepository
+  //     .createQueryBuilder(this.ENTITY_ALIAS)
+  //     .leftJoinAndSelect(`${this.ENTITY_ALIAS}.tags`, 'tags')
+  //     .leftJoinAndSelect(
+  //       'story.chapters',
+  //       'chapter',
+  //       'chapter.status = :status',
+  //       { status: ChapterStatus.PUBLISHED },
+  //     )
+  //     .where('story.status = :storyStatus', {
+  //       storyStatus: StoryStatus.PUBLISHED,
+  //     })
+  //     .andWhere('story.lastAddedChapterDate IS NOT NULL')
+  //     .orderBy(`${this.ENTITY_ALIAS}.lastAddedChapterDate`, 'DESC')
+  //     .addOrderBy('chapter.chapterNumber', 'DESC');
+
+  //   queryBuilder = QueryBuilderHelper.applySearch(
+  //     queryBuilder,
+  //     this.ENTITY_ALIAS,
+  //     search,
+  //     STORY_SEARCHABLE_COLUMNS,
+  //   );
+
+  //   if (tags?.length) {
+  //     queryBuilder.andWhere(`tags.slug IN (:...tags)`, { tags });
+  //   }
+
+  //   queryBuilder = QueryBuilderHelper.applyPagination(
+  //     queryBuilder,
+  //     page,
+  //     limit,
+  //   );
+
+  //   const [data, total] = await queryBuilder.getManyAndCount();
+
+  //   return {
+  //     data,
+  //     page,
+  //     limit,
+  //     total,
+  //     totalPages: Math.ceil(total / limit),
+  //   };
+  // }
+
   async findHomepage(
     query: HomeStoryQueryDto,
   ): Promise<PaginatedResponseDto<Story>> {
     const { search, page, limit, tags } = query;
 
-    let queryBuilder = this.storyRepository
-      .createQueryBuilder(this.ENTITY_ALIAS)
-      .leftJoinAndSelect(`${this.ENTITY_ALIAS}.tags`, 'tags')
-      .leftJoinAndSelect(
-        'story.chapters',
-        'chapter',
-        'chapter.status = :status',
-        { status: ChapterStatus.PUBLISHED },
-      )
+    const qb = this.storyRepository
+      .createQueryBuilder('story')
+      .leftJoin('story.tags', 'tags') // chỉ join nếu cần filter
       .where('story.status = :storyStatus', {
         storyStatus: StoryStatus.PUBLISHED,
       })
-      .andWhere('story.lastAddedChapterDate IS NOT NULL')
-      .orderBy(`${this.ENTITY_ALIAS}.lastAddedChapterDate`, 'DESC')
-      .addOrderBy('chapter.chapterNumber', 'DESC');
+      .andWhere('story.lastAddedChapterDate IS NOT NULL');
 
-    queryBuilder = QueryBuilderHelper.applyPagination(
-      queryBuilder,
-      page,
-      limit,
-    );
+    if (tags?.length) {
+      qb.andWhere('tags.slug IN (:...tags)', { tags });
+    }
 
-    queryBuilder = QueryBuilderHelper.applySearch(
-      queryBuilder,
-      this.ENTITY_ALIAS,
+    QueryBuilderHelper.applySearch(
+      qb,
+      'story',
       search,
       STORY_SEARCHABLE_COLUMNS,
     );
 
-    if (tags?.length) {
-      queryBuilder.andWhere(`tags.slug IN (:...tags)`, { tags });
-    }
+    qb.orderBy('story.lastAddedChapterDate', 'DESC');
 
-    queryBuilder.distinct(true);
+    QueryBuilderHelper.applyPagination(qb, page, limit);
 
-    const [data, total] = await queryBuilder.getManyAndCount();
+    const [stories, total] = await qb.getManyAndCount();
+
+    const storyIds = stories.map((s) => s.id);
+
+    const data = await this.storyRepository.find({
+      where: { id: In(storyIds) },
+      relations: {
+        tags: true,
+        chapters: true, // nếu cần
+      },
+      order: {
+        chapters: {
+          chapterNumber: 'DESC',
+        },
+      },
+    });
 
     return {
       data,
