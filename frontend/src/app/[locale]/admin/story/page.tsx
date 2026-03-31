@@ -6,6 +6,8 @@ import CustomCheckbox from "@/components/custom-checkbox";
 import {
   IconArchive,
   IconBookOpenOutline,
+  IconExport,
+  IconImport,
   IconPen,
   IconPlus,
 } from "@/components/icons";
@@ -27,7 +29,17 @@ import {
   ExtraColumnConfig,
 } from "@/features/shared/table/components/data-table";
 import HideColumnSelect from "@/features/shared/table/components/hide-column-select";
-import { useRowSelection, useTimeZone } from "@/hooks";
+import {
+  useFileUpload,
+  useIsMobile,
+  useRowSelection,
+  useTimeZone,
+} from "@/hooks";
+import {
+  ALLOWED_EXCEL_TYPES,
+  ALLOWED_EXCEL_TYPES_STRING,
+  MAX_EXCEL_SIZE_MB,
+} from "@/shared/constants";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { useEffect, useMemo } from "react";
@@ -35,6 +47,7 @@ import { useEffect, useMemo } from "react";
 export default function StoryPage() {
   const tStory = useTranslations("story");
   const tCommon = useTranslations("common");
+  const isMobile = useIsMobile();
   const { filterConfigs, params: filterParams } = useStoryFilter();
   const timezone = useTimeZone();
 
@@ -48,7 +61,8 @@ export default function StoryPage() {
     isSelected,
   } = useRowSelection<Story>();
 
-  const { removeOne, removeMany } = useStoryActions();
+  const { removeOne, removeMany, handleExportExcel, handleImportExcel } =
+    useStoryActions();
 
   const handleDelete = async (tag: Story) => {
     const success = await removeOne(tag);
@@ -170,12 +184,35 @@ export default function StoryPage() {
     },
   ];
 
+  const { inputRef, openFileDialog, onFileChange } = useFileUpload({
+    maxSizeMB: MAX_EXCEL_SIZE_MB,
+    accept: ALLOWED_EXCEL_TYPES,
+    onFileSelected: handleImportExcel,
+    onError: (msg) => alert(msg),
+  });
+
   return (
     <div className="p-4 md:p-6 space-y-2">
       <div className="flex justify-between items-center gap-2">
         <h3 className="font-medium">{tStory("title")}</h3>
         <div className="flex items-center gap-2">
           <HideColumnSelect tableState={tableState} />
+          <Button
+            variant="outline"
+            size={isMobile ? "icon" : "default"}
+            onClick={handleExportExcel}
+          >
+            <IconExport color="custom" />
+            {!isMobile && <p>{tCommon("actions.export")}</p>}
+          </Button>
+          <Button
+            variant="outline"
+            size={isMobile ? "icon" : "default"}
+            onClick={openFileDialog}
+          >
+            <IconImport color="custom" />
+            {!isMobile && <p>{tCommon("actions.import")}</p>}
+          </Button>
           <CustomButton asChild color="orange">
             <Link href={`/admin/story/upsert`}>
               <IconPlus color="custom" />
@@ -208,6 +245,13 @@ export default function StoryPage() {
         isOpen={isOpenUpsertModal}
         data={dataUpsertModal}
       /> */}
+      <input
+        ref={inputRef}
+        type="file"
+        onChange={onFileChange}
+        accept={ALLOWED_EXCEL_TYPES_STRING}
+        hidden
+      />
     </div>
   );
 }

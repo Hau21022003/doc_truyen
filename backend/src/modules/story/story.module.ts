@@ -1,3 +1,4 @@
+import { ExcelModule } from '@/common/excel/excel.module';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MediaModule } from '../media/media.module';
@@ -7,7 +8,12 @@ import { StoryController } from './story.controller';
 import { StoryService } from './story.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Story]), TagsModule, MediaModule],
+  imports: [
+    TypeOrmModule.forFeature([Story]),
+    TagsModule,
+    MediaModule,
+    ExcelModule,
+  ],
   controllers: [StoryController],
   providers: [StoryService],
   exports: [StoryService],

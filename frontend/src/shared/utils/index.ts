@@ -1,6 +1,7 @@
 export * from "./avatar.utils";
 export * from "./date.utils";
 export * from "./delay.utils";
+export * from "./download-blob.utils";
 export * from "./image.utils";
 export * from "./logger.utils";
 export * from "./number.utils";

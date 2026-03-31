@@ -14,6 +14,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { useIsMobile } from "@/hooks";
 import { useTranslations } from "next-intl";
 import { TableColumnKey, TableState } from "../table.types";
 
@@ -25,6 +26,7 @@ export default function HideColumnSelect<TColumn extends TableColumnKey, TRow>({
   tableState,
   className = "",
 }: HideColumnSelectProps<TColumn, TRow>) {
+  const isMobile = useIsMobile();
   const t = useTranslations("table");
 
   const columnOptions = (
@@ -44,9 +46,13 @@ export default function HideColumnSelect<TColumn extends TableColumnKey, TRow>({
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="outline" className={`${className}`}>
+        <Button
+          variant="outline"
+          className={`${className}`}
+          size={isMobile ? "icon" : "default"}
+        >
           <IconAdjustmentsHorizontal />
-          {t("hide")}
+          {!isMobile && t("hide")}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="p-0 w-60" align="end">

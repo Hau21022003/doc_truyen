@@ -3,7 +3,13 @@
 import { BulkActionBar } from "@/components/bulk-action-bar";
 import CustomButton from "@/components/custom-button";
 import CustomCheckbox from "@/components/custom-checkbox";
-import { IconArchive, IconPen, IconPlus } from "@/components/icons";
+import {
+  IconArchive,
+  IconExport,
+  IconImport,
+  IconPen,
+  IconPlus,
+} from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -23,7 +29,17 @@ import {
   ExtraColumnConfig,
 } from "@/features/shared/table/components/data-table";
 import HideColumnSelect from "@/features/shared/table/components/hide-column-select";
-import { useRowSelection, useTimeZone } from "@/hooks";
+import {
+  useFileUpload,
+  useIsMobile,
+  useRowSelection,
+  useTimeZone,
+} from "@/hooks";
+import {
+  ALLOWED_EXCEL_TYPES,
+  ALLOWED_EXCEL_TYPES_STRING,
+  MAX_EXCEL_SIZE_MB,
+} from "@/shared/constants";
 import { ArrowLeft } from "lucide-react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
@@ -33,6 +49,7 @@ import { useEffect, useMemo } from "react";
 export default function ChaptersPage() {
   const tChapter = useTranslations("chapter");
   const tCommon = useTranslations("common");
+  const isMobile = useIsMobile();
   const params = useParams<{ id: string }>();
   const storyId = params.id ? Number(params.id) : undefined;
   const timeZone = useTimeZone();
@@ -51,7 +68,8 @@ export default function ChaptersPage() {
     isSelected,
   } = useRowSelection<Chapter>();
 
-  const { removeOne, removeMany } = useChapterActions();
+  const { removeOne, removeMany, handleExportExcel, handleImportExcel } =
+    useChapterActions();
 
   const handleDelete = async (tag: Chapter) => {
     const success = await removeOne(tag);
@@ -164,6 +182,17 @@ export default function ChaptersPage() {
     },
   ];
 
+  const { inputRef, openFileDialog, onFileChange } = useFileUpload({
+    maxSizeMB: MAX_EXCEL_SIZE_MB,
+    accept: ALLOWED_EXCEL_TYPES,
+    onFileSelected: (file) => {
+      if (storyData?.payload) {
+        handleImportExcel(file, storyData.payload);
+      }
+    },
+    onError: (msg) => alert(msg),
+  });
+
   return (
     <div className="p-4 md:p-6 space-y-2">
       <div className="flex items-center gap-2">
@@ -184,6 +213,24 @@ export default function ChaptersPage() {
         </div>
         <div className="shrink-0 flex items-center gap-2">
           <HideColumnSelect tableState={tableState} />
+          <Button
+            variant="outline"
+            size={isMobile ? "icon" : "default"}
+            onClick={() => {
+              if (storyData?.payload) handleExportExcel(storyData.payload);
+            }}
+          >
+            <IconExport color="custom" />
+            {!isMobile && <p>{tCommon("actions.export")}</p>}
+          </Button>
+          <Button
+            variant="outline"
+            size={isMobile ? "icon" : "default"}
+            onClick={openFileDialog}
+          >
+            <IconImport color="custom" />
+            {!isMobile && <p>{tCommon("actions.import")}</p>}
+          </Button>
           <CustomButton color="orange" asChild>
             <Link href={`/admin/story/${storyId}/chapters/upsert`}>
               <IconPlus color="custom" />
@@ -210,6 +257,14 @@ export default function ChaptersPage() {
         count={selectedIds.length}
         onDelete={handleBulkDelete}
         onClear={clearSelection}
+      />
+
+      <input
+        ref={inputRef}
+        type="file"
+        onChange={onFileChange}
+        accept={ALLOWED_EXCEL_TYPES_STRING}
+        hidden
       />
     </div>
   );

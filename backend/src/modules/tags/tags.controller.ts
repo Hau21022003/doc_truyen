@@ -1,3 +1,4 @@
+import { ALLOWED_MIMES, createMulterOptions, FILE_SIZES_MB } from '@/common';
 import { QueryBaseDto } from '@/common/dto';
 import {
   Body,
@@ -11,8 +12,13 @@ import {
   Patch,
   Post,
   Query,
+  Res,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiBody, ApiConsumes, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { type Response } from 'express';
 import { Public } from '../auth/decorators/public.decorator';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { UserRole } from '../users/entities/user.entity';
@@ -34,6 +40,30 @@ export class TagsController {
     return await this.tagsService.create(createGenreDto);
   }
 
+  @Post('import/excel')
+  @UseInterceptors(
+    FileInterceptor(
+      'file',
+      createMulterOptions(FILE_SIZES_MB.DOCUMENT, ALLOWED_MIMES.EXCEL),
+    ),
+  )
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+      required: ['file'],
+    },
+  })
+  async importExcel(@UploadedFile() file: Express.Multer.File) {
+    return this.tagsService.importFromBuffer(file.buffer);
+  }
+
   @Get()
   @Roles(UserRole.SYSTEM_ADMIN)
   async query(@Query() query: QueryBaseDto) {
@@ -44,6 +74,17 @@ export class TagsController {
   @Public()
   findAll() {
     return this.tagsService.findAll();
+  }
+
+  @Get('export/excel')
+  async exportExcel(@Res() res: Response) {
+    const buffer = await this.tagsService.exportAll();
+    res.set({
+      'Content-Type':
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'Content-Disposition': `attachment; filename="tags-${Date.now()}.xlsx"`,
+    });
+    res.send(buffer);
   }
 
   @Get(':id')

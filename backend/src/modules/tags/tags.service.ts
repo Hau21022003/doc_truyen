@@ -4,7 +4,9 @@ import {
   QueryBuilderHelper,
   toSlug,
 } from '@/common';
+import { ExcelService } from '@/common/excel/excel.service';
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
@@ -14,6 +16,7 @@ import { FindOptionsWhere, In, Repository } from 'typeorm';
 import { CreateTagDto } from './dto/create-genre.dto';
 import { UpdateTagDto } from './dto/update-genre.dto';
 import { Tag } from './entities/tag.entity';
+import { TAG_EXCEL_COLUMNS } from './tag.constants';
 
 @Injectable()
 export class TagsService {
@@ -22,6 +25,7 @@ export class TagsService {
   constructor(
     @InjectRepository(Tag)
     private readonly tagRepository: Repository<Tag>,
+    private readonly excelService: ExcelService,
   ) {}
 
   async create(createTagDto: CreateTagDto): Promise<Tag> {
@@ -131,6 +135,55 @@ export class TagsService {
     tag.isFeatured = isFeatured;
 
     return await this.tagRepository.save(tag);
+  }
+
+  async exportAll(): Promise<Buffer> {
+    const stories = await this.tagRepository.find();
+    return this.excelService.export(stories, TAG_EXCEL_COLUMNS, {
+      sheetName: 'Tags',
+    });
+  }
+
+  async importFromBuffer(
+    buffer: Buffer,
+  ): Promise<{ imported: number; errors: any[] }> {
+    const { data, errors } = await this.excelService.import<Tag>(
+      buffer,
+      TAG_EXCEL_COLUMNS,
+    );
+
+    if (errors.length) {
+      throw new BadRequestException({ message: 'Validation errors', errors });
+    }
+
+    const importErrors: any[] = [];
+    const toSave: Tag[] = [];
+
+    for (const [index, item] of data.entries()) {
+      // ✅ Normalize slug
+      if (item.slug) {
+        item.slug = toSlug(item.slug);
+      } else if (item.name) {
+        item.slug = toSlug(item.name); // auto-gen nếu không có
+      }
+
+      // ✅ Check duplicate trong DB
+      try {
+        await this.checkUniqueFields({ name: item.name, slug: item.slug });
+        toSave.push(this.tagRepository.create(item as Partial<Tag>));
+      } catch (e: any) {
+        importErrors.push({
+          row: index + 2, // +2 vì row 1 là header
+          messages: [e.message],
+        });
+      }
+    }
+
+    if (toSave.length > 0) {
+      await this.tagRepository.save(toSave);
+    }
+
+    return { imported: toSave.length, errors: importErrors };
   }
 
   private async checkUniqueFields(

@@ -1,3 +1,4 @@
+import { downloadBlob } from "@/shared/utils";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { STORY_QUERY_KEYS } from "./story.query";
 import { storyService } from "./story.service";
@@ -103,6 +104,37 @@ export const useRateStoryMutation = () => {
       queryClient.invalidateQueries({
         queryKey: STORY_QUERY_KEYS.lists(),
       });
+    },
+  });
+};
+
+/**
+ * IMPORT STORIES FROM EXCEL
+ */
+export const useImportStoryExcelMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (file: File) => storyService.importExcel(file),
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: STORY_QUERY_KEYS.all,
+      });
+    },
+  });
+};
+
+/**
+ * EXPORT STORIES TO EXCEL
+ */
+export const useExportStoryExcelMutation = () => {
+  return useMutation({
+    mutationFn: async () => {
+      const blob = (await storyService.exportExcel()).payload;
+      if (blob instanceof Blob) {
+        downloadBlob(blob, `stories-${Date.now()}.xlsx`);
+      }
     },
   });
 };

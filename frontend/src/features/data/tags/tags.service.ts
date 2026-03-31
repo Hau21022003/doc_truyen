@@ -1,5 +1,6 @@
 import http from "@/lib/http";
 import { QUERY_SEPARATORS } from "@/shared/constants";
+import { ImportResult } from "@/shared/types/import";
 import { PaginationResponse } from "@/shared/types/paginated-response.type";
 import { TagQueryInput, UpsertTagInput } from "./tags.schema";
 import { Tag } from "./tags.types";
@@ -26,4 +27,12 @@ export const tagsService = {
     http.delete(`/tags/bulk`, {
       params: { ids: ids.join(QUERY_SEPARATORS.LIST) },
     }),
+
+  exportExcel: () => http.get("/tags/export/excel"),
+
+  importExcel: (file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    return http.post<ImportResult>("/tags/import/excel", formData);
+  },
 };

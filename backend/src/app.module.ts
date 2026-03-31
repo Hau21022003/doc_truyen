@@ -7,6 +7,7 @@ import databaseConfig from 'src/config/database.config';
 import jwtConfig from 'src/config/jwt.config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { ExcelModule } from './common/excel/excel.module';
 import { ValidationProvidersModule } from './common/providers/validation-providers.module';
 import { AppConfigService } from './config/app-config.service';
 import appConfig from './config/app.config';
@@ -66,6 +67,7 @@ import { UsersModule } from './modules/users/users.module';
     BookmarkModule,
     ReadingHistoryModule,
     StoryViewDailyModule,
+    ExcelModule,
   ],
   controllers: [AppController],
   providers: [

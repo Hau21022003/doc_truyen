@@ -119,8 +119,9 @@ const PROJECTS_DATA = [
       "Docker",
       "Nginx",
     ],
-    demoHref: "#",
+    demoHref: "https://youtu.be/zB-_0pQDtjU",
     sourceHref: "https://github.com/Hau21022003/doc_truyen",
+    websiteHref: "https://lephuchau.io.vn",
   },
   {
     image: "/portfolio/project.png",
@@ -218,6 +219,30 @@ function PeopleIcon() {
   );
 }
 
+function WebsiteIcon() {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="1em"
+      height="1em"
+      viewBox="0 0 48 48"
+      className="w-4 h-4 shrink-0 text-white"
+    >
+      <g fill="none" stroke="currentColor" stroke-width="3">
+        <path
+          strokeLinejoin="round"
+          d="M3 24a21 21 0 1 0 42 0a21 21 0 1 0-42 0"
+        />
+        <path
+          strokeLinejoin="round"
+          d="M15 24a9 21 0 1 1 18 0a9 21 0 1 1-18 0"
+        />
+        <path strokeLinecap="round" d="M4.5 31h39m-39-14h39" />
+      </g>
+    </svg>
+  );
+}
+
 function ClockHistoryIcon() {
   return (
     <svg
@@ -300,6 +325,7 @@ function ProjectCard({
   tech,
   demoHref,
   sourceHref,
+  websiteHref,
 }: (typeof PROJECTS_DATA)[0]) {
   return (
     <div className="glass-card rounded-xl overflow-hidden group transition hover:shadow-[0_0_40px_rgba(34,211,238,0.15)]">
@@ -365,7 +391,7 @@ function ProjectCard({
         </div>
 
         {/* CTA buttons */}
-        <div className="flex gap-3">
+        <div className="grid grid-cols-2 gap-3">
           <a
             href={demoHref}
             className="flex-1 inline-flex items-center gap-2 justify-center px-4 py-2 rounded-lg
@@ -380,6 +406,15 @@ function ProjectCard({
           >
             Source <GitHubIcon />
           </a>
+          {websiteHref && (
+            <a
+              href={websiteHref}
+              className="flex-1 inline-flex items-center gap-2 justify-center px-4 py-2 rounded-lg
+                       border border-cyan-500/30 text-gray-300 hover:border-cyan-400 transition text-sm"
+            >
+              Website <WebsiteIcon />
+            </a>
+          )}
         </div>
       </div>
     </div>

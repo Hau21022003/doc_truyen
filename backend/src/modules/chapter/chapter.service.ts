@@ -4,9 +4,14 @@ import {
   QueryBuilderHelper,
   toSlug,
 } from '@/common';
+import { ExcelService } from '@/common/excel/excel.service';
 import { MediaUsage } from '@/modules/media/constants/media.constants';
 import { MediaService } from '@/modules/media/media.service';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, In, Repository } from 'typeorm';
 import { BookmarkService } from '../bookmark/bookmark.service';
@@ -15,8 +20,10 @@ import { StoryViewDailyService } from '../story-view-daily/story-view-daily.serv
 import { Story } from '../story/entities/story.entity';
 import { StoryService } from '../story/story.service';
 import {
+  CHAPTER_EXCEL_COLUMNS,
   CHAPTER_SEARCHABLE_COLUMNS,
   CHAPTER_SORTABLE_COLUMNS,
+  ChapterExcelRow,
 } from './constants/chapter.constants';
 import {
   CreateChapterContentDto,
@@ -25,7 +32,7 @@ import {
   UpdateChapterStatusDto,
 } from './dto';
 import { FindChaptersByStoryDto } from './dto/find-chapters-by-story.dto';
-import { ChapterContent } from './entities/chapter-content';
+import { ChapterContent, ContentType } from './entities/chapter-content';
 import { Chapter, ChapterStatus } from './entities/chapter.entity';
 
 @Injectable()
@@ -40,6 +47,7 @@ export class ChapterService {
     private readonly readingHistoryService: ReadingHistoryService,
     private readonly storyService: StoryService,
     private readonly storyViewDailyService: StoryViewDailyService,
+    private readonly excelService: ExcelService,
   ) {}
 
   async create(createChapterDto: CreateChapterDto): Promise<Chapter> {
@@ -338,6 +346,197 @@ export class ChapterService {
 
     return chapter;
   }
+
+  // ─── EXPORT ───────────────────────────────────────────────────────────────────
+
+  /**
+   * Export tất cả chapter (cùng contents) của 1 story ra file Excel.
+   * Mỗi content block là 1 row. Các field chapter lặp lại trên mỗi row.
+   *
+   * @param storyId - ID của story cần export
+   */
+  async exportByStoryId(storyId: number): Promise<Buffer> {
+    const chapters = await this.chapterRepository.find({
+      where: { story: { id: storyId } },
+      relations: ['contents'],
+      order: { chapterNumber: 'ASC', contents: { position: 'ASC' } },
+    });
+
+    if (!chapters.length) {
+      // Trả về file Excel rỗng (chỉ có header) nếu story chưa có chapter
+      return this.excelService.export<ChapterExcelRow>(
+        [],
+        CHAPTER_EXCEL_COLUMNS,
+        { sheetName: 'Chapters' },
+      );
+    }
+
+    // Flatten: mỗi content block → 1 row
+    const rows: ChapterExcelRow[] = [];
+
+    for (const chapter of chapters) {
+      if (!chapter.contents?.length) {
+        // Chapter không có content → vẫn xuất 1 row để giữ thông tin chapter
+        rows.push({
+          chapterNumber: chapter.chapterNumber,
+          title: chapter.title,
+          slug: chapter.slug,
+          status: chapter.status,
+          contentType: ContentType.TEXT,
+          textContent: undefined,
+          imageUrl: undefined,
+        });
+        continue;
+      }
+
+      for (const content of chapter.contents) {
+        rows.push({
+          chapterNumber: chapter.chapterNumber,
+          title: chapter.title,
+          slug: chapter.slug,
+          status: chapter.status,
+          contentType: content.contentType,
+          textContent: content.textContent,
+          imageUrl: content.imageUrl,
+        });
+      }
+    }
+
+    return this.excelService.export<ChapterExcelRow>(
+      rows,
+      CHAPTER_EXCEL_COLUMNS,
+      {
+        sheetName: 'Chapters',
+      },
+    );
+  }
+
+  // ─── IMPORT ───────────────────────────────────────────────────────────────────
+
+  /**
+   * Import chapter từ file Excel vào story chỉ định.
+   * - Group các row theo chapterNumber.
+   * - Mỗi nhóm → tạo 1 Chapter + nhiều ChapterContent.
+   * - Skip chapter đã tồn tại (theo chapterNumber + storyId), ghi vào importErrors.
+   *
+   * @param storyId - ID của story sẽ nhận chapter mới
+   * @param buffer  - Buffer của file .xlsx
+   */
+  async importFromBuffer(
+    storyId: number,
+    buffer: Buffer,
+  ): Promise<{ imported: number; skipped: number; errors: any[] }> {
+    // 1️⃣ Validate story tồn tại
+    await this.storyService.findOne(storyId);
+
+    // 2️⃣ Parse Excel
+    const { data, errors } = await this.excelService.import<ChapterExcelRow>(
+      buffer,
+      CHAPTER_EXCEL_COLUMNS,
+    );
+
+    if (errors.length) {
+      throw new BadRequestException({ message: 'Validation errors', errors });
+    }
+
+    // 3️⃣ Group rows theo chapterNumber
+    const chapterMap = new Map<number, ChapterExcelRow[]>();
+
+    for (const row of data) {
+      const num = row.chapterNumber as number;
+      if (num == null || isNaN(num)) continue;
+
+      if (!chapterMap.has(num)) {
+        chapterMap.set(num, []);
+      }
+      chapterMap.get(num)!.push(row as ChapterExcelRow);
+    }
+
+    // 4️⃣ Lấy danh sách chapterNumber đã tồn tại trong story
+    const existingChapters = await this.chapterRepository.find({
+      where: { story: { id: storyId } },
+      select: ['chapterNumber'],
+    });
+    const existingNumbers = new Set(
+      existingChapters.map((c) => c.chapterNumber),
+    );
+
+    // 5️⃣ Tạo chapter trong transaction
+    const importErrors: any[] = [];
+    let imported = 0;
+    let skipped = 0;
+
+    await this.chapterRepository.manager.transaction(async (manager) => {
+      for (const [chapterNumber, rows] of chapterMap.entries()) {
+        // Skip nếu chapterNumber đã tồn tại
+        if (existingNumbers.has(chapterNumber)) {
+          skipped++;
+          importErrors.push({
+            chapterNumber,
+            messages: [
+              `Chapter ${chapterNumber} already exists in this story — skipped`,
+            ],
+          });
+          continue;
+        }
+
+        // Lấy metadata từ row đầu tiên của nhóm
+        const firstRow = rows[0];
+        const title = firstRow.title ?? `Chapter ${chapterNumber}`;
+        const slug = firstRow.slug ? toSlug(firstRow.slug) : toSlug(title);
+        const status = firstRow.status ?? ChapterStatus.DRAFT;
+        const publishedAt = this.updatePublishedAt(status);
+
+        try {
+          // Build contents
+          const contents: ChapterContent[] = rows
+            .filter(
+              (r) =>
+                r.contentType === ContentType.IMAGE
+                  ? !!r.imageUrl // image row phải có imageUrl
+                  : r.textContent != null, // text row phải có textContent
+            )
+            .map((r, position) =>
+              manager.create(ChapterContent, {
+                position,
+                contentType: r.contentType ?? ContentType.TEXT,
+                textContent: r.textContent,
+                imageUrl: r.imageUrl,
+              }),
+            );
+
+          const chapter = manager.create(Chapter, {
+            title,
+            slug,
+            chapterNumber,
+            status,
+            publishedAt,
+            story: { id: storyId },
+            contents,
+          });
+
+          await manager.save(chapter);
+          imported++;
+        } catch (e: any) {
+          importErrors.push({
+            chapterNumber,
+            messages: [e.message ?? 'Unknown error'],
+          });
+        }
+      }
+
+      // ✅ Cập nhật lastAddedChapterDate nếu có chapter được import
+      if (imported > 0) {
+        await manager.update(Story, storyId, {
+          lastAddedChapterDate: new Date(),
+        });
+      }
+    });
+
+    return { imported, skipped, errors: importErrors };
+  }
+
+  // ─── PRIVATE HELPERS ──────────────────────────────────────────────────────────
 
   private async buildChapterContents(
     contentsDto: CreateChapterContentDto[],

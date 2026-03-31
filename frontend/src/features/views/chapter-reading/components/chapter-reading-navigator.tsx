@@ -1,14 +1,12 @@
 "use client";
 
 import CustomButton from "@/components/custom-button";
+import { IconArrowLeft, IconHamburger } from "@/components/icons";
 import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Chapter } from "@/features/data/chapter/chapter.types";
 import { useChapterNavigation } from "../hooks/use-chapter-navigation";
 
@@ -34,40 +32,60 @@ export function ChapterReadingNavigator({
   });
 
   return (
-    <div className="flex justify-between">
-      <Select
-        onValueChange={(value) => navigateToChapter(Number(value))}
-        value={currentChapterNumber.toString()}
-      >
-        <SelectTrigger className="w-full max-w-36">
-          <SelectValue placeholder="Select chap" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectGroup>
-            {chapters.map((chapter) => (
-              <SelectItem value={chapter.chapterNumber?.toString() || ""}>
-                {`Chap ${chapter.chapterNumber}`}
-              </SelectItem>
-            ))}
-          </SelectGroup>
-        </SelectContent>
-      </Select>
-
-      <div className="flex items-center gap-2">
+    <div className="flex justify-center">
+      <div className="w-full flex items-center justify-center gap-2">
         <CustomButton
           color="orange"
           onClick={canGoPrev ? goToPrev : undefined}
           disabled={!canGoPrev}
+          className="flex-1 max-w-40 rounded-2xl rounded-tr-none rounded-br-none"
         >
+          <IconArrowLeft size={"sm"} color="custom" />
           Prev
         </CustomButton>
+
+        <Popover>
+          <PopoverTrigger asChild>
+            <button>
+              <IconHamburger size={"lg"} />
+            </button>
+          </PopoverTrigger>
+          <PopoverContent
+            align="start"
+            className="p-2 w-64 max-h-80 overflow-y-auto"
+          >
+            <div className="flex flex-col gap-1">
+              {chapters.map((chap) => {
+                const isActive = chap.chapterNumber === currentChapterNumber;
+
+                return (
+                  <button
+                    key={chap.chapterNumber}
+                    onClick={() => {
+                      if (chap.chapterNumber) {
+                        navigateToChapter(chap.chapterNumber);
+                      }
+                    }}
+                    className={`text-left px-3 py-2 rounded-md text-sm transition
+              ${isActive ? "bg-orange-500 text-white" : "hover:bg-muted"}
+            `}
+                  >
+                    {`Chap ${chap.chapterNumber}`}
+                  </button>
+                );
+              })}
+            </div>
+          </PopoverContent>
+        </Popover>
 
         <CustomButton
           color="orange"
           disabled={!canGoNext}
           onClick={canGoNext ? goToNext : undefined}
+          className="flex-1 max-w-40 rounded-2xl rounded-tl-none rounded-bl-none"
         >
           Next
+          <IconArrowLeft className="rotate-180" size={"sm"} color="custom" />
         </CustomButton>
       </div>
     </div>

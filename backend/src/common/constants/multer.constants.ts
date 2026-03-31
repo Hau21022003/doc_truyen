@@ -10,6 +10,10 @@ export const FILE_SIZES_MB = {
 export const ALLOWED_MIMES = {
   IMAGE: ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
   DOCUMENT: ['application/pdf', 'application/msword', 'text/plain'],
+  EXCEL: [
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // .xlsx
+    'application/vnd.ms-excel', // .xls
+  ],
 };
 
 export const createMulterOptions = (

@@ -1,5 +1,6 @@
 import http from "@/lib/http";
 import { QUERY_SEPARATORS, SortDirection } from "@/shared/constants";
+import { ImportResult } from "@/shared/types/import";
 import { PaginationResponse } from "@/shared/types/paginated-response.type";
 import { StoryQueryInput, UpsertStoryInput } from "./story.schema";
 import {
@@ -42,4 +43,12 @@ export const storyService = {
 
   rate: (data: { storyId: number; rating: number }) =>
     http.post<RateStoryResponse>("/story-rating/rate", data),
+
+  exportExcel: () => http.get("/story/export"),
+
+  importExcel: (file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    return http.post<ImportResult>("/story/import", formData);
+  },
 };

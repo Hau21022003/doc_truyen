@@ -28,7 +28,21 @@
       "pasteImageUrl": "Paste image URL...",
       "view": "View",
       "retry": "Retry",
-      "loadMore": "Load More"
+      "loadMore": "Load More",
+
+      "export": "Export",
+      "exporting": "Exporting...",
+      "exportSuccess": "Export successful",
+      "exportFailed": "Export failed",
+
+      "import": "Import",
+      "importing": "Importing...",
+      "importSuccess": "Import successful",
+      "importFailed": "Import failed",
+
+      "importSuccessWithCount": "Imported {imported} records successfully",
+      "importPartialSuccess": "Imported {imported} records, {errors} errors. Example: {errorDetail}",
+      "importFailedWithDetail": "Import failed. Imported {imported} records, {errors} errors. Example: {errorDetail}"
     },
     "content": {
       "text": "Text",

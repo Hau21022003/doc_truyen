@@ -3,7 +3,13 @@
 import { BulkActionBar } from "@/components/bulk-action-bar";
 import CustomButton from "@/components/custom-button";
 import CustomCheckbox from "@/components/custom-checkbox";
-import { IconArchive, IconPen, IconPlus } from "@/components/icons";
+import {
+  IconArchive,
+  IconExport,
+  IconImport,
+  IconPen,
+  IconPlus,
+} from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import {
   InputGroup,
@@ -22,9 +28,14 @@ import {
   ExtraColumnConfig,
 } from "@/features/shared/table/components/data-table";
 import HideColumnSelect from "@/features/shared/table/components/hide-column-select";
-import { useIsMobile, useUpsertModal } from "@/hooks";
+import { useFileUpload, useIsMobile, useUpsertModal } from "@/hooks";
 import { useDebounce } from "@/hooks/use-debounce";
 import { useRowSelection } from "@/hooks/use-row-selection";
+import {
+  ALLOWED_EXCEL_TYPES,
+  ALLOWED_EXCEL_TYPES_STRING,
+  MAX_EXCEL_SIZE_MB,
+} from "@/shared/constants";
 import { Search } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
@@ -54,7 +65,13 @@ export default function TagsPage() {
     isSelected,
   } = useRowSelection<Tag>();
 
-  const { removeOne, removeMany, toggleFeatured } = useTagActions();
+  const {
+    removeOne,
+    removeMany,
+    toggleFeatured,
+    handleExportExcel,
+    handleImportExcel,
+  } = useTagActions();
 
   const handleDelete = async (tag: Tag) => {
     const success = await removeOne(tag);
@@ -179,6 +196,13 @@ export default function TagsPage() {
     },
   ];
 
+  const { inputRef, openFileDialog, onFileChange } = useFileUpload({
+    maxSizeMB: MAX_EXCEL_SIZE_MB,
+    accept: ALLOWED_EXCEL_TYPES,
+    onFileSelected: handleImportExcel,
+    onError: (msg) => alert(msg),
+  });
+
   return (
     <div className="p-4 md:p-6 space-y-2">
       <div className="flex justify-between items-center gap-2">
@@ -196,6 +220,22 @@ export default function TagsPage() {
         </div>
         <div className="flex items-center gap-2">
           <HideColumnSelect tableState={tableState} />
+          <Button
+            variant="outline"
+            size={isMobile ? "icon" : "default"}
+            onClick={handleExportExcel}
+          >
+            <IconExport color="custom" />
+            {!isMobile && <p>{tCommon("actions.export")}</p>}
+          </Button>
+          <Button
+            variant="outline"
+            size={isMobile ? "icon" : "default"}
+            onClick={openFileDialog}
+          >
+            <IconImport color="custom" />
+            {!isMobile && <p>{tCommon("actions.import")}</p>}
+          </Button>
           <CustomButton
             onClick={openCreateTagModal}
             color="orange"
@@ -228,6 +268,14 @@ export default function TagsPage() {
         onClose={closeUpsertTagModal}
         isOpen={isOpenUpsertTagModal}
         data={dataUpsertTagModal}
+      />
+
+      <input
+        ref={inputRef}
+        type="file"
+        onChange={onFileChange}
+        accept={ALLOWED_EXCEL_TYPES_STRING}
+        hidden
       />
     </div>
   );

@@ -27,7 +27,8 @@ export function StoryDetailsContent({ story }: { story: Story }) {
         <p className="font-medium">{tStoryDetails("rating")}</p>
         <p className="text-muted-foreground">
           {tStoryDetails("ratingSummary", {
-            avg: story.averageRating,
+            // avg: story.averageRating,
+            avg: story.averageRating.toFixed(1),
             count: story.ratingCount,
           })}
         </p>

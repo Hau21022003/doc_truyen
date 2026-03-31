@@ -1,3 +1,6 @@
+import { ExcelColumnDef } from '@/common/excel/excel-column-def.interface';
+import { Story, StoryProgress, StoryStatus } from '../entities/story.entity';
+
 export const STORY_SORTABLE_COLUMNS = [
   'title',
   'createdAt',
@@ -47,3 +50,65 @@ export const HOT_STORY_CONFIG = {
    */
   VIEW_COUNT_WEIGHT: 0.1,
 } as const;
+
+export const STORY_EXCEL_COLUMNS: ExcelColumnDef<Story>[] = [
+  { header: 'ID', key: 'id', width: 8 },
+  { header: 'Title', key: 'title', width: 35, required: true },
+  { header: 'Slug', key: 'slug', width: 30, required: true },
+  { header: 'Author', key: 'authorName', width: 25 },
+  { header: 'Description', key: 'description', width: 50 },
+  {
+    header: 'Status',
+    key: 'status',
+    width: 15,
+    required: true,
+    // export: giữ nguyên enum value (draft / published / archived)
+    parse: (v) => {
+      const val = String(v).toLowerCase();
+      if (Object.values(StoryStatus).includes(val as StoryStatus)) return val;
+      return StoryStatus.DRAFT; // fallback
+    },
+  },
+  {
+    header: 'Progress',
+    key: 'progress',
+    width: 15,
+    required: true,
+    parse: (v) => {
+      const val = String(v).toLowerCase();
+      if (Object.values(StoryProgress).includes(val as StoryProgress))
+        return val;
+      return StoryProgress.ONGOING;
+    },
+  },
+  { header: 'Cover Image', key: 'coverImage', width: 50 },
+  {
+    header: 'Tags',
+    key: 'tags',
+    width: 30,
+    // export: ["action","romance"] → "action, romance"
+    transform: (tags: Story['tags']) =>
+      Array.isArray(tags) ? tags.map((t) => t.name).join(', ') : '',
+    // import: "action, romance" — chỉ lưu tên, resolve ở service
+    parse: (v) =>
+      v
+        ? String(v)
+            .split(',')
+            .map((s) => s.trim())
+        : [],
+  },
+  {
+    header: 'View Count',
+    key: 'viewCount',
+    width: 12,
+    transform: (v) => v ?? 0,
+    parse: (v) => Number(v) || 0,
+  },
+  {
+    header: 'Avg Rating',
+    key: 'averageRating',
+    width: 12,
+    transform: (v) => v ?? 0,
+    parse: (v) => Number(v) || 0,
+  },
+];

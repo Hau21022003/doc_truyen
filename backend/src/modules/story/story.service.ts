@@ -5,6 +5,7 @@ import {
   SortDirections,
   toSlug,
 } from '@/common';
+import { ExcelService } from '@/common/excel/excel.service';
 import {
   BadRequestException,
   ConflictException,
@@ -19,6 +20,7 @@ import { MediaService } from '../media/media.service';
 import { TagsService } from '../tags/tags.service';
 import {
   HOT_STORY_CONFIG,
+  STORY_EXCEL_COLUMNS,
   STORY_SEARCHABLE_COLUMNS,
   STORY_SORTABLE_COLUMNS,
 } from './constants/story.constants';
@@ -39,8 +41,12 @@ export class StoryService {
     private storyRepository: Repository<Story>,
     private readonly tagsService: TagsService,
     private readonly mediaService: MediaService,
+    private readonly excelService: ExcelService,
   ) {}
-  async create(createStoryDto: CreateStoryDto): Promise<Story> {
+  async create(
+    createStoryDto: CreateStoryDto,
+    coverImage?: string,
+  ): Promise<Story> {
     this.normalizeSlug(createStoryDto);
 
     await this.checkUniqueFields(createStoryDto);
@@ -56,6 +62,10 @@ export class StoryService {
 
     if (coverImageTempId) {
       story.coverImage = await this.handleCoverImageTemp(coverImageTempId);
+    }
+
+    if (coverImage) {
+      story.coverImage = coverImage;
     }
 
     return this.storyRepository.save(story);
@@ -145,55 +155,6 @@ export class StoryService {
       totalPages: Math.ceil(total / limit),
     };
   }
-
-  // async findHomepage(
-  //   query: HomeStoryQueryDto,
-  // ): Promise<PaginatedResponseDto<Story>> {
-  //   const { search, page, limit, tags } = query;
-
-  //   let queryBuilder = this.storyRepository
-  //     .createQueryBuilder(this.ENTITY_ALIAS)
-  //     .leftJoinAndSelect(`${this.ENTITY_ALIAS}.tags`, 'tags')
-  //     .leftJoinAndSelect(
-  //       'story.chapters',
-  //       'chapter',
-  //       'chapter.status = :status',
-  //       { status: ChapterStatus.PUBLISHED },
-  //     )
-  //     .where('story.status = :storyStatus', {
-  //       storyStatus: StoryStatus.PUBLISHED,
-  //     })
-  //     .andWhere('story.lastAddedChapterDate IS NOT NULL')
-  //     .orderBy(`${this.ENTITY_ALIAS}.lastAddedChapterDate`, 'DESC')
-  //     .addOrderBy('chapter.chapterNumber', 'DESC');
-
-  //   queryBuilder = QueryBuilderHelper.applySearch(
-  //     queryBuilder,
-  //     this.ENTITY_ALIAS,
-  //     search,
-  //     STORY_SEARCHABLE_COLUMNS,
-  //   );
-
-  //   if (tags?.length) {
-  //     queryBuilder.andWhere(`tags.slug IN (:...tags)`, { tags });
-  //   }
-
-  //   queryBuilder = QueryBuilderHelper.applyPagination(
-  //     queryBuilder,
-  //     page,
-  //     limit,
-  //   );
-
-  //   const [data, total] = await queryBuilder.getManyAndCount();
-
-  //   return {
-  //     data,
-  //     page,
-  //     limit,
-  //     total,
-  //     totalPages: Math.ceil(total / limit),
-  //   };
-  // }
 
   async findHomepage(
     query: HomeStoryQueryDto,
@@ -456,6 +417,65 @@ export class StoryService {
 
     // xóa nhiều story
     await this.storyRepository.delete(ids);
+  }
+
+  async exportExcel(): Promise<Buffer> {
+    const data = await this.storyRepository.find({ relations: ['tags'] });
+    return this.excelService.export(data, STORY_EXCEL_COLUMNS, {
+      sheetName: 'Stories',
+    });
+  }
+
+  async importExcel(
+    buffer: Buffer,
+  ): Promise<{ imported: number; errors: any[] }> {
+    const { data, errors } = await this.excelService.import<Story>(
+      buffer,
+      STORY_EXCEL_COLUMNS,
+    );
+
+    if (errors.length) {
+      throw new BadRequestException({ message: 'Validation errors', errors });
+    }
+
+    let imported = 0;
+    const importErrors: any[] = [];
+
+    for (const [index, row] of data.entries()) {
+      try {
+        // `tags` từ Excel là string[] (tên tag), cần resolve sang Tag entity
+        const tagNames = (row as any).tags as string[] | undefined;
+        let tagIds: number[] = [];
+
+        if (tagNames?.length) {
+          const tags = await this.tagsService.findBy({ name: In(tagNames) }); // xem note bên dưới
+          tagIds = tags.map((t) => t.id);
+        }
+
+        await this.create(
+          {
+            title: row.title!,
+            slug: row.slug!,
+            authorName: row.authorName,
+            description: row.description,
+            status: row.status ?? StoryStatus.DRAFT,
+            progress: row.progress ?? StoryProgress.ONGOING,
+            tagIds,
+          } as CreateStoryDto,
+          row.coverImage || undefined,
+        );
+
+        imported++;
+      } catch (e: any) {
+        // bỏ qua lỗi duplicate slug v.v, hoặc push vào errors nếu muốn
+        importErrors.push({
+          row: index + 2, // +2 vì row 1 là header
+          messages: [e.message],
+        });
+      }
+    }
+
+    return { imported, errors: importErrors };
   }
 
   private async validateAndGetTags(tagIds: number[]) {

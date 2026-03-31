@@ -6,6 +6,8 @@ import { toast } from "sonner";
 import {
   useDeleteManyStoryMutation,
   useDeleteStoryMutation,
+  useExportStoryExcelMutation,
+  useImportStoryExcelMutation,
 } from "../story.mutation";
 import { Story } from "../story.types";
 
@@ -15,6 +17,8 @@ export const useStoryActions = () => {
 
   const { mutateAsync: deleteStory } = useDeleteStoryMutation();
   const { mutateAsync: deleteManyStories } = useDeleteManyStoryMutation();
+  const { mutateAsync: exportExcel } = useExportStoryExcelMutation();
+  const { mutateAsync: importExcel } = useImportStoryExcelMutation();
 
   const removeOne = async (tag: Story) => {
     const confirmed = await confirm({
@@ -56,5 +60,39 @@ export const useStoryActions = () => {
     return true;
   };
 
-  return { removeOne, removeMany };
+  const handleExportExcel = async () => {
+    await toast.promise(exportExcel(), {
+      loading: tCommon("actions.exporting"),
+      success: () => tCommon("actions.exportSuccess"),
+      error: (err) => getErrorMessage(err) || tCommon("actions.exportFailed"),
+    });
+  };
+
+  const handleImportExcel = async (file: File) => {
+    await toast.promise(importExcel(file), {
+      loading: tCommon("actions.importing"),
+      success: ({ payload }) => {
+        const { imported, errors } = payload;
+
+        // Có lỗi → partial success
+        if (errors.length) {
+          const firstError = errors[0];
+
+          return tCommon("actions.importPartialSuccess", {
+            imported,
+            errors: errors.length,
+            errorDetail: `Row ${firstError.row}: ${firstError.messages.join(", ")}`,
+          });
+        }
+
+        // Thành công hoàn toàn
+        return tCommon("actions.importSuccessWithCount", {
+          imported,
+        });
+      },
+      error: (err) => getErrorMessage(err) || tCommon("actions.importFailed"),
+    });
+  };
+
+  return { removeOne, removeMany, handleExportExcel, handleImportExcel };
 };

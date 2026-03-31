@@ -104,3 +104,42 @@ export const useSetFeaturedTagMutation = () => {
     },
   });
 };
+
+/**
+ * IMPORT TAGS FROM EXCEL
+ */
+export const useImportTagsExcelMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (file: File) => tagsService.importExcel(file),
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: TAGS_QUERY_KEYS.lists(),
+      });
+      queryClient.invalidateQueries({
+        queryKey: TAGS_QUERY_KEYS.allList(),
+      });
+    },
+  });
+};
+
+/**
+ * EXPORT TAGS TO EXCEL
+ */
+export const useExportTagsExcelMutation = () => {
+  return useMutation({
+    mutationFn: async () => {
+      const blob = (await tagsService.exportExcel()).payload;
+      if (blob && blob instanceof Blob) {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `tags-${Date.now()}.xlsx`;
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+    },
+  });
+};

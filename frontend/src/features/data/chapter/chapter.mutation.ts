@@ -1,4 +1,6 @@
+import { downloadBlob } from "@/shared/utils/download-blob.utils";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Story } from "../story/story.types";
 import { ChapterStatus } from "./chapter.constants";
 import { CHAPTERS_QUERY_KEYS } from "./chapter.query";
 import { UpsertChapterInput } from "./chapter.schema";
@@ -139,6 +141,38 @@ export const useDeleteManyChaptersMutation = () => {
       queryClient.invalidateQueries({
         queryKey: CHAPTERS_QUERY_KEYS.story(),
       });
+    },
+  });
+};
+
+/**
+ * IMPORT CHAPTERS FROM EXCEL
+ */
+export const useImportChaptersExcelMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ file, story }: { file: File; story: Story }) =>
+      chaptersService.importExcel(story, file),
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: CHAPTERS_QUERY_KEYS.all,
+      });
+    },
+  });
+};
+
+/**
+ * EXPORT CHAPTERS TO EXCEL
+ */
+export const useExportChaptersExcelMutation = () => {
+  return useMutation({
+    mutationFn: async (story: Story) => {
+      const blob = (await chaptersService.exportExcel(story)).payload;
+      if (blob instanceof Blob) {
+        downloadBlob(blob, `${story.slug}-${Date.now()}.xlsx`);
+      }
     },
   });
 };

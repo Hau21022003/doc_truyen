@@ -1,9 +1,11 @@
+import { ALLOWED_MIMES, createMulterOptions, FILE_SIZES_MB } from '@/common';
 import { ParseIdsPipe } from '@/common/pipes/parse-ids.pipe';
 import {
   Body,
   Controller,
   Delete,
   Get,
+  Header,
   HttpCode,
   HttpStatus,
   Param,
@@ -11,7 +13,13 @@ import {
   Patch,
   Post,
   Query,
+  Res,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiBody, ApiConsumes } from '@nestjs/swagger';
+import { type Response } from 'express';
 import { Public } from '../auth/decorators/public.decorator';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { UserRole } from '../users/entities/user.entity';
@@ -33,10 +41,45 @@ export class StoryController {
     return this.storyService.create(createStoryDto);
   }
 
+  @Post('import')
+  @UseInterceptors(
+    FileInterceptor(
+      'file',
+      createMulterOptions(FILE_SIZES_MB.DOCUMENT, ALLOWED_MIMES.EXCEL),
+    ),
+  )
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+      required: ['file'],
+    },
+  })
+  async importExcel(@UploadedFile() file: Express.Multer.File) {
+    return this.storyService.importExcel(file.buffer);
+  }
+
   @Get()
   @Public()
   findAll(@Query() queryDto: QueryStoryDto) {
     return this.storyService.findAll(queryDto);
+  }
+
+  @Get('export')
+  @Header(
+    'Content-Type',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  )
+  @Header('Content-Disposition', 'attachment; filename="stories.xlsx"')
+  async exportChapters(@Res() res: Response) {
+    const buffer = await this.storyService.exportExcel();
+    res.end(buffer);
   }
 
   @Get('home')

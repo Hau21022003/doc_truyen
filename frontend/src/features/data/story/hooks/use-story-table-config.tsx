@@ -116,7 +116,7 @@ export const useStoryTableConfig = () => {
             <Rating size="default" value={row.averageRating} />
             <p className="text-sm text-muted-foreground">
               {tStoryColumns("ratingValue", {
-                averageRating: row.averageRating,
+                averageRating: row.averageRating.toFixed(1),
                 ratingCount: row.ratingCount,
               })}
             </p>

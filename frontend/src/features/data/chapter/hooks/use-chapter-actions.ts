@@ -3,9 +3,12 @@ import { useConfirm } from "@/providers/confirm-provider";
 import { stringUtils } from "@/shared/utils";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
+import { Story } from "../../story/story.types";
 import {
   useDeleteChapterMutation,
   useDeleteManyChaptersMutation,
+  useExportChaptersExcelMutation,
+  useImportChaptersExcelMutation,
 } from "../chapter.mutation";
 import { Chapter } from "../chapter.types";
 
@@ -15,6 +18,8 @@ export function useChapterActions() {
 
   const { mutateAsync: deleteOne } = useDeleteChapterMutation();
   const { mutateAsync: deleteMany } = useDeleteManyChaptersMutation();
+  const { mutateAsync: exportExcel } = useExportChaptersExcelMutation();
+  const { mutateAsync: importExcel } = useImportChaptersExcelMutation();
 
   const removeOne = async (chapter: Chapter) => {
     const confirmed = await confirm({
@@ -57,5 +62,39 @@ export function useChapterActions() {
     return true;
   };
 
-  return { removeOne, removeMany };
+  const handleExportExcel = async (story: Story) => {
+    await toast.promise(exportExcel(story), {
+      loading: tCommon("actions.exporting"),
+      success: () => tCommon("actions.exportSuccess"),
+      error: (err) => getErrorMessage(err) || tCommon("actions.exportFailed"),
+    });
+  };
+
+  const handleImportExcel = async (file: File, story: Story) => {
+    await toast.promise(importExcel({ file, story }), {
+      loading: tCommon("actions.importing"),
+      success: ({ payload }) => {
+        const { imported, errors } = payload;
+
+        // Có lỗi → partial success
+        if (errors.length) {
+          const firstError = errors[0];
+
+          return tCommon("actions.importPartialSuccess", {
+            imported,
+            errors: errors.length,
+            errorDetail: `Row ${firstError.row}: ${firstError.messages.join(", ")}`,
+          });
+        }
+
+        // Thành công hoàn toàn
+        return tCommon("actions.importSuccessWithCount", {
+          imported,
+        });
+      },
+      error: (err) => getErrorMessage(err) || tCommon("actions.importFailed"),
+    });
+  };
+
+  return { removeOne, removeMany, handleExportExcel, handleImportExcel };
 }

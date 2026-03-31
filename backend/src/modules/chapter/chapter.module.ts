@@ -1,3 +1,4 @@
+import { ExcelModule } from '@/common/excel/excel.module';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { BookmarkModule } from '../bookmark/bookmark.module';
@@ -18,6 +19,7 @@ import { Chapter } from './entities/chapter.entity';
     ReadingHistoryModule,
     StoryModule,
     StoryViewDailyModule,
+    ExcelModule,
   ],
   controllers: [ChapterController],
   providers: [ChapterService],

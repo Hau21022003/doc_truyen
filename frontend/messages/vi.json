@@ -28,7 +28,21 @@
       "pasteImageUrl": "Dán URL hình ảnh...",
       "view": "Xem",
       "retry": "Thử lại",
-      "loadMore": "Hiện thêm"
+      "loadMore": "Hiện thêm",
+
+      "export": "Xuất file",
+      "exporting": "Đang xuất file...",
+      "exportSuccess": "Xuất file thành công",
+      "exportFailed": "Xuất file thất bại",
+
+      "import": "Nhập file",
+      "importing": "Đang nhập file...",
+      "importSuccess": "Nhập file thành công",
+      "importFailed": "Nhập file thất bại",
+
+      "importSuccessWithCount": "Đã import thành công {imported} dòng",
+      "importPartialSuccess": "Đã import {imported} dòng, có {errors} lỗi. Ví dụ: {errorDetail}",
+      "importFailedWithDetail": "Import thất bại. Đã import {imported} dòng, có {errors} lỗi. Ví dụ: {errorDetail}"
     },
     "content": {
       "text": "Văn bản",

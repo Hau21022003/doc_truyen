@@ -6,6 +6,8 @@ import { toast } from "sonner";
 import {
   useDeleteManyTagMutation,
   useDeleteTagMutation,
+  useExportTagsExcelMutation,
+  useImportTagsExcelMutation,
   useSetFeaturedTagMutation,
 } from "../tags.mutation";
 import { Tag } from "../tags.types";
@@ -17,6 +19,8 @@ export const useTagActions = () => {
   const { mutateAsync: deleteTag } = useDeleteTagMutation();
   const { mutateAsync: deleteManyTags } = useDeleteManyTagMutation();
   const { mutateAsync: setFeatured } = useSetFeaturedTagMutation();
+  const { mutateAsync: exportExcel } = useExportTagsExcelMutation();
+  const { mutateAsync: importExcel } = useImportTagsExcelMutation();
 
   const removeOne = async (tag: Tag) => {
     const confirmed = await confirm({
@@ -72,5 +76,45 @@ export const useTagActions = () => {
     );
   };
 
-  return { removeOne, removeMany, toggleFeatured };
+  const handleExportExcel = async () => {
+    await toast.promise(exportExcel(), {
+      loading: tCommon("actions.exporting"),
+      success: () => tCommon("actions.exportSuccess"),
+      error: (err) => getErrorMessage(err) || tCommon("actions.exportFailed"),
+    });
+  };
+
+  const handleImportExcel = async (file: File) => {
+    await toast.promise(importExcel(file), {
+      loading: tCommon("actions.importing"),
+      success: ({ payload }) => {
+        const { imported, errors } = payload;
+
+        // Có lỗi → partial success
+        if (errors.length) {
+          const firstError = errors[0];
+
+          return tCommon("actions.importPartialSuccess", {
+            imported,
+            errors: errors.length,
+            errorDetail: `Row ${firstError.row}: ${firstError.messages.join(", ")}`,
+          });
+        }
+
+        // Thành công hoàn toàn
+        return tCommon("actions.importSuccessWithCount", {
+          imported,
+        });
+      },
+      error: (err) => getErrorMessage(err) || tCommon("actions.importFailed"),
+    });
+  };
+
+  return {
+    removeOne,
+    removeMany,
+    toggleFeatured,
+    handleExportExcel,
+    handleImportExcel,
+  };
 };
