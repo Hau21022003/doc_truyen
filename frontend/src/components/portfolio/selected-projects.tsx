@@ -2,89 +2,6 @@
 
 import { Orbitron } from "next/font/google";
 
-// const PROJECTS_DATA = [
-//   {
-//     image: "/portfolio/project1.jpg",
-//     title: "SaaS Project Management Platform",
-//     description:
-//       "Full-featured project management tool with real-time collaboration for remote teams.",
-//     role: "Full-Stack Developer",
-//     team: "1 Backend, 1 Frontend, 1 Designer",
-//     duration: "4 months",
-//     stack: "React, Node.js, PostgreSQL",
-//     impact: "Reduced churn by 20%",
-//     deploy: "AWS • Docker • CI/CD",
-//     highlights: [
-//       "Real-time task updates (WebSocket)",
-//       "Role-based access & permissions",
-//       "REST API with JWT authentication",
-//     ],
-//     tech: ["React", "Node.js", "PostgreSQL", "AWS", "Docker"],
-//     demoHref: "#",
-//     sourceHref: "#",
-//   },
-//   {
-//     image: "/portfolio/project2.jpg",
-//     title: "Customer Support Ticketing System",
-//     description:
-//       "Internal support platform for managing customer tickets, SLA, and agent performance.",
-//     role: "Full-Stack Developer",
-//     team: "2 Developers, 1 Product Manager",
-//     duration: "3 months",
-//     stack: "Next.js, Node.js, MongoDB",
-//     impact: "Avg. response time improved by 35%",
-//     deploy: "Deployed on AWS (EC2 + S3)",
-//     highlights: [
-//       "Ticket workflow & SLA automation",
-//       "Agent role & permission management",
-//       "Email & webhook integrations",
-//     ],
-//     tech: ["Next.js", "Node.js", "MongoDB", "AWS"],
-//     demoHref: "#",
-//     sourceHref: "#",
-//   },
-//   {
-//     image: "/portfolio/project3.jpg",
-//     title: "SaaS Analytics Dashboard",
-//     description:
-//       "Real-time analytics dashboard to track user activity, revenue, and system performance.",
-//     role: "Full-Stack Developer",
-//     team: "Solo Project",
-//     duration: "2 months",
-//     stack: "React, Express, PostgreSQL",
-//     impact: "Data-driven decisions increased MRR by 15%",
-//     deploy: "Dockerized & CI/CD enabled",
-//     highlights: [
-//       "Interactive charts & filters",
-//       "Role-based admin access",
-//       "Optimized SQL queries for large datasets",
-//     ],
-//     tech: ["React", "Express", "PostgreSQL", "Docker"],
-//     demoHref: "#",
-//     sourceHref: "#",
-//   },
-//   {
-//     image: "/portfolio/project4.jpg",
-//     title: "Authentication & User Management Service",
-//     description:
-//       "Secure authentication service used across multiple SaaS products.",
-//     role: "Backend & Full-Stack Developer",
-//     team: "Solo Project",
-//     duration: "1.5 months",
-//     stack: "Node.js, JWT, Redis, PostgreSQL",
-//     impact: "Enhanced security across all products",
-//     deploy: "Microservice architecture",
-//     highlights: [
-//       "JWT & refresh token flow",
-//       "Password hashing & session security",
-//       "Multi-tenant user architecture",
-//     ],
-//     tech: ["Node.js", "JWT", "Redis", "PostgreSQL"],
-//     demoHref: "#",
-//     sourceHref: "#",
-//   },
-// ];
-
 const PROJECTS_DATA = [
   {
     image: "/portfolio/project.png",
@@ -121,7 +38,8 @@ const PROJECTS_DATA = [
     ],
     demoHref: "https://youtu.be/zB-_0pQDtjU",
     sourceHref: "https://github.com/Hau21022003/doc_truyen",
-    websiteHref: "https://lephuchau.io.vn",
+    websiteHref: "https://lephuchau.online",
+    adminAccount: { username: "admin@example.com", password: "Abcd123!" },
   },
   {
     image: "/portfolio/project.png",
@@ -155,6 +73,8 @@ const PROJECTS_DATA = [
     ],
     demoHref: "https://www.youtube.com/watch?v=5RoDWKMq_R4",
     sourceHref: "https://github.com/Hau21022003/PHShop",
+    websiteHref: "https://ph-shop-psi.vercel.app",
+    adminAccount: { username: "admin@example.com", password: "Abcd123!" },
   },
   {
     image: "/portfolio/project.png",
@@ -326,6 +246,7 @@ function ProjectCard({
   demoHref,
   sourceHref,
   websiteHref,
+  adminAccount,
 }: (typeof PROJECTS_DATA)[0]) {
   return (
     <div className="glass-card rounded-xl overflow-hidden group transition hover:shadow-[0_0_40px_rgba(34,211,238,0.15)]">
@@ -390,6 +311,19 @@ function ProjectCard({
           ))}
         </div>
 
+        {websiteHref && (
+          <div className="flex gap-2 items-center mb-4 flex-wrap">
+            <WebsiteIcon />
+            <a href={websiteHref} className="text-cyan-300 transition text-sm">
+              {websiteHref}
+            </a>
+            <p className="text-sm">
+              Admin Account: {adminAccount.username}, Password:{" "}
+              {adminAccount.password}
+            </p>
+          </div>
+        )}
+
         {/* CTA buttons */}
         <div className="grid grid-cols-2 gap-3">
           <a
@@ -406,15 +340,6 @@ function ProjectCard({
           >
             Source <GitHubIcon />
           </a>
-          {websiteHref && (
-            <a
-              href={websiteHref}
-              className="flex-1 inline-flex items-center gap-2 justify-center px-4 py-2 rounded-lg
-                       border border-cyan-500/30 text-gray-300 hover:border-cyan-400 transition text-sm"
-            >
-              Website <WebsiteIcon />
-            </a>
-          )}
         </div>
       </div>
     </div>

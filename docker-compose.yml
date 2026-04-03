@@ -34,12 +34,22 @@ services:
     networks:
       - app-network
 
+  shop_backend:
+    build: ../ecommerce/backend
+    image: lephuchau/shop-backend:latest
+    container_name: shop-backend
+    restart: always
+    env_file:
+      - .env
+    networks:
+      - app-network
+
   frontend:
     build:
       context: ./frontend
       args:
-        NEXT_PUBLIC_API_ENDPOINT: https://lephuchau.io.vn/backend # Build
-        NEXT_PUBLIC_URL: https://lephuchau.io.vn
+        NEXT_PUBLIC_API_ENDPOINT: https://lephuchau.online/backend # Build
+        NEXT_PUBLIC_URL: https://lephuchau.online
     image: lephuchau/doctruyen-frontend:latest
     container_name: doctruyen-frontend
     restart: always
