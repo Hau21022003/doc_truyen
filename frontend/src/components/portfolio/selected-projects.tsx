@@ -21,6 +21,7 @@ const PROJECTS_DATA = [
       "Used Zustand for lightweight client state management",
       "Designed dark/light mode and fully responsive UI",
       "Optimized backend with NestJS & TypeORM",
+      "Configured CI/CD pipeline with GitHub Actions to auto-deploy to VPS on push to main, reducing manual deployment steps",
     ],
     tech: [
       "Next.js",
@@ -35,6 +36,7 @@ const PROJECTS_DATA = [
       "ShadcnUI",
       "Docker",
       "Nginx",
+      "GitHub Actions",
     ],
     demoHref: "https://youtu.be/zB-_0pQDtjU",
     sourceHref: "https://github.com/Hau21022003/doc_truyen",
@@ -43,7 +45,7 @@ const PROJECTS_DATA = [
   },
   {
     image: "/portfolio/project.png",
-    title: "Online Clothing Store & Realtime Chat System",
+    title: "Online Clothing Store",
     description:
       "Full-stack e-commerce platform with real-time customer chat and authentication system.",
     role: "Full-Stack Developer",
@@ -52,12 +54,16 @@ const PROJECTS_DATA = [
     stack: "NestJS, Next.js, MongoDB",
     impact:
       "Enabled real-time customer interaction and seamless shopping experience",
-    deploy: "Docker",
+    deploy: "Docker • Vercel",
     highlights: [
+      "Built complete shopping flow: product listing, cart, checkout, and order management",
+      "Implemented real-time chat between users and admin using WebSocket",
+      "Developed admin dashboard for managing products (with variants), categories, orders, and users",
+      "Built analytics dashboard with Chart.js for monthly sales visualization",
+      "Built inventory tracking system with low-stock alerts and automated reporting",
+      "Implemented user interaction features: product reviews, comments, likes, and profile management",
       "Built RESTful APIs with JWT & Google OAuth authentication",
-      "Implemented real-time chat using WebSocket",
-      "Designed product, order, and user management system",
-      "Integrated task scheduling for background jobs",
+      "Integrated task scheduling for automated background jobs",
       "Developed responsive UI using Tailwind CSS & ShadcnUI",
     ],
     tech: [
@@ -70,6 +76,7 @@ const PROJECTS_DATA = [
       "Tailwind CSS",
       "ShadcnUI",
       "Zod",
+      "Docker",
     ],
     demoHref: "https://www.youtube.com/watch?v=5RoDWKMq_R4",
     sourceHref: "https://github.com/Hau21022003/PHShop",
