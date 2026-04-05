@@ -40,6 +40,6 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           password: ${{ secrets.VPS_PASSWORD }} # hoặc dùng key
           script: |
-            cd /app
+            cd /root/app
             docker compose pull
             docker compose up -d --remove-orphans
