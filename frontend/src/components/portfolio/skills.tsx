@@ -8,7 +8,7 @@ const SKILLS_DATA = [
     category: "Frontend",
     icon: <PaletteIcon />,
     skills: [
-      { name: "React & Next.js", level: 95 },
+      { name: "React & Next.js", level: 94 },
       { name: "HTML5 & CSS3", level: 98 },
       { name: "Tailwind CSS", level: 92 },
       { name: "JavaScript/TypeScript", level: 90 },

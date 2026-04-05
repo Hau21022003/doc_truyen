@@ -63,13 +63,6 @@ export default function Education() {
                 <p className="text-gray-300">{edu.school}</p>
                 <p className="text-gray-400 text-sm mt-1">{edu.period}</p>
               </div>
-
-              {/* Score */}
-              {/* <div
-                className={`rounded-lg absolute right-6 top-6 ${orbitron.className}`}
-              >
-                {edu.score}
-              </div> */}
             </div>
           </div>
         ))}

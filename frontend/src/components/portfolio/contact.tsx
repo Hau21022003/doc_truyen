@@ -4,8 +4,6 @@ import { Orbitron } from "next/font/google";
 
 const CONTACT_CONFIG = {
   email: "lephuchau21022003@gmail.com",
-  // website: "johndoe.dev",
-  // websiteHref: "https://johndoe.dev",
   resumeHref:
     "https://drive.google.com/uc?export=download&id=1HVvbCk7uIqtieZEsG3as-P-yaV0oYL2b",
   socials: [
