@@ -15,7 +15,7 @@ export class Tag extends IntegerIdBaseEntity {
   isFeatured: boolean;
 
   @ManyToMany(() => Story, (story) => story.tags)
-  stories: Story[];
+  stories?: Story[];
 
   storyCount?: number;
 }

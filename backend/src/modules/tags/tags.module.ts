@@ -1,4 +1,4 @@
-import { ExcelModule } from '@/common/excel/excel.module';
+import { ExcelModule } from '@/modules/common/excel/excel.module';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Tag } from './entities/tag.entity';

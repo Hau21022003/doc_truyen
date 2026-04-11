@@ -5,7 +5,7 @@ import {
   SortDirections,
   toSlug,
 } from '@/common';
-import { ExcelService } from '@/common/excel/excel.service';
+import { ExcelService } from '@/modules/common/excel/excel.service';
 import {
   BadRequestException,
   ConflictException,

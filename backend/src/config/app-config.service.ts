@@ -32,6 +32,19 @@ export class AppConfigService {
     return ms(this.jwtRefreshExpiresIn as StringValue);
   }
 
+  // ========== REDIS ==========
+  get redisHost(): string {
+    return this.config.getOrThrow('redis.host');
+  }
+
+  get redisPort(): number {
+    return this.config.getOrThrow('redis.port');
+  }
+
+  get redisTTL(): number {
+    return this.config.getOrThrow('redis.ttl');
+  }
+
   // ========== DATABASE ==========
   get dbHost(): string {
     return this.config.getOrThrow('database.host');

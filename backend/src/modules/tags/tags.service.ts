@@ -4,7 +4,7 @@ import {
   QueryBuilderHelper,
   toSlug,
 } from '@/common';
-import { ExcelService } from '@/common/excel/excel.service';
+import { ExcelService } from '@/modules/common/excel/excel.service';
 import {
   BadRequestException,
   ConflictException,
@@ -13,6 +13,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsWhere, In, Repository } from 'typeorm';
+import { CacheService } from '../common/cache/cache.service';
 import { CreateTagDto } from './dto/create-genre.dto';
 import { UpdateTagDto } from './dto/update-genre.dto';
 import { Tag } from './entities/tag.entity';
@@ -21,11 +22,23 @@ import { TAG_EXCEL_COLUMNS } from './tag.constants';
 @Injectable()
 export class TagsService {
   private readonly ENTITY_ALIAS = 'tag';
+  private readonly CacheKeys = {
+    tag: (id: number) => `tag:${id}`,
+    tags: () => `tags:all`,
+    tagQueries: () => 'tags:query:*',
+    tagQuery: (query) => this.cacheService.buildKey('tags:query', query),
+  };
+
+  private readonly TTL = {
+    single: 600_000, // 10 phút cho từng tag
+    list: 600_000, // 10 phút cho danh sách / query
+  };
 
   constructor(
     @InjectRepository(Tag)
     private readonly tagRepository: Repository<Tag>,
     private readonly excelService: ExcelService,
+    private readonly cacheService: CacheService,
   ) {}
 
   async create(createTagDto: CreateTagDto): Promise<Tag> {
@@ -33,64 +46,126 @@ export class TagsService {
 
     await this.checkUniqueFields(createTagDto);
     const newTag = this.tagRepository.create(createTagDto);
-    return await this.tagRepository.save(newTag);
+
+    // return await this.tagRepository.save(newTag);
+    const saved = await this.tagRepository.save(newTag);
+
+    // Warm cache cho entity vừa tạo + xóa list cache
+    await this.cacheService.set(
+      this.CacheKeys.tag(saved.id),
+      saved,
+      this.TTL.single,
+    );
+    await this.invalidateListCache();
+
+    return saved;
   }
 
   async query(query: QueryBaseDto): Promise<PaginatedResponseDto<Tag>> {
-    const { page, limit, search, sortBy, sortOrder } = query;
+    const cacheKey = this.CacheKeys.tagQuery(query);
 
-    let queryBuilder = this.tagRepository.createQueryBuilder(this.ENTITY_ALIAS);
+    return this.cacheService.getOrSet(
+      cacheKey,
+      async () => {
+        const { page, limit, search, sortBy, sortOrder } = query;
+        let qb = this.tagRepository.createQueryBuilder(this.ENTITY_ALIAS);
 
-    queryBuilder.loadRelationCountAndMap(
-      `${this.ENTITY_ALIAS}.storyCount`,
-      `${this.ENTITY_ALIAS}.stories`,
+        qb.loadRelationCountAndMap(
+          `${this.ENTITY_ALIAS}.storyCount`,
+          `${this.ENTITY_ALIAS}.stories`,
+        );
+
+        qb = QueryBuilderHelper.applySearch(qb, this.ENTITY_ALIAS, search, [
+          'name',
+          'slug',
+        ]);
+        qb = QueryBuilderHelper.applySorting(qb, 'tag', sortBy, sortOrder, [
+          'name',
+          'createdAt',
+          'updatedAt',
+        ]);
+        qb = QueryBuilderHelper.applyPagination(qb, page, limit);
+
+        const [data, total] = await qb.getManyAndCount();
+
+        return {
+          data,
+          page,
+          limit,
+          total,
+          totalPages: Math.ceil(total / limit),
+        };
+      },
+      this.TTL.list,
     );
 
-    // Apply search using helper
-    queryBuilder = QueryBuilderHelper.applySearch(
-      queryBuilder,
-      this.ENTITY_ALIAS,
-      search,
-      ['name', 'slug'],
-    );
+    // const { page, limit, search, sortBy, sortOrder } = query;
 
-    // Apply sorting using helper
-    queryBuilder = QueryBuilderHelper.applySorting(
-      queryBuilder,
-      'tag',
-      sortBy,
-      sortOrder,
-      ['name', 'createdAt', 'updatedAt'],
-    );
+    // let queryBuilder = this.tagRepository.createQueryBuilder(this.ENTITY_ALIAS);
 
-    // Apply pagination using helper
-    queryBuilder = QueryBuilderHelper.applyPagination(
-      queryBuilder,
-      page,
-      limit,
-    );
+    // queryBuilder.loadRelationCountAndMap(
+    //   `${this.ENTITY_ALIAS}.storyCount`,
+    //   `${this.ENTITY_ALIAS}.stories`,
+    // );
 
-    const [data, total] = await queryBuilder.getManyAndCount();
+    // // Apply search using helper
+    // queryBuilder = QueryBuilderHelper.applySearch(
+    //   queryBuilder,
+    //   this.ENTITY_ALIAS,
+    //   search,
+    //   ['name', 'slug'],
+    // );
 
-    return {
-      data,
-      page,
-      limit,
-      total,
-      totalPages: Math.ceil(total / limit),
-    };
+    // // Apply sorting using helper
+    // queryBuilder = QueryBuilderHelper.applySorting(
+    //   queryBuilder,
+    //   'tag',
+    //   sortBy,
+    //   sortOrder,
+    //   ['name', 'createdAt', 'updatedAt'],
+    // );
+
+    // // Apply pagination using helper
+    // queryBuilder = QueryBuilderHelper.applyPagination(
+    //   queryBuilder,
+    //   page,
+    //   limit,
+    // );
+
+    // const [data, total] = await queryBuilder.getManyAndCount();
+
+    // return {
+    //   data,
+    //   page,
+    //   limit,
+    //   total,
+    //   totalPages: Math.ceil(total / limit),
+    // };
   }
 
   findAll() {
-    return this.tagRepository.find();
+    return this.cacheService.getOrSet(
+      this.CacheKeys.tags(),
+      () => this.tagRepository.find(),
+      this.TTL.list,
+    );
   }
 
   async findOne(id: number): Promise<Tag> {
-    const tag = await this.tagRepository.findOne({ where: { id } });
-    if (!tag) {
-      throw new NotFoundException(`Genre with ID ${id} not found`);
-    }
-    return tag;
+    // const tag = await this.tagRepository.findOne({ where: { id } });
+    // if (!tag) {
+    //   throw new NotFoundException(`Genre with ID ${id} not found`);
+    // }
+    // return tag;
+    return this.cacheService.getOrSet(
+      this.CacheKeys.tag(id),
+      async () => {
+        const tag = await this.tagRepository.findOne({ where: { id } });
+        if (!tag) throw new NotFoundException(`Genre with ID ${id} not found`);
+        return tag;
+      },
+      this.TTL.single,
+    );
   }
 
   async update(id: number, updateTagDto: UpdateTagDto): Promise<Tag> {
@@ -101,12 +176,22 @@ export class TagsService {
     await this.checkUniqueFields(updateTagDto, id);
 
     Object.assign(tag, updateTagDto);
-    return await this.tagRepository.save(tag);
+    // return await this.tagRepository.save(tag);
+    const saved = await this.tagRepository.save(tag);
+
+    await this.invalidateTagCache(id);
+
+    return saved;
   }
 
   async remove(id: number) {
-    const genre = await this.findOne(id);
-    return await this.tagRepository.remove(genre);
+    const tag = await this.findOne(id);
+    // return await this.tagRepository.remove(genre);
+    const removed = await this.tagRepository.remove(tag);
+
+    await this.invalidateTagCache(id);
+
+    return removed;
   }
 
   async removeMany(ids: number[]) {
@@ -116,7 +201,16 @@ export class TagsService {
       throw new NotFoundException('Some tags not found');
     }
 
-    return this.tagRepository.remove(tags);
+    // return this.tagRepository.remove(tags);
+    const removed = await this.tagRepository.remove(tags);
+
+    // Xóa cache từng entity + list
+    await Promise.all(
+      ids.map((id) => this.cacheService.del(this.CacheKeys.tag(id))),
+    );
+    await this.invalidateListCache();
+
+    return removed;
   }
 
   async findBy(where: FindOptionsWhere<Tag>): Promise<Tag[]> {
@@ -134,7 +228,12 @@ export class TagsService {
 
     tag.isFeatured = isFeatured;
 
-    return await this.tagRepository.save(tag);
+    // return await this.tagRepository.save(tag);
+    const saved = await this.tagRepository.save(tag);
+
+    await this.invalidateTagCache(tagId);
+
+    return saved;
   }
 
   async exportAll(): Promise<Buffer> {
@@ -185,6 +284,26 @@ export class TagsService {
 
     return { imported: toSave.length, errors: importErrors };
   }
+
+  // ─── Invalidation helper ──────────────────────────────────────────────────
+
+  /**
+   * Xóa cache liên quan đến danh sách (query + all).
+   * Gọi sau mỗi thao tác write để đảm bảo consistency.
+   */
+  private async invalidateListCache() {
+    await this.cacheService.del(this.CacheKeys.tags());
+    await this.cacheService.deleteByPattern(this.CacheKeys.tagQueries());
+    // Query cache dùng wildcard pattern — nếu Redis hỗ trợ SCAN thì mở rộng ở đây.
+    // Hiện tại: xóa bằng cách đánh dấu version hoặc chấp nhận TTL tự hết hạn.
+  }
+
+  private async invalidateTagCache(id: number) {
+    await this.cacheService.del(this.CacheKeys.tag(id));
+    await this.invalidateListCache();
+  }
+
+  // ─── Private helpers ──────────────────────────────────────────────────────
 
   private async checkUniqueFields(
     data: { name?: string; slug?: string },

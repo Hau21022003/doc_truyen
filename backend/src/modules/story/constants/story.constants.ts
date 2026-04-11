@@ -1,4 +1,4 @@
-import { ExcelColumnDef } from '@/common/excel/excel-column-def.interface';
+import { ExcelColumnDef } from '@/modules/common/excel/excel-column-def.interface';
 import { Story, StoryProgress, StoryStatus } from '../entities/story.entity';
 
 export const STORY_SORTABLE_COLUMNS = [

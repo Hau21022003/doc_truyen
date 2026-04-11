@@ -1,4 +1,4 @@
-import { ExcelColumnDef } from '@/common/excel/excel-column-def.interface';
+import { ExcelColumnDef } from '@/modules/common/excel/excel-column-def.interface';
 import { Tag } from './entities/tag.entity';
 
 export const TAG_FIELDS = {

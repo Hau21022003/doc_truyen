@@ -1,4 +1,4 @@
-import { ExcelColumnDef } from '@/common/excel/excel-column-def.interface';
+import { ExcelColumnDef } from '@/modules/common/excel/excel-column-def.interface';
 import { ContentType } from '../entities/chapter-content';
 import { ChapterStatus } from '../entities/chapter.entity';
 
