@@ -62,38 +62,111 @@ export class CacheService {
   async deleteByPattern(pattern: string) {
     const stores: any[] = (this.cache as any).stores;
 
-    if (!stores || stores.length === 0) {
+    if (!stores?.length) {
       this.logger.warn('No cache stores found');
       return;
     }
 
-    // tìm Redis store (thường là store đầu tiên)
-    const redisStore = stores[0];
+    for (const store of stores) {
+      // Keyv wraps the actual store
+      const innerStore = store.store ?? store;
 
-    const client = redisStore.getClient?.() || redisStore.client; // cache-manager-redis-store // fallback
+      // Lấy Redis client từ nhiều dạng package khác nhau
+      const client =
+        innerStore.client || // cache-manager-redis-yet / ioredis-yet
+        innerStore.getClient?.() || // cache-manager-redis-store (cũ)
+        store.client ||
+        store.getClient?.();
 
-    if (!client) {
-      this.logger.warn('Redis client not found → skip deleteByPattern');
-      return;
-    }
-
-    let cursor = '0';
-
-    do {
-      const [nextCursor, keys] = await client.scan(
-        cursor,
-        'MATCH',
-        pattern,
-        'COUNT',
-        100,
-      );
-
-      cursor = nextCursor;
-
-      if (keys.length > 0) {
-        await client.del(keys);
-        this.logger.debug(`Deleted ${keys.length} keys`);
+      if (!client) {
+        this.logger.warn(
+          `Store "${store.constructor?.name}" không phải Redis → skip`,
+        );
+        continue;
       }
-    } while (cursor !== '0');
+
+      this.logger.debug(`Scanning pattern: ${pattern}`);
+
+      // let cursor = '0';
+
+      // do {
+      //   const result = await client.scan(
+      //     cursor,
+      //     'MATCH',
+      //     pattern,
+      //     'COUNT',
+      //     100,
+      //   );
+
+      //   let nextCursor: string;
+      //   let keys: string[];
+
+      //   if (Array.isArray(result)) {
+      //     // ioredis: [cursor, keys]
+      //     [nextCursor, keys] = result;
+      //   } else if (result && typeof result === 'object') {
+      //     // node-redis: { cursor, keys }
+      //     nextCursor = result.cursor;
+      //     keys = result.keys;
+      //   } else {
+      //     this.logger.error('scan result format không xác định:', result);
+      //     break;
+      //   }
+
+      //   cursor = nextCursor; // ✅ giữ nguyên string
+
+      //   if (keys?.length > 0) {
+      //     await client.del(...keys); // ⚠️ quan trọng
+      //     this.logger.debug(`Deleted ${keys.length} keys`);
+      //   }
+      // } while (cursor !== '0');
+      // let cursor = 0;
+
+      // do {
+      //   const result = await client.scan(
+      //     cursor,
+      //     'MATCH',
+      //     pattern,
+      //     'COUNT',
+      //     100,
+      //   );
+      //   let nextCursor: number;
+      //   let keys: string[];
+      //   if (Array.isArray(result)) {
+      //     // ioredis: [cursor, keys]
+      //     [nextCursor, keys] = result;
+      //   } else if (result && typeof result === 'object') {
+      //     // node-redis: { cursor, keys }
+      //     nextCursor = result.cursor;
+      //     keys = result.keys;
+      //   } else {
+      //     this.logger.error('scan result format không xác định:', result);
+      //     break;
+      //   }
+
+      //   cursor = Number(nextCursor);
+      //   if (keys?.length > 0) {
+      //     await client.del(keys); // ioredis chấp nhận cả array lẫn spread
+      //     this.logger.debug(`Deleted ${keys.length} keys`);
+      //   }
+      // } while (cursor !== 0);
+      let cursor = '0';
+
+      do {
+        const result = await client.scan(cursor, {
+          MATCH: pattern,
+          COUNT: 100,
+        });
+
+        const nextCursor = result.cursor;
+        const keys = result.keys;
+
+        cursor = nextCursor;
+
+        if (keys?.length) {
+          await client.del(keys); // node-redis chấp nhận array ✅
+        }
+      } while (cursor !== '0');
+    }
   }
 }

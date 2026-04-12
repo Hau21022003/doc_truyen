@@ -15,6 +15,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, In, Repository } from 'typeorm';
 import { BookmarkService } from '../bookmark/bookmark.service';
+import { CacheService } from '../common/cache/cache.service';
 import { ReadingHistoryService } from '../reading-history/reading-history.service';
 import { StoryViewDailyService } from '../story-view-daily/story-view-daily.service';
 import { Story } from '../story/entities/story.entity';
@@ -39,6 +40,23 @@ import { Chapter, ChapterStatus } from './entities/chapter.entity';
 export class ChapterService {
   private readonly ENTITY_ALIAS = 'chapter';
 
+  private readonly CacheKeys = {
+    chapters: () => 'chapters:*',
+    chapter: (id: number) => `chapter:${id}`,
+    chapterBySlug: (storySlug: string, chapterNumber: number) =>
+      `chapter:slug:${storySlug}:${chapterNumber}`,
+    chaptersByStory: (storyId: number) => `chapters:story:${storyId}:all`,
+    chaptersByStoryQueries: (storyId: number) =>
+      `chapters:story:${storyId}:query:*`,
+    chaptersByStoryQuery: (storyId: number, query: FindChaptersByStoryDto) =>
+      this.cacheService.buildKey(`chapters:story:${storyId}:query`, query),
+  };
+
+  private readonly TTL = {
+    single: 600_000, // 10 phút cho từng chapter
+    list: 600_000, // 10 phút cho danh sách / query
+  };
+
   constructor(
     @InjectRepository(Chapter)
     private chapterRepository: Repository<Chapter>,
@@ -48,6 +66,7 @@ export class ChapterService {
     private readonly storyService: StoryService,
     private readonly storyViewDailyService: StoryViewDailyService,
     private readonly excelService: ExcelService,
+    private readonly cacheService: CacheService,
   ) {}
 
   async create(createChapterDto: CreateChapterDto): Promise<Chapter> {
@@ -84,6 +103,10 @@ export class ChapterService {
         lastAddedChapterDate: new Date(),
       });
 
+      await this.invalidateStoryChapterListCache(
+        savedChapter.story?.id ?? createChapterDto.storyId,
+      );
+
       return savedChapter;
     });
   }
@@ -93,156 +116,182 @@ export class ChapterService {
     updateChapterDto: UpdateChapterDto,
   ): Promise<Chapter> {
     this.normalizeSlug(updateChapterDto);
-    return await this.chapterRepository.manager.transaction(async (manager) => {
-      const chapter = await manager.findOne(Chapter, {
-        where: { id },
-        relations: ['contents'],
-      });
+    let oldStoryId: number | undefined;
+    const saved = await this.chapterRepository.manager.transaction(
+      async (manager) => {
+        const chapter = await manager.findOne(Chapter, {
+          where: { id },
+          relations: ['contents', 'story'],
+        });
 
-      if (!chapter) {
-        throw new NotFoundException('Chapter not found');
-      }
+        if (!chapter) {
+          throw new NotFoundException('Chapter not found');
+        }
 
-      const oldStatus = chapter.status;
-      const oldImageUrls = chapter.contents
-        .filter((content) => content.imageUrl) // Chỉ lấy những content có imageUrl
-        .map((content) => content.imageUrl!)
-        .filter((url) => url); // Lọc bỏ URL rỗng
+        oldStoryId = chapter.story?.id;
 
-      // Cập nhật các thuộc tính cơ bản của chapter
-      const { contents, storyId, ...rest } = updateChapterDto;
-      Object.assign(chapter, rest);
+        const oldStatus = chapter.status;
+        const oldImageUrls = chapter.contents
+          .filter((content) => content.imageUrl) // Chỉ lấy những content có imageUrl
+          .map((content) => content.imageUrl!)
+          .filter((url) => url); // Lọc bỏ URL rỗng
 
-      // ✅ Chỉ update publishedAt khi status CÓ thay đổi
-      if (rest.status && rest.status !== oldStatus) {
-        chapter.publishedAt = this.updatePublishedAt(rest.status);
-      }
+        // Cập nhật các thuộc tính cơ bản của chapter
+        const { contents, storyId, ...rest } = updateChapterDto;
+        Object.assign(chapter, rest);
 
-      // Nếu có contents trong DTO, xóa hết contents cũ và tạo mới
-      if (contents !== undefined) {
-        await manager.delete(ChapterContent, { chapterId: id });
+        // ✅ Chỉ update publishedAt khi status CÓ thay đổi
+        if (rest.status && rest.status !== oldStatus) {
+          chapter.publishedAt = this.updatePublishedAt(rest.status);
+        }
 
-        const { contents: newContents, imageUrls: newImageUrls } =
-          await this.buildChapterContents(contents, manager, id);
+        // Nếu có contents trong DTO, xóa hết contents cũ và tạo mới
+        if (contents !== undefined) {
+          await manager.delete(ChapterContent, { chapterId: id });
 
-        chapter.contents = newContents;
+          const { contents: newContents, imageUrls: newImageUrls } =
+            await this.buildChapterContents(contents, manager, id);
 
-        // Xóa các ảnh cũ không còn được sử dụng
-        const urlsToDelete = oldImageUrls.filter(
-          (url) => !newImageUrls.includes(url),
-        );
-        await this.safeDeleteMedia(urlsToDelete);
-      }
+          chapter.contents = newContents;
 
-      // Lưu chapter và contents mới
-      return await manager.save(chapter);
-    });
+          // Xóa các ảnh cũ không còn được sử dụng
+          const urlsToDelete = oldImageUrls.filter(
+            (url) => !newImageUrls.includes(url),
+          );
+          await this.safeDeleteMedia(urlsToDelete);
+        }
+
+        // Lưu chapter và contents mới
+        return await manager.save(chapter);
+      },
+    );
+
+    // await this.invalidateChapterCache(id, oldStoryId);
+    await this.cacheService.deleteByPattern(this.CacheKeys.chapters());
+    await this.cacheService.deleteByPattern('chapter:*');
+
+    return saved;
   }
 
   async findOne(id: number): Promise<Chapter> {
-    const chapter = await this.chapterRepository.findOne({
-      where: { id },
-      relations: ['contents'], // nếu cần story
-      order: {
-        contents: {
-          position: 'ASC', // giữ đúng thứ tự
-        },
+    return this.cacheService.getOrSet(
+      this.CacheKeys.chapter(id),
+      async () => {
+        const chapter = await this.chapterRepository.findOne({
+          where: { id },
+          relations: ['contents'],
+          order: {
+            contents: {
+              position: 'ASC',
+            },
+          },
+        });
+
+        if (!chapter) {
+          throw new NotFoundException('Chapter not found');
+        }
+
+        return chapter;
       },
-    });
-
-    if (!chapter) {
-      throw new NotFoundException('Chapter not found');
-    }
-
-    return chapter;
+      this.TTL.single,
+    );
   }
 
   async findByStoryId(
     storyId: number,
     query: FindChaptersByStoryDto,
   ): Promise<PaginatedResponseDto<Chapter>> {
-    const {
-      search,
-      status,
-      sortBy,
-      sortOrder,
-      page,
-      limit,
-      endDate,
-      startDate,
-      timezone,
-    } = query;
+    const cacheKey = this.CacheKeys.chaptersByStoryQuery(storyId, query);
 
-    let queryBuilder = this.chapterRepository
-      .createQueryBuilder(this.ENTITY_ALIAS)
-      .leftJoin(`${this.ENTITY_ALIAS}.story`, 'story')
-      .where('story.id = :storyId', { storyId });
+    return this.cacheService.getOrSet(
+      cacheKey,
+      async () => {
+        const {
+          search,
+          status,
+          sortBy,
+          sortOrder,
+          page,
+          limit,
+          endDate,
+          startDate,
+          timezone,
+        } = query;
 
-    // Apply search using helper
-    queryBuilder = QueryBuilderHelper.applySearch(
-      queryBuilder,
-      this.ENTITY_ALIAS,
-      search,
-      CHAPTER_SEARCHABLE_COLUMNS,
+        let queryBuilder = this.chapterRepository
+          .createQueryBuilder(this.ENTITY_ALIAS)
+          .leftJoin(`${this.ENTITY_ALIAS}.story`, 'story')
+          .where('story.id = :storyId', { storyId });
+
+        queryBuilder = QueryBuilderHelper.applySearch(
+          queryBuilder,
+          this.ENTITY_ALIAS,
+          search,
+          CHAPTER_SEARCHABLE_COLUMNS,
+        );
+
+        const { utcEndDate, utcStartDate } = createDateRangeInUTC({
+          timezone,
+          endDate,
+          startDate,
+        });
+        queryBuilder = QueryBuilderHelper.applyDateRange(
+          queryBuilder,
+          this.ENTITY_ALIAS,
+          'updatedAt',
+          utcStartDate,
+          utcEndDate,
+        );
+
+        if (status) {
+          queryBuilder.andWhere(`${this.ENTITY_ALIAS}.status = :status`, {
+            status,
+          });
+        }
+
+        queryBuilder = QueryBuilderHelper.applySorting(
+          queryBuilder,
+          this.ENTITY_ALIAS,
+          sortBy,
+          sortOrder,
+          CHAPTER_SORTABLE_COLUMNS,
+        );
+
+        queryBuilder = QueryBuilderHelper.applyPagination(
+          queryBuilder,
+          page,
+          limit,
+        );
+
+        const [data, total] = await queryBuilder.getManyAndCount();
+
+        return {
+          data,
+          page,
+          limit,
+          total,
+          totalPages: Math.ceil(total / limit),
+        };
+      },
+      this.TTL.list,
     );
-
-    const { utcEndDate, utcStartDate } = createDateRangeInUTC({
-      timezone,
-      endDate,
-      startDate,
-    });
-    queryBuilder = QueryBuilderHelper.applyDateRange(
-      queryBuilder,
-      this.ENTITY_ALIAS,
-      'updatedAt',
-      utcStartDate,
-      utcEndDate,
-    );
-
-    // business filters
-    if (status) {
-      queryBuilder.andWhere(`${this.ENTITY_ALIAS}.status = :status`, {
-        status,
-      });
-    }
-
-    // Apply sorting using helper
-    queryBuilder = QueryBuilderHelper.applySorting(
-      queryBuilder,
-      this.ENTITY_ALIAS,
-      sortBy,
-      sortOrder,
-      CHAPTER_SORTABLE_COLUMNS,
-    );
-
-    // Apply pagination using helper
-    queryBuilder = QueryBuilderHelper.applyPagination(
-      queryBuilder,
-      page,
-      limit,
-    );
-
-    const [data, total] = await queryBuilder.getManyAndCount();
-
-    return {
-      data,
-      page,
-      limit,
-      total,
-      totalPages: Math.ceil(total / limit),
-    };
   }
 
   async remove(id: number) {
-    return this.chapterRepository.manager.transaction(async (manager) => {
+    const chapter = await this.findOne(id);
+    const storyId = chapter.story?.id;
+
+    await this.chapterRepository.manager.transaction(async (manager) => {
       await this.removeChapterLogic(manager, id);
     });
+
+    await this.invalidateChapterCache(id, storyId);
   }
 
   async removeMany(ids: number[]) {
     ids = [...new Set(ids)];
 
-    return this.chapterRepository.manager.transaction(async (manager) => {
+    await this.chapterRepository.manager.transaction(async (manager) => {
       // Check tất cả chapter tồn tại
       const chapters = await manager.find(Chapter, {
         where: { id: In(ids) },
@@ -262,13 +311,19 @@ export class ChapterService {
         await this.removeChapterLogic(manager, id);
       }
     });
+
+    await this.cacheService.deleteByPattern(this.CacheKeys.chapters());
+    await this.cacheService.deleteByPattern('chapter:*');
   }
 
   async updateStatus(
     id: number,
     updateChapterStatusDto: UpdateChapterStatusDto,
   ) {
-    const chapter = await this.chapterRepository.findOne({ where: { id } });
+    const chapter = await this.chapterRepository.findOne({
+      where: { id },
+      relations: ['story'],
+    });
 
     if (!chapter) throw new NotFoundException('Chapter not found');
 
@@ -279,7 +334,12 @@ export class ChapterService {
       chapter.publishedAt = this.updatePublishedAt(status);
     }
 
-    return this.chapterRepository.save(chapter);
+    // return this.chapterRepository.save(chapter);
+    const saved = await this.chapterRepository.save(chapter);
+
+    await this.invalidateChapterCache(id, chapter.story?.id);
+
+    return saved;
   }
 
   /**
@@ -295,45 +355,50 @@ export class ChapterService {
     chapterNumber: number,
     userId?: string,
   ): Promise<Chapter> {
-    const chapter = await this.chapterRepository.findOne({
-      where: {
-        chapterNumber,
-        story: {
-          slug: storySlug,
-        },
-      },
-      relations: ['contents', 'story'],
-      order: {
-        contents: {
-          position: 'ASC',
-        },
-      },
-    });
+    const chapter = await this.cacheService.getOrSet(
+      this.CacheKeys.chapterBySlug(storySlug, chapterNumber),
+      async () => {
+        const found = await this.chapterRepository.findOne({
+          where: {
+            chapterNumber,
+            story: {
+              slug: storySlug,
+            },
+          },
+          relations: ['contents', 'story'],
+          order: {
+            contents: {
+              position: 'ASC',
+            },
+          },
+        });
 
-    if (!chapter) {
-      throw new NotFoundException(
-        `Chapter ${chapterNumber} not found for story: ${storySlug}`,
-      );
-    }
+        if (!found) {
+          throw new NotFoundException(
+            `Chapter ${chapterNumber} not found for story: ${storySlug}`,
+          );
+        }
 
-    // ✅ Tăng viewCount cho story (đồng bộ)
+        return found;
+      },
+      this.TTL.single,
+    );
+
+    // ✅ Side-effects NGOÀI cache (không cache kết quả của các action này)
     this.storyService.incrementViewCount(chapter.story.id).catch((error) => {
       console.error('Failed to increment view count:', error);
     });
 
     this.storyViewDailyService.recordView(chapter.story.id);
 
-    // ✅ If user is logged in, update reading data
     if (userId) {
       try {
-        // 1️⃣ Save reading history
         await this.readingHistoryService.addHistory(
           userId,
           chapter.story.id,
           chapter.id,
         );
 
-        // 2️⃣ Update bookmark progress if bookmark exists
         await this.bookmarkService.updateLastReadChapter(
           userId,
           chapter.story.id,
@@ -345,6 +410,27 @@ export class ChapterService {
     }
 
     return chapter;
+  }
+
+  // ─── CACHE INVALIDATION ───────────────────────────────────────────────────────
+
+  /**
+   * Xóa cache danh sách chapters của một story (query + all).
+   */
+  private async invalidateStoryChapterListCache(storyId?: number) {
+    if (!storyId) return;
+    await this.cacheService.del(this.CacheKeys.chaptersByStory(storyId));
+    await this.cacheService.deleteByPattern(
+      this.CacheKeys.chaptersByStoryQueries(storyId),
+    );
+  }
+
+  /**
+   * Xóa cache của một chapter cụ thể + list cache của story.
+   */
+  private async invalidateChapterCache(id: number, storyId?: number) {
+    await this.cacheService.del(this.CacheKeys.chapter(id));
+    await this.invalidateStoryChapterListCache(storyId);
   }
 
   // ─── EXPORT ───────────────────────────────────────────────────────────────────
